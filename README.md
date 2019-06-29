@@ -1,7 +1,7 @@
 # Software
 
-This is the software repo
+TODO: Once software high level plan complete on google drive, move it all into here for ease of access
 
-File organisation system is to come
 
-One directory is reserved for concept proving and prototypes
+
+
