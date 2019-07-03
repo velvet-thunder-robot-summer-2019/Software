@@ -69,13 +69,13 @@ extern identity bot_identity;
  * Params: start_position - location at which robot is beginning
  *         start_state    - state in which the robot is beginning
  */
-void initialise_global_variables(position start_position);
+void initialise_competition_data(position start_position);
 
 /**
  * Initialisation from competition mode
  * Sets up my state as REACH_RAMP, my position as either METHANOS_START or THANOS_START depending on MvT
  */
-void initialise_global_variables();
+void initialise_competition_data();
 
 
 #endif //STATE_H_

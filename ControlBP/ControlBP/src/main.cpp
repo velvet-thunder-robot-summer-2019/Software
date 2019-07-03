@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "Initialisation/HardwareDefs.h"
 #include "Initialisation/State.h"
+#include "Initialisation/Interrupts.h"
 
 #include "Debugging/Debug.h"
 #include "Debugging/Menu.h"
@@ -16,16 +17,23 @@
 #include "StateControl/GoodnightSweetPrince.h"
 
 
-
+/**
+ * Calls all initialisation routines (vary between DEV and COMP modes)
+ * Calls initialise_global_variables
+ * Sets starting state
+ * TODO: Calls initialise_interrupt, call THANOS v METHANOS inits, send init_command to infinity
+ * 
+ */
 void setup() {
   // put your setup code here, to run once:
   // Initialisation of everything here
   if (digitalRead(MASTER_SWITCH) == COMP) {
     bot_state = REACH_RAMP;
-    initialise_global_variables();
+    initialise_competition_data();
   } else {
     bot_state = MENU;
   }
+
 }
 
 void loop() {

@@ -2,6 +2,13 @@
 #include "Initialisation/HardwareDefs.h"
 #include <Arduino.h>
 
+
+volatile state bot_state; // state of robot
+volatile state bot_previous_state; //previous state of robot
+volatile stone_status stones_status[TOTAL_NUM_STONE]; //tracking what we know about the infinity stones. I don't think it needs volatile?
+volatile position bot_position;
+identity bot_identity;
+
 /**
  * Gets called from MENU mode for testing
  * Params: start_position - location at which robot is beginning
