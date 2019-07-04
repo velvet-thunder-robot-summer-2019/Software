@@ -1,5 +1,7 @@
+#include <Arduino.h>
+
 #include "Initialisation/Interrupts.h"
-#include "Initialisation/State.h"
+#include "Initialisation/GlobalVars.h"
 
 #define RETURN_TIME 130 // in seconds, arbitrary rn
 
@@ -8,6 +10,7 @@
  */
 void init_interrupts()
 {
+    Serial.println("init_interrupts");
     // init collision interrupt
 
     // init timer interrupt
@@ -18,6 +21,7 @@ void init_interrupts()
  */
 void collision_interrupt_handler()
 {
+    Serial.println("collision_interrupt_handler");
     bot_previous_state = bot_state;
     bot_state = HANDLE_COLLISION;
 }
@@ -27,6 +31,7 @@ void collision_interrupt_handler()
  */
 void timer_interrupt_handler()
 {
+    Serial.println("timer_interrupt_handler");
     bot_previous_state = bot_state;
     bot_state = RETURN_TO_GAUNTLET;
 }

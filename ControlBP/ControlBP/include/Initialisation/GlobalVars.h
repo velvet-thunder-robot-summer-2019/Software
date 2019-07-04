@@ -1,5 +1,5 @@
-#ifndef STATE_H_
-#define STATE_H_
+#ifndef GLOBAL_VARS_H_
+#define GLOBAL_VARS_H_
 
 #define TOTAL_NUM_STONE 6
 
@@ -78,4 +78,4 @@ void initialise_competition_data(position start_position);
 void initialise_competition_data();
 
 
-#endif //STATE_H_
+#endif //GLOBAL_VARS_H_

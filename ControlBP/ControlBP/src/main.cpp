@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "Initialisation/HardwareDefs.h"
-#include "Initialisation/State.h"
+#include "Initialisation/GlobalVars.h"
 #include "Initialisation/Interrupts.h"
 
 #include "Debugging/Debug.h"
@@ -38,6 +38,8 @@ void setup() {
 
 void loop() {
   // MAIN CONTROL LOOP
+  Serial.println("Begin control loop");
+
   switch(bot_state) {
     case MENU :
       menu();
@@ -83,4 +85,5 @@ void loop() {
       goodnight_sweet_prince();
       break;
   }
+  delay(10000); // just for now, so that Julie can see what went down
 }

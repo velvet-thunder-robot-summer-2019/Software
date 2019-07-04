@@ -1,4 +1,4 @@
-#include "Initialisation\State.h"
+#include "Initialisation\GlobalVars.h"
 #include "Initialisation/HardwareDefs.h"
 #include <Arduino.h>
 
@@ -16,6 +16,8 @@ identity bot_identity;
  */
 void initialise_competition_data(position start_position)
 {
+    Serial.println("initialise_competition_data");
+
     bot_position.last_location = start_position.last_location;
     bot_position.next_location = start_position.last_location;
     bot_position.fraction_to_next = start_position.fraction_to_next;
@@ -32,6 +34,7 @@ void initialise_competition_data(position start_position)
     for (i = 0; i < TOTAL_NUM_STONE; i++) {
         stones_status[i] = UNKNOWN;
     }
+    Serial.begin(9600);
 }
 
 /**
@@ -40,6 +43,8 @@ void initialise_competition_data(position start_position)
  */
 void initialise_competition_data()
 {
+    Serial.println("initialise_competition_data general mode");
+
     position my_position;
     if (digitalRead(THANOS_v_METHANOS_SWITCH) == METHANOS) {
         my_position = {METHANOS_START, METHANOS_GAUNTLET, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
