@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "AllPurposeInclude.h"
 #include "StateControl/Calibrate.h"
 

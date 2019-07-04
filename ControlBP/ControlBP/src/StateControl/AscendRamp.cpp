@@ -1,10 +1,10 @@
-#include <Arduino.h>
-
 #include "StateControl/AscendRamp.h"
 #include "AllPurposeInclude.h"
 
 void ascend_ramp()
 {
+    Serial.println("");
+    Serial.println("");
     Serial.println("ASCEND_RAMP state entered!");
     Serial.println("______________________");
 

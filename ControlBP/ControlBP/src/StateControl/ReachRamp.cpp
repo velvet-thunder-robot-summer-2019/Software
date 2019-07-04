@@ -6,6 +6,8 @@
 
 void reach_ramp()
 {
+    Serial.println("");
+    Serial.println("");
     Serial.println("REACH_RAMP state entered!");
     Serial.println("______________________");
 

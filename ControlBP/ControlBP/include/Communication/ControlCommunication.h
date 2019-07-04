@@ -43,6 +43,25 @@ int request_wheel_rotations_right();
 int request_confirmation_post_presence(int side);
 
 /**
+ * Requests ascent of post (kind of climb up post, abstract this)
+ * Internally checks if it's at the top
+ * Returns:     SUCCESS - if it detects top of post
+ *              ERROR   - if something goes horribly wrong
+ */
+int request_post_ascent();
+
+/**
+ * Requests grab infinity stone
+ * See doc
+ */
+int grab_infinity_stone();
+
+/**
+ * Request put stone in gauntlet
+ */
+void request_put_stone_in_gauntlet(int next_slot_available);
+
+/**
  * Request angle of lazy susan, ccw from standard axis
  * Params:      angle - in degrees
  * Returns:     angle set

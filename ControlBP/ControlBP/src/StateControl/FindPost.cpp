@@ -1,15 +1,19 @@
-#include <Arduino.h>
-
 #include "AllPurposeInclude.h"
 #include "DecisionMaking/DecisionMaking.h"
 #include "StateControl/FindPost.h"
 
+int debug_iterations = 0;
+
 void find_post()
 {
-    Serial.println("CALIBRATE state entered!");
+    Serial.println("");
+    Serial.println("");
+    Serial.println("FIND_POST state entered!");
     Serial.println("______________________");
 
-    int side = pick_post_to_find();
+    // int post_num = pick_post_to_find();
+    int side = get_checkpoint_expected_side();
+    
     //OK... this will be more complicated, we'll have to either:
     //1. pick direction to follow tape in or
     //2. Go cross country
@@ -30,6 +34,7 @@ void find_post()
             return;
         }
     }
+    // UPDATE bot_position!!!!!
 
     if (align_to_branch() == STATE_CHANGED)
         return;
@@ -43,10 +48,16 @@ void find_post()
         return;
     
     bot_previous_state = FIND_POST;
+    debug_iterations++;
+    Serial.print("debug iterations: ");
+    Serial.println(debug_iterations);
+    if (debug_iterations >= 2) {
+        bot_state = RETURN_TO_GAUNTLET;
+        return;
+    }
     if (digitalRead(MASTER_SWITCH) == COMP) {
         bot_state = GET_INFINITY_STONE;
     } else {
         bot_state = MENU;
     }
-    
 }

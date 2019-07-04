@@ -1,6 +1,44 @@
+#include "AllPurposeInclude.h"
 #include "StateControl/ReturnToGauntlet.h"
+#include "DecisionMaking/DecisionMaking.h"
 
 void return_to_gauntlet()
 {
+    Serial.println("RETURN_TO_GAUNTLET state entered!");
+    Serial.println("______________________");
+
+    if (align_direction_to_return() == STATE_CHANGED)
+    {
+        return;
+    }
+
+    int gauntlet = (bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
+    int branch_side = get_checkpoint_expected_side();
+
+    while (bot_position.last_location != gauntlet) {
+        uint8_t response = follow_tape();
+        if (response == TAPE_NOT_FOUND) {
+            backtrack_to_tape();
+        }
+        if (bot_state != RETURN_TO_GAUNTLET) {
+            return;
+        }
+        if (branch_reached(branch_side)) {
+            update_position();
+        }
+
+        //TODO: remove this stupid line
+        bot_position.last_location = (bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
+    }
+
+    if (align_to_gauntlet() != SUCCESS) {
+        return;
+    }
     
+    bot_previous_state = RETURN_TO_GAUNTLET;
+    if (digitalRead(MASTER_SWITCH) == COMP) {
+        bot_state = FIT_TO_GAUNTLET;
+    } else {
+        bot_state = MENU;
+    }
 }

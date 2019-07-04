@@ -10,7 +10,6 @@
 void request_arm_position__travel()
 {
     Serial.println("request_arm_position__travel");
-
 }
 
 /**
@@ -19,6 +18,7 @@ void request_arm_position__travel()
  */
 int request_arm_position__ascent()
 {
+    delay(1000);
     Serial.println("request_arm_position__ascent");
     return SUCCESS;
 }
@@ -31,7 +31,7 @@ int request_arm_position__ascent()
 int request_U_turn_status()
 {
     Serial.println("request_U_turn_status");
-    return SUCCESS;  
+    return TRUE;  
 }
 
 /**
@@ -68,8 +68,41 @@ int request_wheel_rotations_right()
 int request_confirmation_post_presence(int side)
 {
     Serial.print("request_confirmation_post_presence: ");
+    delay(1000);
     Serial.println("POST FOUND! Except not really");
     return SUCCESS;
+}
+
+/**
+ * Requests ascent of post (kind of climb up post, abstract this)
+ * Internally checks if it's at the top
+ * Returns:     SUCCESS - if it detects top of post
+ *              ERROR   - if something goes horribly wrong
+ */
+int request_post_ascent()
+{
+    Serial.println("Ascending post...");
+    delay(5000);
+    return SUCCESS;
+}
+
+/**
+ * Requests grab infinity stone
+ * See doc
+ */
+int grab_infinity_stone()
+{
+    delay(2000);
+    Serial.println("grab_infinity_stone... stone grabbed!");
+    return SUCCESS;
+}
+
+/**
+ * Request put stone in gauntlet
+ */
+void request_put_stone_in_gauntlet(int next_slot_available) 
+{
+    Serial.println("request_put_infinity_in_gauntlet: putting stone in gauntlet");
 }
 
 /**
