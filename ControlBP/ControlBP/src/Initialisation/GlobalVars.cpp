@@ -21,6 +21,8 @@ void initialise_competition_data(position start_position)
     bot_position.last_location = start_position.last_location;
     bot_position.next_location = start_position.last_location;
     bot_position.fraction_to_next = start_position.fraction_to_next;
+    bot_position.wheel_rot_since_last_left = 0;
+    bot_position.wheel_rot_since_last_right = 0;
 
     if (digitalRead(THANOS_v_METHANOS_SWITCH) == METHANOS)
     {
@@ -46,9 +48,9 @@ void initialise_competition_data()
 
     position my_position;
     if (digitalRead(THANOS_v_METHANOS_SWITCH) == METHANOS) {
-        my_position = {METHANOS_START, METHANOS_GAUNTLET, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
+        my_position = {METHANOS_START, METHANOS_GAUNTLET, 0, 0, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
     } else {
-        my_position = {THANOS_START, THANOS_GAUNTLET, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
+        my_position = {THANOS_START, THANOS_GAUNTLET, 0, 0, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
     }
     initialise_competition_data(my_position);
 }

@@ -55,6 +55,8 @@ typedef struct
     location last_location;
     location next_location;
     int fraction_to_next;  //fraction of the dist made to the next location
+    int wheel_rot_since_last_left;
+    int wheel_rot_since_last_right;
 }position;
 
 

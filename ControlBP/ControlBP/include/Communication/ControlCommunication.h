@@ -26,12 +26,16 @@ uint8_t request_U_turn_status();
  * CONSIDER RETURNING POINTER
  */
 uint8_t request_recent_path();
+/**
+ * Returns:     number of left wheel rotations
+ */
+int request_wheel_rotations_left();
 
 /**
  * CONSIDER returning a struct with left and right wheel info (2 ints)
- * Returns:     number of left and right wheel rotations
+ * Returns:     number of right wheel rotations
  */
-int request_wheel_rotations();
+int request_wheel_rotations_right();
 
 /**
  * 

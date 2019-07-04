@@ -43,12 +43,21 @@ uint8_t request_recent_path()
 }
 
 /**
- * CONSIDER returning a struct with left and right wheel info (2 ints)
- * Returns:     number of left and right wheel rotations
+ * Returns:     number of left wheel rotations
  */
-int request_wheel_rotations()
+int request_wheel_rotations_left()
 {
-    Serial.println("request_wheel_rotations");
+    Serial.println("request_wheel_rotation_left");
+    return SUCCESS;
+}
+
+/**
+ * CONSIDER returning a struct with left and right wheel info (2 ints)
+ * Returns:     number of right wheel rotations
+ */
+int request_wheel_rotations_right()
+{
+    Serial.println("request_wheel_rotation_right");
     return SUCCESS;
 }
 
