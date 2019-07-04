@@ -13,19 +13,19 @@ void request_arm_position__travel();
  * Requests for Infinity BP to position arm for ascent
  * Returns: Error code returned by Infinity BP, code TBD
  */
-uint8_t request_arm_position__ascent();
+int request_arm_position__ascent();
 
 /**
  * Checks whether or not a U-turn has been performed yet (start of course)
  * Returns: True if U turn has been performed
  *          False otherwise
  */
-uint8_t request_U_turn_status();
+int request_U_turn_status();
 
 /**
  * CONSIDER RETURNING POINTER
  */
-uint8_t request_recent_path();
+int request_recent_path();
 /**
  * Returns:     number of left wheel rotations
  */
@@ -40,7 +40,45 @@ int request_wheel_rotations_right();
 /**
  * 
  */
-void request_confirmation_post_presence();
+int request_confirmation_post_presence(int side);
+
+/**
+ * Request angle of lazy susan, ccw from standard axis
+ * Params:      angle - in degrees
+ * Returns:     angle set
+ */
+int request_susan_angle(int angle);
+
+
+/**
+ * Request angle of shoulder, from horizontal axis
+ * Params:      angle - in degrees
+ * Returns:     angle set
+ */
+int request_shoulder_angle(int angle);
+
+/**
+ * Request angle of elbow 
+ * -90 is collinear to  base arm, +90 is extended opposite to base arm
+ * Params:      angle - in degrees
+ * Returns:     angle set
+ */
+int request_elbow_angle(int angle);
+
+/**
+ * Request angle of wrist 
+ * -90 is collinear to mid-arm, +90 is extended opposite to mid-arm
+ * Params:      angle - in degrees
+ * Returns:     angle set
+ */
+int request_wrist_angle(int angle);
+
+/**
+ * Opens or closes claw
+ * Params:      position - OPEN or CLOSED
+ * Returns:     claw angle
+ */
+int request_claw_position(int position);
 
 
 

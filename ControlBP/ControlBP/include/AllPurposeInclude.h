@@ -4,3 +4,4 @@
 
 #include "Locomotion/Locomotion.h"
 #include "Communication/ControlCommunication.h"
+#include "Locomotion/TapeSensor.h"

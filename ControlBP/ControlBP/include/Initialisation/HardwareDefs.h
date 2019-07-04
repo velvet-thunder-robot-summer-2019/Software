@@ -11,6 +11,8 @@
 #define STATE_CHANGED 1
 #define TRUE 1
 #define FALSE 0
+#define OPEN 0
+#define CLOSED 1
 
 // tape sensor and driving
 #define TAPE_NOT_FOUND 2

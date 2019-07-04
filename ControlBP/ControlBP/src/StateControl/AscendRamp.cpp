@@ -2,7 +2,6 @@
 
 #include "StateControl/AscendRamp.h"
 #include "AllPurposeInclude.h"
-#include "Locomotion/TapeSensor.h"
 
 void ascend_ramp()
 {
