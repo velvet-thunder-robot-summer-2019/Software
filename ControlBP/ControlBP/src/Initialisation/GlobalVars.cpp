@@ -34,7 +34,6 @@ void initialise_competition_data(position start_position)
     for (i = 0; i < TOTAL_NUM_STONE; i++) {
         stones_status[i] = UNKNOWN;
     }
-    Serial.begin(9600);
 }
 
 /**

@@ -11,7 +11,7 @@ void ascend_ramp()
 
     request_arm_position__ascent();
 
-    if (bot_state != REACH_RAMP) {
+    if (bot_state != ASCEND_RAMP) {
         return;
     }
 
@@ -28,7 +28,7 @@ void ascend_ramp()
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }
-        if (bot_state != REACH_RAMP) {
+        if (bot_state != ASCEND_RAMP) {
             return;
         }
     }

@@ -27,13 +27,17 @@
 void setup() {
   // put your setup code here, to run once:
   // Initialisation of everything here
+
+  Serial.begin(9600);
+  
   if (digitalRead(MASTER_SWITCH) == COMP) {
+    Serial.println("COMP MODE");
     bot_state = REACH_RAMP;
     initialise_competition_data();
   } else {
+    Serial.println("DEV MODE");
     bot_state = MENU;
   }
-
 }
 
 void loop() {
@@ -85,5 +89,6 @@ void loop() {
       goodnight_sweet_prince();
       break;
   }
-  delay(10000); // just for now, so that Julie can see what went down
+  
+  delay(1000); // just for now, so that Julie can see what went down
 }

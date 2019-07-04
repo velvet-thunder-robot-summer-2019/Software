@@ -3,6 +3,11 @@
 #include "Initialisation/HardwareDefs.h"
 #include "Locomotion/TapeSensor.h"
 
+
+#define DEBUG_BRANCH_REACH_EXPECTED 20
+
+int branch_reach_calls = 0;
+
 /**
  * Returns the error in tape following from 2 front tape sensor input
  * (ON_TAPE, LEFT_OFF_RIGHT_ON, 
@@ -22,5 +27,9 @@ int get_tape_following_error()
 int branch_reached(int expected_side) {
     Serial.print("branch_reached, expected side: ");
     Serial.println(expected_side);
+    if (branch_reach_calls < DEBUG_BRANCH_REACH_EXPECTED) {
+        branch_reach_calls++;
+        return 0;
+    }
     return 1;
 }
