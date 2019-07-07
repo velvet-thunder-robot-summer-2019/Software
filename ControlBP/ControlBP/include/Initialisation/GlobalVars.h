@@ -49,6 +49,15 @@ typedef enum
     METHANOS
 }identity;
 
+typedef enum
+{
+    NO_COLLISION,
+    LEFT_COLLISION,
+    RIGHT_COLLISION,
+    FRONT_COLLISION,
+    BACK_COLLISION
+}collision_direction;
+
 typedef struct
 {
     /* data */
@@ -59,12 +68,18 @@ typedef struct
     int wheel_rot_since_last_right;
 }position;
 
+typedef struct
+{
+    /* data */
+    state bot_state;
+    state bot_previous_state;
+    stone_status stone_status[TOTAL_NUM_STONE];
+    position bot_position;
+    identity bot_identity;
+    collision_direction last_collision;
+}status_summary;
 
-extern volatile state bot_state; // state of robot
-extern volatile state bot_previous_state; //previous state of robot
-extern volatile stone_status stones_status[TOTAL_NUM_STONE]; //tracking what we know about the infinity stones. I don't think it needs volatile?
-extern volatile position bot_position;
-extern identity bot_identity;
+extern volatile status_summary run_status;
 
 /**
  * Gets called from MENU mode for testing

@@ -1,7 +1,7 @@
+// https://circuitdigest.com/microcontroller-projects/how-to-use-interrupts-in-stm32f103c8
 #include <Arduino.h>
 
-#include "Initialisation/Interrupts.h"
-#include "Initialisation/GlobalVars.h"
+#include "AllPurposeInclude.h"
 
 #define RETURN_TIME 130 // in seconds, arbitrary rn
 
@@ -11,7 +11,15 @@
 void init_interrupts()
 {
     Serial.println("init_interrupts");
-    // init collision interrupt
+
+    //set up pins
+    pinMode(BUMPER_LEFT, INPUT);
+    pinMode(BUMPER_RIGHT, INPUT);
+    pinMode(BUMPER_FRONT, INPUT);
+    pinMode(BUMPER_BACK, INPUT);
+
+    // attach collision interrupt
+    attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), collision_left, FALLING);
 
     // init timer interrupt
 }
@@ -19,11 +27,12 @@ void init_interrupts()
 /**
  * Sets state to handle collision when bumpers detect collision
  */
-void collision_interrupt_handler()
+void collision_left()
 {
-    Serial.println("collision_interrupt_handler");
-    bot_previous_state = bot_state;
-    bot_state = HANDLE_COLLISION;
+    Serial.println("collision_left");
+    run_status.bot_previous_state = run_status.bot_state;
+    run_status.bot_state = HANDLE_COLLISION;
+    run_status.last_collision = LEFT_COLLISION;
 }
 
 /**
@@ -32,6 +41,6 @@ void collision_interrupt_handler()
 void timer_interrupt_handler()
 {
     Serial.println("timer_interrupt_handler");
-    bot_previous_state = bot_state;
-    bot_state = RETURN_TO_GAUNTLET;
+    run_status.bot_previous_state = run_status.bot_state;
+    run_status.bot_state = RETURN_TO_GAUNTLET;
 }

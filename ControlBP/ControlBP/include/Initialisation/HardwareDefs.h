@@ -5,6 +5,11 @@
 #define MASTER_SWITCH PB13
 #define THANOS_v_METHANOS_SWITCH PB12
 
+#define BUMPER_FRONT PB3
+#define BUMPER_BACK PA15
+#define BUMPER_LEFT PA12
+#define BUMPER_RIGHT PA11
+
 /* Here lie definitions to make code more legible */
 //syntactical sugar
 #define SUCCESS 0
