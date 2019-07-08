@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "Debugging/Menu.h"
+#include "Debugging/Debug.h"
 #include "Locomotion/PID.h"
 #include "AllPurposeInclude.h"
 
@@ -48,42 +49,71 @@ void init_menu()
 void menu()
 {
     Serial.println("Here be menu");
+    Serial.print("NAVIGATE: ");
+    Serial.println(digitalRead(NAVIGATE));
+    Serial.print("SET: ");
+    Serial.println(digitalRead(SET));
+
     while(1) {
         switch (menu_display) {
             case CALIBRATION_MENU:
                 Serial.println("Calibration menu");
-                calibration_menu();
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY / 10);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    menu_display = DEBUG_MENU;
+                } else if (digitalRead(SET)) {
+                    calibration_menu();
+                }
                 break;
+
             case DEBUG_MENU:
-                Serial.println("debug menu");
-                switch_state(MENU, DEBUG);
+               Serial.println("Debug menu");
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY / 10);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    menu_display = STATE_MENU;
+                } else if (digitalRead(SET)) {
+                    debug();
+                }
                 break;
             case STATE_MENU:
-                Serial.println("state menu");
-                state_menu();
+                Serial.println("State menu");
+
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY / 10);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    menu_display = CALIBRATION_MENU;
+                } else if (digitalRead(SET)) {
+                    state_menu();
+                }
                 break;
         }
         if (robot_state() != MENU) {
             return;
         }
+        delay(MENU_REFRESH_DELAY);
     }
 }
 
 void calibration_menu()
 {
+    calibrate_menu calibration_val = CAL_TAPE_SENSOR;
     while (1) {
-        calibrate_menu calibration_val = CAL_TAPE_SENSOR;
         delay(MENU_REFRESH_DELAY);
 
         switch (calibration_val) {
             case CAL_TAPE_SENSOR:
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
-                    delay(MENU_REFRESH_DELAY);
-                    
                     Serial.print("Current tape sensor threshold: ");
                     Serial.println(get_tape_sensor_threshold());
                     Serial.print("Current potentiometer val: "); 
                     Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
+
+                    delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
                     calibration_val = CAL_PID_PROP;
@@ -94,12 +124,12 @@ void calibration_menu()
 
             case CAL_PID_PROP:
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
-                    delay(MENU_REFRESH_DELAY);
-
                     Serial.print("Current kp: ");
                     Serial.println(get_kp());
                     Serial.print("Current potentiometer val: "); 
                     Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
+
+                    delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
                     calibration_val = CAL_PID_DERIV;
@@ -109,13 +139,13 @@ void calibration_menu()
                 break;
 
             case CAL_PID_DERIV:
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
-                    delay(MENU_REFRESH_DELAY);
-
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {                   
                     Serial.print("Current kd: ");
                     Serial.println(get_kd());
                     Serial.print("Current potentiometer val: "); 
                     Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
+
+                    delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
                     calibration_val = CAL_EXIT;
@@ -126,7 +156,9 @@ void calibration_menu()
             
             case CAL_EXIT:
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
-                    delay(MENU_REFRESH_DELAY);
+                    Serial.println("Exit");
+
+                    delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
                     calibration_val = CAL_TAPE_SENSOR;
@@ -134,6 +166,9 @@ void calibration_menu()
                     return;
                 }
                 break;
+        }
+        if (digitalRead(MASTER_SWITCH) == COMP) {
+            switch_state(MENU, REACH_RAMP);
         }
         if (robot_state() != MENU) {
             return;

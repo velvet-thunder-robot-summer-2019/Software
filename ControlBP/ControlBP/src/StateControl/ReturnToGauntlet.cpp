@@ -16,7 +16,7 @@ void return_to_gauntlet()
     int branch_side = get_checkpoint_expected_side();
 
     while (run_status.bot_position.last_location != gauntlet) {
-        uint8_t response = follow_tape();
+        uint8_t response = follow_tape(TORQUE_OF_MOTION_AVG);
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }

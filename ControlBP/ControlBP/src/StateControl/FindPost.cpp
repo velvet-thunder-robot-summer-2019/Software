@@ -26,7 +26,7 @@ void find_post()
     }
 
     while (!branch_reached(side)) {
-        uint8_t response = follow_tape();
+        uint8_t response = follow_tape(TORQUE_OF_MOTION_AVG);
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }

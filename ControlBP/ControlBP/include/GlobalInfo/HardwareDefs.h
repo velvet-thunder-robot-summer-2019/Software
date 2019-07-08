@@ -14,7 +14,8 @@
 #define BUMPER_LEFT PA12
 #define BUMPER_RIGHT PA11
 
-
+//tape following
+#define TORQUE_OF_MOTION_AVG 10
 
 /* Here lie definitions to make code more legible */
 //syntactical sugar

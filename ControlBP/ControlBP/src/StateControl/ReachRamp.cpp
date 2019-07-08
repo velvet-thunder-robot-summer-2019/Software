@@ -3,6 +3,7 @@
 #include "StateControl/ReachRamp.h"
 #include "AllPurposeInclude.h"
 
+#define REACH_RAMP_TORQUE 10
 
 void reach_ramp()
 {
@@ -19,7 +20,7 @@ void reach_ramp()
     }
 
     while (!request_U_turn_status()) {
-        uint8_t response = follow_tape();
+        uint8_t response = follow_tape(REACH_RAMP_TORQUE);
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }

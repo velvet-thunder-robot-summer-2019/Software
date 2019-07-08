@@ -9,6 +9,12 @@
 
 typedef enum
 {
+    FACING_NEXT,
+    FACING_PREV
+} facing_direction;
+
+typedef enum
+{
     MENU,
     DEBUG,
     REACH_RAMP,
@@ -63,9 +69,10 @@ typedef struct
     /* data */
     location last_location;
     location next_location;
-    int fraction_to_next;  //fraction of the dist made to the next location
-    int wheel_rot_since_last_left;
-    int wheel_rot_since_last_right;
+    facing_direction currently_facing; // either last_location or next_location
+    // int fraction_to_next;  //fraction of the dist made to the next location
+    // int wheel_rot_since_last_left;
+    // int wheel_rot_since_last_right;
 }position;
 
 typedef struct

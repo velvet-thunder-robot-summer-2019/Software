@@ -18,10 +18,11 @@ void init_tape_following()
 
 /**
  * Adjusts PWM of both motors once
+ * Params:      torque - determines speed of motion
  * Returns:     SUCCESS if successful
  *              TAPE_NOT_FOUND if tape repeatedly fails to be found
  */
-int follow_tape()
+int follow_tape(int torque)
 {
     //code
     Serial.println("follow_tape");

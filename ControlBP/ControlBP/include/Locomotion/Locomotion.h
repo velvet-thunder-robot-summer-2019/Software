@@ -12,13 +12,14 @@ void init_tape_following();
  * Returns:     SUCCESS if successful
  *              TAPE_NOT_FOUND if tape repeatedly fails to be found
  */
-int follow_tape();
+int follow_tape(int torque);
 
 /**
  * Backtracks to reach tape, using historical information of movement
  * Checks for any change of state during backtracking
  * Returns:     SUCCESS - if tape successfully found 
  *              STATE_CHANGED - if state is changed during backtracking
+ * NOTE: might eliminate this if we don't use encoders
  */
 int backtrack_to_tape();
 

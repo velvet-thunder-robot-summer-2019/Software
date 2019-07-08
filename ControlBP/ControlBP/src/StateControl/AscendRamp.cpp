@@ -1,6 +1,8 @@
 #include "StateControl/AscendRamp.h"
 #include "AllPurposeInclude.h"
 
+#define ASCEND_RAMP_TORQUE 10
+
 void ascend_ramp()
 {
     Serial.println("");
@@ -23,7 +25,7 @@ void ascend_ramp()
     }
 
     while (!branch_reached(tape_side)) {
-        uint8_t response = follow_tape();
+        uint8_t response = follow_tape(ASCEND_RAMP_TORQUE);
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }
