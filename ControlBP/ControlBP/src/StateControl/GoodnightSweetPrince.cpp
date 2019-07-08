@@ -12,6 +12,6 @@ void goodnight_sweet_prince()
     Serial.println("And flights of angels sing thee to thy rest");
     delay(10000); // TODO: change this to permanent delay 
     if (digitalRead(MASTER_SWITCH) == DEV) {
-        bot_state = MENU;
+        switch_state(GOODNIGHT_SWEET_PRINCE, MENU);
     }
 }

@@ -21,7 +21,7 @@ void find_post()
     
     //code after this assumes we're on the tape facing
     //the direction we want
-    if (bot_state != FIND_POST) {
+    if (robot_state() != FIND_POST) {
         return;
     }
 
@@ -30,7 +30,7 @@ void find_post()
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }
-        if (bot_state != FIND_POST) {
+        if (robot_state() != FIND_POST) {
             return;
         }
     }
@@ -39,7 +39,7 @@ void find_post()
     if (align_to_branch() == STATE_CHANGED)
         return;
     
-    int susan_angle = (side == LEFT ? 0 : 360);
+    int susan_angle = (side == LEFT) ? 0 : 360;
 
     if (request_susan_angle(susan_angle) == STATE_CHANGED)
         return;
@@ -47,17 +47,16 @@ void find_post()
     if (request_confirmation_post_presence(side) == STATE_CHANGED)
         return;
     
-    bot_previous_state = FIND_POST;
     debug_iterations++;
     Serial.print("debug iterations: ");
     Serial.println(debug_iterations);
+
     if (debug_iterations >= 2) {
-        bot_state = RETURN_TO_GAUNTLET;
-        return;
+        switch_state(FIND_POST, RETURN_TO_GAUNTLET);
     }
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        bot_state = GET_INFINITY_STONE;
+        switch_state(FIND_POST, GET_INFINITY_STONE);
     } else {
-        bot_state = MENU;
+        switch_state(FIND_POST, MENU);
     }
 }

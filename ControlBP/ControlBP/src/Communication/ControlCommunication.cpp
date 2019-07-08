@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#include "Initialisation/GlobalVars.h"
-#include "Initialisation/HardwareDefs.h"
+#include "GlobalInfo/GlobalVars.h"
+#include "GlobalInfo/HardwareDefs.h"
 
 /**
  * Doesn't wait for response bc we can prob just GO without return 

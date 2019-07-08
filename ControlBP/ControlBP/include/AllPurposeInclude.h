@@ -1,8 +1,9 @@
 #include <Arduino.h>
 
 #include "Debugging/LogLevels.h"
-#include "Initialisation/GlobalVars.h"
-#include "Initialisation/HardwareDefs.h"
+#include "GlobalInfo/GlobalVars.h"
+#include "GlobalInfo/HardwareDefs.h"
+#include "GlobalInfo/RobotState.h"
 
 #include "Locomotion/Locomotion.h"
 #include "Communication/ControlCommunication.h"

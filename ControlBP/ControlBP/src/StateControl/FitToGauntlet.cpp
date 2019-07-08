@@ -9,12 +9,10 @@ void fit_to_gauntlet()
     Serial.println("______________________");
 
     Serial.println("Julie figures we'll think of this later");
-    
-    bot_previous_state = FIT_TO_GAUNTLET;
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        bot_state = GOODNIGHT_SWEET_PRINCE;
+        switch_state(FIT_TO_GAUNTLET, GOODNIGHT_SWEET_PRINCE);
     } else {
-        bot_state = MENU;
+        switch_state(FIT_TO_GAUNTLET, MENU);
     }
 }

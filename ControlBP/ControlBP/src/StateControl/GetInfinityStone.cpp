@@ -23,7 +23,7 @@ void get_infinity_stone()
         if (result == SUCCESS) {
             break;
         }
-        if (bot_state == RETURN_TO_GAUNTLET) {
+        if (robot_state() == RETURN_TO_GAUNTLET) {
             break;
         }
     }
@@ -38,10 +38,9 @@ void get_infinity_stone()
     int next_slot_available = 0; // THIS IS JUST A STANDIN
     request_put_stone_in_gauntlet(next_slot_available);
 
-    bot_previous_state = GET_INFINITY_STONE;
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        bot_state = FIND_POST;
+        switch_state(GET_INFINITY_STONE, FIND_POST);
     } else {
-        bot_state = MENU;
+        switch_state(GET_INFINITY_STONE, MENU);
     }
 }

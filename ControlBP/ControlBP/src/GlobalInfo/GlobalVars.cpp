@@ -1,5 +1,5 @@
-#include "Initialisation\GlobalVars.h"
-#include "Initialisation/HardwareDefs.h"
+#include "GlobalInfo/GlobalVars.h"
+#include "GlobalInfo/HardwareDefs.h"
 #include <Arduino.h>
 
 volatile status_summary run_status;
@@ -29,7 +29,7 @@ void initialise_competition_data(position start_position)
     run_status.bot_previous_state = MENU; //previous state of robot
     int i;
     for (i = 0; i < TOTAL_NUM_STONE; i++) {
-        run_status.stone_status[i] = UNKNOWN;
+        run_status.stones_status[i] = UNKNOWN;
     }
 
     run_status.last_collision = NO_COLLISION;

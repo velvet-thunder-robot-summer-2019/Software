@@ -10,13 +10,13 @@ void ascend_ramp()
 
     request_arm_position__ascent();
 
-    if (bot_state != ASCEND_RAMP) {
+    if (robot_state() != ASCEND_RAMP) {
         return;
     }
 
     //determine which side top of ramp tape would be at
     uint8_t tape_side;
-    if (bot_identity == METHANOS) {
+    if (run_status.bot_identity == METHANOS) {
         tape_side = RIGHT;
     } else {
         tape_side = LEFT;
@@ -27,15 +27,14 @@ void ascend_ramp()
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }
-        if (bot_state != ASCEND_RAMP) {
+        if (robot_state() != ASCEND_RAMP) {
             return;
         }
     }
 
-    bot_previous_state = ASCEND_RAMP;
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        bot_state = CALIBRATE;
+        switch_state(ASCEND_RAMP, CALIBRATE);
     } else {
-        bot_state = MENU;
+        switch_state(ASCEND_RAMP, MENU);
     }
 }

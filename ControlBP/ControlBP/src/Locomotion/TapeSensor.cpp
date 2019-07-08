@@ -1,12 +1,13 @@
 #include <Arduino.h>
 
-#include "Initialisation/HardwareDefs.h"
+#include "GlobalInfo/HardwareDefs.h"
 #include "Locomotion/TapeSensor.h"
 
 
 #define DEBUG_BRANCH_REACH_EXPECTED 20
 
 int branch_reach_calls = 0;
+int tape_sensor_threshold = 400;
 
 /**
  * Returns the error in tape following from 2 front tape sensor input
@@ -32,4 +33,20 @@ int branch_reached(int expected_side) {
         return 0;
     }
     return 1;
+}
+
+/**
+ * Updates cutoff threshold for tape sensors to potentiometer value
+ */
+void update_threshold_tape_sensor()
+{
+    Serial.println("update_threshold_tape_sensor");
+    tape_sensor_threshold = analogRead(CALIBRATION_POTENTIOMETER);
+}
+
+/**
+ * Returns the current threshold for tape sensor values
+ */
+int get_tape_sensor_threshold() {
+    return tape_sensor_threshold;
 }

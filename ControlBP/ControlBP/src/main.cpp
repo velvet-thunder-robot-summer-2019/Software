@@ -1,7 +1,6 @@
 #include <Arduino.h>
-#include "Initialisation/HardwareDefs.h"
-#include "Initialisation/GlobalVars.h"
-#include "Initialisation/Interrupts.h"
+#include "AllPurposeInclude.h"
+#include "GlobalInfo/Interrupts.h"
 
 #include "Debugging/Debug.h"
 #include "Debugging/Menu.h"
@@ -32,17 +31,20 @@ void setup() {
   
   if (digitalRead(MASTER_SWITCH) == COMP) {
     Serial.println("COMP MODE");
-    bot_state = REACH_RAMP;
     initialise_competition_data();
+    init_robot_state(REACH_RAMP);
   } else {
     Serial.println("DEV MODE");
-    bot_state = MENU;
+    init_robot_state(MENU);
   }
+  init_menu();
+  init_interrupts();
 }
 
 void loop() {
   // MAIN CONTROL LOOP
   Serial.println("Begin control loop");
+  state bot_state = robot_state();
 
   switch(bot_state) {
     case MENU :

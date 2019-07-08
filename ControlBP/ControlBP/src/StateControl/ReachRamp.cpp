@@ -14,7 +14,7 @@ void reach_ramp()
     request_arm_position__travel();
 
     //check collision
-    if (bot_state != REACH_RAMP) {
+    if (robot_state() != REACH_RAMP) {
         return;
     }
 
@@ -23,15 +23,14 @@ void reach_ramp()
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }
-        if (bot_state != REACH_RAMP) {
+        if (robot_state() != REACH_RAMP) {
             return;
         }
     }
 
-    bot_previous_state = REACH_RAMP;
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        bot_state = ASCEND_RAMP;
+        switch_state(REACH_RAMP, ASCEND_RAMP);
     } else {
-        bot_state = MENU;
+        switch_state(REACH_RAMP, MENU);
     }
 }

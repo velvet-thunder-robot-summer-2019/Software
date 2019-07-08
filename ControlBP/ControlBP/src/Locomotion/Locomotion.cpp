@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-#include "Initialisation/GlobalVars.h"
+#include "AllPurposeInclude.h"
+
 #include "Locomotion/Locomotion.h"
-#include "Initialisation/HardwareDefs.h"
 #include "Locomotion/PID.h"
 #include "Locomotion/TapeSensor.h"
 

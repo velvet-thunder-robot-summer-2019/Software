@@ -27,4 +27,15 @@ int update_kp();
  */
 int update_kd();
 
+/**
+ * Returns current kp value
+ */
+int get_kp();
+
+
+/**
+ * Returns current kd value
+ */
+int get_kd();
+
 #endif //PID_H_

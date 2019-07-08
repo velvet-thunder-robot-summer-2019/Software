@@ -1,5 +1,9 @@
-#include "Initialisation/HardwareDefs.h"
+#include "GlobalInfo/HardwareDefs.h"
 #include "Locomotion/PID.h"
+
+int kp;
+int kd;
+
 
 /**
  * Initialises PID module
@@ -9,6 +13,8 @@
 void init_PID()
 {
     Serial.println("init_PID");
+    kp = 0;
+    kd = 0;
 }
 
 /**
@@ -38,4 +44,21 @@ int update_kp()
 int update_kd()
 {
     return 0;
+}
+
+/**
+ * Returns current kp value
+ */
+int get_kp()
+{
+    return kp;
+}
+
+
+/**
+ * Returns current kd value
+ */
+int get_kd()
+{
+    return kd;
 }

@@ -15,4 +15,14 @@ int get_tape_following_error();
  */
 int branch_reached(int expected_side);
 
+/**
+ * Updates cutoff threshold for tape sensors to potentiometer value
+ */
+void update_threshold_tape_sensor();
+
+/**
+ * Returns the current threshold for tape sensor values
+ */
+int get_tape_sensor_threshold();
+
 #endif // TAPE_SENSOR_H_

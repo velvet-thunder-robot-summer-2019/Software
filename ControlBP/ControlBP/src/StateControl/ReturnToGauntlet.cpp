@@ -12,15 +12,15 @@ void return_to_gauntlet()
         return;
     }
 
-    int gauntlet = (bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
+    int gauntlet = (run_status.bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
     int branch_side = get_checkpoint_expected_side();
 
-    while (bot_position.last_location != gauntlet) {
+    while (run_status.bot_position.last_location != gauntlet) {
         uint8_t response = follow_tape();
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
         }
-        if (bot_state != RETURN_TO_GAUNTLET) {
+        if (robot_state() != RETURN_TO_GAUNTLET) {
             return;
         }
         if (branch_reached(branch_side)) {
@@ -28,17 +28,17 @@ void return_to_gauntlet()
         }
 
         //TODO: remove this stupid line
-        bot_position.last_location = (bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
+        run_status.bot_position.last_location = (run_status.bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
     }
 
     if (align_to_gauntlet() != SUCCESS) {
         return;
     }
     
-    bot_previous_state = RETURN_TO_GAUNTLET;
+
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        bot_state = FIT_TO_GAUNTLET;
+        switch_state(RETURN_TO_GAUNTLET, FIT_TO_GAUNTLET);
     } else {
-        bot_state = MENU;
+        switch_state(RETURN_TO_GAUNTLET, MENU);
     }
 }
