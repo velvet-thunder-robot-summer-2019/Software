@@ -21,10 +21,22 @@ typedef enum
     CAL_EXIT   
 }calibrate_menu;
 
+typedef enum
+{
+    REACH_RAMP_MENU,
+    ASCEND_RAMP_MENU,
+    CALIBRATE_MENU,
+    FIND_POST_MENU,
+    GET_INFINITY_STONE_MENU,
+    RETURN_TO_GAUNTLET_MENU,
+    FIT_TO_GAUNTLET_MENU,
+    HANDLE_COLLISION_MENU,
+    GOODNIGHT_SWEET_PRINCE_MENU
+}state_selection_menu;
+
 static menu_page menu_display;
 
 void calibration_menu();
-void debug_menu();
 void state_menu();
 
 void init_menu()
@@ -44,7 +56,7 @@ void menu()
                 break;
             case DEBUG_MENU:
                 Serial.println("debug menu");
-                debug_menu();
+                switch_state(MENU, DEBUG);
                 break;
             case STATE_MENU:
                 Serial.println("state menu");
@@ -61,6 +73,7 @@ void calibration_menu()
 {
     while (1) {
         calibrate_menu calibration_val = CAL_TAPE_SENSOR;
+        delay(MENU_REFRESH_DELAY);
 
         switch (calibration_val) {
             case CAL_TAPE_SENSOR:
@@ -113,7 +126,7 @@ void calibration_menu()
             
             case CAL_EXIT:
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
-                    delay(1);
+                    delay(MENU_REFRESH_DELAY);
                 }
                 if (digitalRead(NAVIGATE)) {
                     calibration_val = CAL_TAPE_SENSOR;
@@ -121,6 +134,123 @@ void calibration_menu()
                     return;
                 }
                 break;
+        }
+        if (robot_state() != MENU) {
+            return;
+        }
+    }
+}
+
+void state_menu()
+{
+    state_selection_menu displayed_state = REACH_RAMP_MENU;
+
+    while (1) {
+        delay(MENU_REFRESH_DELAY);
+
+        switch (displayed_state) {
+            case REACH_RAMP_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = ASCEND_RAMP_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, REACH_RAMP);
+                }
+                break;
+            
+            case ASCEND_RAMP_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = CALIBRATE_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, CALIBRATE);
+                }
+                break;
+
+            case CALIBRATE_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = FIND_POST_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, CALIBRATE);
+                }
+                break;
+                
+            case FIND_POST_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = ASCEND_RAMP_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, REACH_RAMP);
+                }
+                break;
+            
+            case GET_INFINITY_STONE_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = HANDLE_COLLISION_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, GET_INFINITY_STONE);
+                }
+                break;
+
+            case HANDLE_COLLISION_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = RETURN_TO_GAUNTLET_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, HANDLE_COLLISION);
+                }
+                break;
+
+            case RETURN_TO_GAUNTLET_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = FIT_TO_GAUNTLET_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, RETURN_TO_GAUNTLET);
+                }
+                break;
+
+            case FIT_TO_GAUNTLET_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = GOODNIGHT_SWEET_PRINCE_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, FIT_TO_GAUNTLET);
+                }
+                break;
+
+            case GOODNIGHT_SWEET_PRINCE_MENU:
+                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    delay(MENU_REFRESH_DELAY);
+                }
+                if (digitalRead(NAVIGATE)) {
+                    displayed_state = REACH_RAMP_MENU;
+                } else if (digitalRead(SET)) {
+                    switch_state(MENU, GOODNIGHT_SWEET_PRINCE);
+                }
+                break;
+            }
+        
+        if (robot_state() != MENU) {
+            return;
         }
     }
 }
