@@ -25,21 +25,18 @@ Example commands:
 
 void debug()
 {
+    Serial.println("Welcome to debug mode! Enter 'exit' to go back to menu. ");
     while (1) {
 
-        String command = "";
-        char rx_byte = 0;
-        
-        while(1) {
-            if (Serial.available() > 0) {
-                rx_byte = Serial.read();
-                if (rx_byte != '\n') {
-                    command += rx_byte;
-                } else {
-                    break;
-                }
-            }
+        int available = Serial.available();
+        while (!available) {
+            available = Serial.available();
         }
+        String command = Serial.readString();
+        command.trim();
+
+        Serial.print("Command received is: ");
+        Serial.println(command);
 
         // can't use a switch statement bc that doesn't accept String types
         if (command.equals("exit")) {
@@ -48,7 +45,7 @@ void debug()
             init_tape_following();
         } else if (command.equals("align_to_branch")) {
             align_to_branch();
-        }
+        } 
 
         delay(DELAY_BETWEEN_COMMANDS);
     }

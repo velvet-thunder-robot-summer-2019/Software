@@ -34,7 +34,8 @@ float get_PID_output(int error)
  */
 int update_kp() 
 {
-    return 0;
+    kp = analogRead(CALIBRATION_POTENTIOMETER);
+    return kp;
 }
 
 /**
@@ -43,7 +44,8 @@ int update_kp()
  */
 int update_kd()
 {
-    return 0;
+    kd = analogRead(CALIBRATION_POTENTIOMETER);
+    return kd;
 }
 
 /**
