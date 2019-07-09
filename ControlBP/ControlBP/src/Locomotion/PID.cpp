@@ -1,9 +1,20 @@
 #include "GlobalInfo/HardwareDefs.h"
 #include "Locomotion/PID.h"
 
-int kp;
-int kd;
+// PID related values
+#define NUM_PAST_ERRORS 10 // number of errors to save
+#define MAX_ANALOG 1023
+#define PIN_PROP PB0
+#define PIN_DERIV PB1
 
+// declare values necessary for calculations
+int past_errors[NUM_PAST_ERRORS];
+int last_error_index;
+int kp, kd;
+
+float getP(int error);
+float getD(int error);
+void updateError(int error);
 
 /**
  * Initialises PID module
@@ -13,6 +24,11 @@ int kd;
 void init_PID()
 {
     Serial.println("init_PID");
+    int i = 0;
+    for (i = 0; i < NUM_PAST_ERRORS; i++) {
+        past_errors[i] = 0;
+    }
+    last_error_index = 0;
     kp = 0;
     kd = 0;
 }
@@ -25,7 +41,11 @@ void init_PID()
 float get_PID_output(int error)
 {
     Serial.println("init_PID");
-    return 0.0;
+    float out = getP(error) + getD(error);
+
+    updateError(error);
+    
+    return out;
 }
 
 /**
@@ -63,4 +83,34 @@ int get_kp()
 int get_kd()
 {
     return kd;
+}
+
+/**
+ * Returns: correction due to proportional error
+ */
+float getP(int error)
+{
+    return error * kp / MAX_ANALOG;
+}
+
+/**
+ * Returns: correction due to derivative error
+ */
+float getD(int error)
+{
+    return (error - past_errors[last_error_index]) * kd / MAX_ANALOG;
+}
+
+/**
+ * Updates record of 10 previous errors
+ * This is so that we can get better derivative estimates for D
+ * Deals with threshold
+ */
+void updateError(int error)
+{
+    past_errors[last_error_index] = error;
+    last_error_index++;
+    if (last_error_index == NUM_PAST_ERRORS) {
+        last_error_index = 0;
+    }
 }

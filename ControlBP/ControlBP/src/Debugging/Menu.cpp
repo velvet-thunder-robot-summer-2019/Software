@@ -6,7 +6,6 @@
 #include "AllPurposeInclude.h"
 
 #define MENU_REFRESH_DELAY 400 //ms, bring this down once display set up
-#define CALIBRATION_DELTA 10
 
 typedef enum 
 {
@@ -121,7 +120,7 @@ void calibration_menu()
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
                     int calibration_value = analogRead(CALIBRATION_POTENTIOMETER);
 
-                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA) {
+                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA_TO_PRINT) {
                         previous_calibration_value = calibration_value;
                         Serial.print("Current tape sensor threshold: ");
                         Serial.println(get_tape_sensor_threshold());
@@ -147,7 +146,7 @@ void calibration_menu()
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
                     int calibration_value = analogRead(CALIBRATION_POTENTIOMETER);
 
-                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA) {
+                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA_TO_PRINT) {
                         previous_calibration_value = calibration_value;
 
                         Serial.print("Current kp: ");
@@ -174,7 +173,7 @@ void calibration_menu()
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {   
                     int calibration_value = analogRead(CALIBRATION_POTENTIOMETER);
                     
-                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA) {
+                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA_TO_PRINT) {
                         previous_calibration_value = calibration_value;
                         Serial.print("Current kd: ");
                         Serial.println(get_kd());

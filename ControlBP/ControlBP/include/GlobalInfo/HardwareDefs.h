@@ -17,7 +17,18 @@
 //tape following
 #define TORQUE_OF_MOTION_AVG 10
 
+//sensors
+#define LEFT_SENSOR PA4
+#define RIGHT_SENSOR PA5
+
+//motors
+#define LEFT_MOTOR 0
+#define RIGHT_MOTOR 1
+
 /* Here lie definitions to make code more legible */
+// calibration output
+#define CALIBRATION_DELTA_TO_PRINT 10
+
 //syntactical sugar
 #define SUCCESS 0
 #define STATE_CHANGED 1
@@ -37,3 +48,9 @@
 #define RIGHT 1
 #define FWD 1
 #define BACK 0
+
+#define ON_TAPE 0
+#define LEFT_OFF_RIGHT_ON -1
+#define RIGHT_OFF_LEFT_ON 1
+#define BOTH_OFF_LAST_RIGHT -5
+#define BOTH_OFF_LAST_LEFT 5

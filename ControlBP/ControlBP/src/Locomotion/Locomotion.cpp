@@ -5,6 +5,9 @@
 #include "Locomotion/Locomotion.h"
 #include "Locomotion/PID.h"
 #include "Locomotion/TapeSensor.h"
+#include "Locomotion/Motor.h"
+
+float PID_output = 0;
 
 /**
  * Performs necessary initialisation for tape following
@@ -24,8 +27,12 @@ void init_tape_following()
  */
 int follow_tape(int torque)
 {
-    //code
     Serial.println("follow_tape");
+    run_motor(LEFT_MOTOR, FWD, torque + PID_output);
+    run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
+    int error = get_tape_following_error();
+    PID_output = get_PID_output(error);
+
     return SUCCESS;
 }
 
@@ -37,7 +44,7 @@ int follow_tape(int torque)
  */
 int backtrack_to_tape()
 {
-    Serial.println("backtrack_to_tape()");
+    Serial.println("backtrack_to_tape");
     return SUCCESS;
 }
 

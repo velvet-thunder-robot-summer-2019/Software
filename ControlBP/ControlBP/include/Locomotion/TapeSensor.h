@@ -2,6 +2,11 @@
 #define TAPE_SENSOR_H_
 
 /**
+ * Initialising pins for tape sensing
+ */
+void initTapeSensor();
+
+/**
  * Returns the error in tape following from 2 front tape sensor input
  * (ON_TAPE, LEFT_OFF_RIGHT_ON, 
  * RIGHT_OFF_LEFT_ON, BOTH_OFF_LAST_RIGHT,

@@ -1,13 +1,28 @@
+// TODO: implement a backtrack if we're "lost" requires a measure of lost.
+// Get that
+
 #include <Arduino.h>
 
 #include "GlobalInfo/HardwareDefs.h"
 #include "Locomotion/TapeSensor.h"
 
-
 #define DEBUG_BRANCH_REACH_EXPECTED 20
 
+int lastSensor = LEFT_SENSOR; // arbitrarily set, we just need one
+int left_sensor();
+int right_sensor();
+
 int branch_reach_calls = 0;
-int tape_sensor_threshold = 400;
+uint32_t tape_sensor_threshold = 180;
+
+/**
+ * Initialising pins for tape sensing
+ */
+void initTapeSensor()
+{
+    pinMode(LEFT_SENSOR, INPUT);
+    pinMode(RIGHT_SENSOR, INPUT);
+}
 
 /**
  * Returns the error in tape following from 2 front tape sensor input
@@ -18,14 +33,31 @@ int tape_sensor_threshold = 400;
 int get_tape_following_error()
 {
     Serial.println("get_tape_following_error");
-    return 0;
+
+    int left = left_sensor();
+    int right = right_sensor();
+
+    if (left && right) {
+        return ON_TAPE;
+    } else if (right) {
+        lastSensor = RIGHT_SENSOR;
+        return LEFT_OFF_RIGHT_ON;
+    } else if (left) {
+        lastSensor = LEFT_SENSOR;
+        return RIGHT_OFF_LEFT_ON;
+    } else if (lastSensor == RIGHT_SENSOR) {
+        return BOTH_OFF_LAST_RIGHT;
+    } else {
+        return BOTH_OFF_LAST_LEFT;
+    }
 }
 
 /**
  * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
  * Params:  expected_side - side on which we expect a branch to appear
  */
-int branch_reached(int expected_side) {
+int branch_reached(int expected_side)
+{
     Serial.print("branch_reached, expected side: ");
     Serial.println(expected_side);
     if (branch_reach_calls < DEBUG_BRANCH_REACH_EXPECTED) {
@@ -47,6 +79,25 @@ void update_threshold_tape_sensor()
 /**
  * Returns the current threshold for tape sensor values
  */
-int get_tape_sensor_threshold() {
-    return tape_sensor_threshold;
+int get_tape_sensor_threshold()
+{
+    return (int) tape_sensor_threshold;
+}
+
+/**
+ * Returns: 0 if left sensor is over threshold (over white)
+ *          1 if left sensor is below threshold (over tape)
+ */
+int left_sensor()
+{
+    return analogRead(LEFT_SENSOR) < tape_sensor_threshold;
+}
+
+/**
+ * Returns: 0 if right sensor is over threshold (over white)
+ *          1 if right sensor is below threshold (over tape)
+ */
+int right_sensor()
+{
+    return analogRead(RIGHT_SENSOR) < tape_sensor_threshold;
 }
