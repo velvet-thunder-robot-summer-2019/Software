@@ -1,18 +1,20 @@
 #include <Arduino.h>
+
 #include "Locomotion/Motor.h"
 #include "GlobalInfo/HardwareDefs.h"
 
 #define LEFT_MOTOR_PWM_FWD PB_9
 #define LEFT_MOTOR_PWM_BACK PB_8
-#define RIGHT_MOTOR_PWM_FWD PA_6
-#define RIGHT_MOTOR_PWM_BACK PA_7
+
+#define RIGHT_MOTOR_PWM_FWD PB_0
+#define RIGHT_MOTOR_PWM_BACK PB_1
 
 #define CLOCK_FREQUENCY 100000 //Hz
 #define PERIOD 500 //T(pwm) = PERIOD/CLOCK_FREQUENCY
 
-float torque_to_PWM(int torque);
+float torque_to_PWM(float torque);
 
-uint32_t PWM_initialised = 0;
+int motors_initialised = FALSE;
 
 /**
  * Sets the specified motor to have the given torque in the given direction
@@ -21,8 +23,16 @@ uint32_t PWM_initialised = 0;
  *          torque - value in N-cm
  * NOTE: just takes in PWM value rn
  */
-void run_motor(int motor, int direction, int torque)
+void run_motor(int motor, int direction, float torque)
 {
+    if (!motors_initialised) {
+        pwm_start(LEFT_MOTOR_PWM_BACK, CLOCK_FREQUENCY, PERIOD, 0, 1);
+        pwm_start(LEFT_MOTOR_PWM_FWD, CLOCK_FREQUENCY, PERIOD, 0, 1);
+        pwm_start(RIGHT_MOTOR_PWM_BACK, CLOCK_FREQUENCY, PERIOD, 0, 1);
+        pwm_start(RIGHT_MOTOR_PWM_FWD, CLOCK_FREQUENCY, PERIOD, 0, 1);
+
+        motors_initialised = TRUE;
+    }
     PinName fwd;
     PinName back;
 
@@ -37,15 +47,16 @@ void run_motor(int motor, int direction, int torque)
     }
 
     if (direction == FWD) {
-        pwm_stop(back);
-        pwm_start(fwd, CLOCK_FREQUENCY, PERIOD, duty_cycle * PERIOD, !PWM_initialised);
-    } else {
-        pwm_stop(fwd);
-        pwm_start(back, CLOCK_FREQUENCY, PERIOD, duty_cycle * PERIOD, !PWM_initialised);
-    }
+        pwm_start(back, CLOCK_FREQUENCY, PERIOD, 0, 0);
+        Serial.print("run motor at duty cycle: ");
+        Serial.println(duty_cycle);
+        Serial.print("FORWARD MOTOR IN USE: ");
+        Serial.println(fwd);
 
-    if (!PWM_initialised) {
-        PWM_initialised = 1;
+        pwm_start(fwd, CLOCK_FREQUENCY, PERIOD, duty_cycle * PERIOD, 0);
+    } else {
+        pwm_start(fwd, CLOCK_FREQUENCY, PERIOD, 0, 0);
+        pwm_start(back, CLOCK_FREQUENCY, PERIOD, duty_cycle * PERIOD, 0);
     }
 }
 
@@ -55,7 +66,7 @@ void run_motor(int motor, int direction, int torque)
  * Params:  torque - wanted torque, N-cm
  * Output:  PWM needed to get wanted torque
  */
-float torque_to_PWM(int torque)
+float torque_to_PWM(float torque)
 {
     return torque;
 }

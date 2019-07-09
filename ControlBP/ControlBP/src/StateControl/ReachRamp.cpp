@@ -3,7 +3,7 @@
 #include "StateControl/ReachRamp.h"
 #include "AllPurposeInclude.h"
 
-#define REACH_RAMP_TORQUE 10
+#define REACH_RAMP_TORQUE 0.5
 
 void reach_ramp()
 {

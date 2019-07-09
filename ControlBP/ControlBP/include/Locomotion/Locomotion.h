@@ -12,7 +12,7 @@ void init_tape_following();
  * Returns:     SUCCESS if successful
  *              TAPE_NOT_FOUND if tape repeatedly fails to be found
  */
-int follow_tape(int torque);
+int follow_tape(float torque);
 
 /**
  * Backtracks to reach tape, using historical information of movement

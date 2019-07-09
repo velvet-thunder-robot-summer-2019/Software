@@ -40,11 +40,14 @@ void init_PID()
  */
 float get_PID_output(int error)
 {
-    Serial.println("init_PID");
+    Serial.println("get_PID_output");
     float out = getP(error) + getD(error);
 
     updateError(error);
-    
+
+    if (out > 0.5) {
+        out = 0.5;
+    }
     return out;
 }
 

@@ -7,6 +7,6 @@
  *          direction - FWD or BACK
  *          torque - value in N-cm
  */
-void run_motor(int motor, int direction, int torque);
+void run_motor(int motor, int direction, float torque);
 
 #endif // MOTOR_H_

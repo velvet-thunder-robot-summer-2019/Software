@@ -25,11 +25,15 @@ void init_tape_following()
  * Returns:     SUCCESS if successful
  *              TAPE_NOT_FOUND if tape repeatedly fails to be found
  */
-int follow_tape(int torque)
+int follow_tape(float torque)
 {
     Serial.println("follow_tape");
-    run_motor(LEFT_MOTOR, FWD, torque + PID_output);
+    Serial.print("PWM: ");
+    Serial.println(torque);
+    Serial.println("");
+
     run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
+    run_motor(LEFT_MOTOR, FWD, torque + PID_output);
     int error = get_tape_following_error();
     PID_output = get_PID_output(error);
 
