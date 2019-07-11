@@ -7,6 +7,11 @@
 
 void reach_ramp()
 {
+    int dev_or_comp = digitalRead(MASTER_SWITCH);
+
+    Serial.print("IF this says 1, I was dev: ");
+    Serial.println(dev_or_comp);
+
     Serial.println("");
     Serial.println("");
     Serial.println("REACH_RAMP state entered!");
@@ -26,6 +31,13 @@ void reach_ramp()
         }
         if (robot_state() != REACH_RAMP) {
             return;
+        }
+        Serial.print("IF this says 1, currently in dev: ");
+        Serial.println(digitalRead(MASTER_SWITCH));
+
+        if (digitalRead(MASTER_SWITCH) == DEV) {
+            Serial.println("Breaking out of this rubbish loop");
+            break;
         }
     }
 

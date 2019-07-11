@@ -93,7 +93,11 @@ int get_kd()
  */
 float getP(int error)
 {
-    return error * kp / MAX_ANALOG;
+    Serial.print("Error is: ");
+    Serial.println(error);
+    Serial.print("P value is: ");
+    Serial.println(error * 0.2 * kp / MAX_ANALOG);
+    return error * 0.2 * kp / MAX_ANALOG;
 }
 
 /**
@@ -101,7 +105,11 @@ float getP(int error)
  */
 float getD(int error)
 {
-    return (error - past_errors[last_error_index]) * kd / MAX_ANALOG;
+    Serial.print("D value is: ");
+    Serial.println((error - past_errors[last_error_index]) * kd * 0.2 / MAX_ANALOG);
+    Serial.println("");
+
+    return (error - past_errors[last_error_index]) * kd * 0.2 / MAX_ANALOG;
 }
 
 /**

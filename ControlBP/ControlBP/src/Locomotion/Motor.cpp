@@ -3,12 +3,6 @@
 #include "Locomotion/Motor.h"
 #include "GlobalInfo/HardwareDefs.h"
 
-#define LEFT_MOTOR_PWM_FWD PB_9
-#define LEFT_MOTOR_PWM_BACK PB_8
-
-#define RIGHT_MOTOR_PWM_FWD PB_0
-#define RIGHT_MOTOR_PWM_BACK PB_1
-
 #define CLOCK_FREQUENCY 100000 //Hz
 #define PERIOD 500 //T(pwm) = PERIOD/CLOCK_FREQUENCY
 
@@ -48,10 +42,10 @@ void run_motor(int motor, int direction, float torque)
 
     if (direction == FWD) {
         pwm_start(back, CLOCK_FREQUENCY, PERIOD, 0, 0);
-        Serial.print("run motor at duty cycle: ");
-        Serial.println(duty_cycle);
-        Serial.print("FORWARD MOTOR IN USE: ");
-        Serial.println(fwd);
+        // Serial.print("run motor at duty cycle: ");
+        // Serial.println(duty_cycle);
+        // Serial.print("FORWARD MOTOR IN USE: ");
+        // Serial.println(fwd);
 
         pwm_start(fwd, CLOCK_FREQUENCY, PERIOD, duty_cycle * PERIOD, 0);
     } else {

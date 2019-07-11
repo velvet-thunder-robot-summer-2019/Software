@@ -20,10 +20,10 @@ void init_interrupts()
     pinMode(BUMPER_BACK, INPUT);
 
     // attach collision interrupt
-    attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), collision_left, FALLING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), collision_right, FALLING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, FALLING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_BACK), collision_back, FALLING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), collision_left, FALLING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), collision_right, FALLING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, FALLING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_BACK), collision_back, FALLING);
 
     // init timer interrupt
 }

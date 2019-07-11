@@ -6,7 +6,7 @@
 #define THANOS_v_METHANOS_SWITCH PB12
 #define NAVIGATE PB15
 #define SET PB14
-#define CALIBRATION_POTENTIOMETER PB1
+#define CALIBRATION_POTENTIOMETER PA7
 
 //bumpers
 #define BUMPER_FRONT PB3
@@ -22,8 +22,15 @@
 #define RIGHT_SENSOR PA5
 
 //motors
-#define LEFT_MOTOR 0
-#define RIGHT_MOTOR 1
+#define LEFT_MOTOR_PWM_FWD PB_9
+#define LEFT_MOTOR_PWM_BACK PB_8
+
+#define RIGHT_MOTOR_PWM_FWD PB_1
+#define RIGHT_MOTOR_PWM_BACK PB_0
+
+//communication
+#define TX PB10
+#define RX PB11
 
 /* Here lie definitions to make code more legible */
 // calibration output
@@ -54,3 +61,15 @@
 #define RIGHT_OFF_LEFT_ON 1
 #define BOTH_OFF_LAST_RIGHT -5
 #define BOTH_OFF_LAST_LEFT 5
+
+#define LEFT_MOTOR 0
+#define RIGHT_MOTOR 1
+
+// communication status
+#define TIMEOUT -1
+#define CORRUPT_RESPONSE -2
+
+#define ACK 0xAA // cool all went well OR ok i'll try
+#define FAIL 0xAB // task failed (e.g. post not found)
+#define BUSY 0xAC // haven't completed the previous task CHILL
+#define NO_RESPONSE 0xAD // Infinity is ghosting us

@@ -13,7 +13,7 @@ int left_sensor();
 int right_sensor();
 
 int branch_reach_calls = 0;
-uint32_t tape_sensor_threshold = 180;
+uint32_t tape_sensor_threshold = 400;
 
 /**
  * Initialising pins for tape sensing
@@ -36,6 +36,12 @@ int get_tape_following_error()
 
     int left = left_sensor();
     int right = right_sensor();
+
+    Serial.print("left sensor says: ");
+    Serial.println(left);
+    Serial.print("right sensor says: ");
+    Serial.println(right);
+    // delay(1000);
 
     if (left && right) {
         return ON_TAPE;
@@ -90,7 +96,9 @@ int get_tape_sensor_threshold()
  */
 int left_sensor()
 {
-    return analogRead(LEFT_SENSOR) < tape_sensor_threshold;
+    Serial.print("left sensor");
+    Serial.println(analogRead(LEFT_SENSOR));
+    return analogRead(LEFT_SENSOR) > tape_sensor_threshold;
 }
 
 /**
@@ -99,5 +107,7 @@ int left_sensor()
  */
 int right_sensor()
 {
-    return analogRead(RIGHT_SENSOR) < tape_sensor_threshold;
+    Serial.print("right sensor");
+    Serial.println(analogRead(RIGHT_SENSOR));
+    return analogRead(RIGHT_SENSOR) > tape_sensor_threshold;
 }
