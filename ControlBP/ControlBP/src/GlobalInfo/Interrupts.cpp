@@ -1,5 +1,5 @@
 // https://circuitdigest.com/microcontroller-projects/how-to-use-interrupts-in-stm32f103c8
-#define TIM1_IRQn
+//#define TIM1_IRQn
 
 #include <Arduino.h>
 #include <stm32f1xx_hal.h>
