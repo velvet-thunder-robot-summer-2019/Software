@@ -69,7 +69,8 @@ int communication_established()
  */
 int request_U_turn_status()
 {
-    Serial.println("request_U_turn_status");
+    // Serial.println("request_U_turn_status");
+    /* 
     if (send_command(GET_ACK) == TIMEOUT) {
         return TIMEOUT;
     }
@@ -81,6 +82,8 @@ int request_U_turn_status()
         return CORRUPT_RESPONSE;
     } 
     return (int) infinity_response[1];
+    */
+   return FALSE;
 }
 
 /**

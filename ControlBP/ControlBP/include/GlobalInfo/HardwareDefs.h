@@ -22,11 +22,11 @@
 #define RIGHT_SENSOR PA5
 
 //motors
-#define LEFT_MOTOR_PWM_FWD PB_9
-#define LEFT_MOTOR_PWM_BACK PB_8
+#define RIGHT_MOTOR_PWM_BACK PB_9
+#define RIGHT_MOTOR_PWM_FWD PB_8
 
-#define RIGHT_MOTOR_PWM_FWD PB_1
-#define RIGHT_MOTOR_PWM_BACK PB_0
+#define LEFT_MOTOR_PWM_BACK PB_1
+#define LEFT_MOTOR_PWM_FWD PB_0
 
 //communication
 #define TX PB10

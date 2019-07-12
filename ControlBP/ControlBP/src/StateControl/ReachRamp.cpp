@@ -3,12 +3,12 @@
 #include "StateControl/ReachRamp.h"
 #include "AllPurposeInclude.h"
 
-#define REACH_RAMP_TORQUE 0.5
+#define REACH_RAMP_TORQUE 0.4
 
 void reach_ramp()
 {
     int dev_or_comp = digitalRead(MASTER_SWITCH);
-
+    /*
     Serial.print("IF this says 1, I was dev: ");
     Serial.println(dev_or_comp);
 
@@ -16,6 +16,7 @@ void reach_ramp()
     Serial.println("");
     Serial.println("REACH_RAMP state entered!");
     Serial.println("______________________");
+    */
 
     request_arm_position__travel();
 
@@ -32,11 +33,12 @@ void reach_ramp()
         if (robot_state() != REACH_RAMP) {
             return;
         }
+        /*
         Serial.print("IF this says 1, currently in dev: ");
         Serial.println(digitalRead(MASTER_SWITCH));
-
+        */
         if (digitalRead(MASTER_SWITCH) == DEV) {
-            Serial.println("Breaking out of this rubbish loop");
+            // Serial.println("Breaking out of this rubbish loop");
             break;
         }
     }

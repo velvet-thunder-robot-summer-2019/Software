@@ -27,7 +27,7 @@ void reset();
 void setup() {
   // put your setup code here, to run once:
   // Initialisation of everything here
-
+  delay(3000);
   Serial.begin(9600);
   Serial.print("begin setup");
   reset();
@@ -98,5 +98,6 @@ void reset()
     init_robot_state(MENU);
   }
   init_menu();
+  init_tape_following();
   init_interrupts();
 }

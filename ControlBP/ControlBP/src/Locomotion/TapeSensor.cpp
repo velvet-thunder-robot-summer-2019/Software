@@ -32,15 +32,16 @@ void initTapeSensor()
  */
 int get_tape_following_error()
 {
-    Serial.println("get_tape_following_error");
+    // Serial.println("get_tape_following_error");
 
     int left = left_sensor();
     int right = right_sensor();
-
+    /*
     Serial.print("left sensor says: ");
     Serial.println(left);
     Serial.print("right sensor says: ");
     Serial.println(right);
+    */
     // delay(1000);
 
     if (left && right) {
@@ -96,8 +97,8 @@ int get_tape_sensor_threshold()
  */
 int left_sensor()
 {
-    Serial.print("left sensor");
-    Serial.println(analogRead(LEFT_SENSOR));
+    // Serial.print("left sensor");
+    // Serial.println(analogRead(LEFT_SENSOR));
     return analogRead(LEFT_SENSOR) > tape_sensor_threshold;
 }
 
@@ -107,7 +108,7 @@ int left_sensor()
  */
 int right_sensor()
 {
-    Serial.print("right sensor");
-    Serial.println(analogRead(RIGHT_SENSOR));
+    // Serial.print("right sensor");
+    // Serial.println(analogRead(RIGHT_SENSOR));
     return analogRead(RIGHT_SENSOR) > tape_sensor_threshold;
 }

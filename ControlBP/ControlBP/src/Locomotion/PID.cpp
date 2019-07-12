@@ -3,7 +3,7 @@
 
 // PID related values
 #define NUM_PAST_ERRORS 10 // number of errors to save
-#define MAX_ANALOG 1023
+#define MAX_ANALOG 1023.0
 #define PIN_PROP PB0
 #define PIN_DERIV PB1
 
@@ -23,13 +23,13 @@ void updateError(int error);
  */
 void init_PID()
 {
-    Serial.println("init_PID");
+    // Serial.println("init_PID");
     int i = 0;
     for (i = 0; i < NUM_PAST_ERRORS; i++) {
         past_errors[i] = 0;
     }
     last_error_index = 0;
-    kp = 0;
+    kp = 250;
     kd = 0;
 }
 
@@ -40,7 +40,7 @@ void init_PID()
  */
 float get_PID_output(int error)
 {
-    Serial.println("get_PID_output");
+    // Serial.println("get_PID_output");
     float out = getP(error) + getD(error);
 
     updateError(error);
@@ -57,7 +57,9 @@ float get_PID_output(int error)
  */
 int update_kp() 
 {
-    kp = analogRead(CALIBRATION_POTENTIOMETER);
+    // Serial.print("kp being updated ALERT");
+
+    // kp = analogRead(CALIBRATION_POTENTIOMETER);
     return kp;
 }
 
@@ -67,7 +69,8 @@ int update_kp()
  */
 int update_kd()
 {
-    kd = analogRead(CALIBRATION_POTENTIOMETER);
+    // Serial.print("kd being updated ALERT");
+    // kd = analogRead(CALIBRATION_POTENTIOMETER);
     return kd;
 }
 
@@ -93,11 +96,16 @@ int get_kd()
  */
 float getP(int error)
 {
-    Serial.print("Error is: ");
+    /*
+     Serial.print("Error is: ");
     Serial.println(error);
     Serial.print("P value is: ");
-    Serial.println(error * 0.2 * kp / MAX_ANALOG);
-    return error * 0.2 * kp / MAX_ANALOG;
+    Serial.print("kp: ");
+    Serial.println(kp);
+
+    Serial.println((error * 0.2 * kp) / MAX_ANALOG);
+    */
+    return (error * 0.2 * kp) / MAX_ANALOG;
 }
 
 /**
@@ -105,11 +113,13 @@ float getP(int error)
  */
 float getD(int error)
 {
+    /*
     Serial.print("D value is: ");
-    Serial.println((error - past_errors[last_error_index]) * kd * 0.2 / MAX_ANALOG);
+    Serial.println((float)(error - past_errors[last_error_index]) * kd * 0.05 / MAX_ANALOG);
     Serial.println("");
+    */
 
-    return (error - past_errors[last_error_index]) * kd * 0.2 / MAX_ANALOG;
+    return (float) (error - past_errors[last_error_index]) * kd * 00.05 / MAX_ANALOG;
 }
 
 /**

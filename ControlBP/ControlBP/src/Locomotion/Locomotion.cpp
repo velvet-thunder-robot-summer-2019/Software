@@ -27,6 +27,7 @@ void init_tape_following()
  */
 int follow_tape(float torque)
 {
+    /*
     Serial.println("follow_tape");
     Serial.print("PWM: ");
     Serial.println(torque);
@@ -34,9 +35,12 @@ int follow_tape(float torque)
 
     Serial.print("PID_output: ");
     Serial.println(PID_output);
+    */
     run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
     run_motor(LEFT_MOTOR, BACK, torque - PID_output);
     int error = get_tape_following_error();
+    // Serial.print("tape following error is: ");
+    // Serial.println(error);
     PID_output = get_PID_output(error);
 
     // delay(500);
