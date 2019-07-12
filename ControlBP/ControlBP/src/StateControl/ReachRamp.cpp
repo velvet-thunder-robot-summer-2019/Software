@@ -7,7 +7,7 @@
 
 void reach_ramp()
 {
-    int dev_or_comp = digitalRead(MASTER_SWITCH);
+    //int dev_or_comp = digitalRead(MASTER_SWITCH);
     /*
     Serial.print("IF this says 1, I was dev: ");
     Serial.println(dev_or_comp);
