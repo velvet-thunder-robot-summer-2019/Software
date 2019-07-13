@@ -8,13 +8,12 @@
 #include "GlobalInfo/Interrupts.h"
 
 #define RETURN_TIME 130 // in seconds, arbitrary rn
+#define BLINKY PC13
 
-
+/*
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define BLINKY PC13
 
 // void initialise_timer();
 // void SysTick_Handler(void);
@@ -24,10 +23,10 @@ static TIM_HandleTypeDef s_TimerInstance = {
 };
 
 extern "C" void TIM1_IRQHandler()
-{
+{*/
     //this segment copied and pasted from HAL_TIM_IRQHandler()
   /* TIM Update event */
-  if(__HAL_TIM_GET_FLAG(&s_TimerInstance, TIM_FLAG_UPDATE) != RESET)
+/*   if(__HAL_TIM_GET_FLAG(&s_TimerInstance, TIM_FLAG_UPDATE) != RESET)
   {
     if(__HAL_TIM_GET_IT_SOURCE(&s_TimerInstance, TIM_IT_UPDATE) !=RESET)
     {
@@ -36,7 +35,7 @@ extern "C" void TIM1_IRQHandler()
       // HAL_TIM_PeriodElapsedCallback(&s_TimerInstance);
     }
   }
-}
+}*/
 
 /* 
 extern "C" void TIM1_IRQHandler()
@@ -53,7 +52,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /**
  * Taken from tutorial: https://visualgdb.com/tutorials/arm/stm32/timers/
  */
-
+/*
 void SysTick_Handler(void)
 {
     HAL_IncTick();
@@ -63,6 +62,7 @@ void SysTick_Handler(void)
 #ifdef __cplusplus
 }
 #endif
+
 
 
 void initialise_timer()
@@ -81,7 +81,7 @@ void initialise_timer()
     // setup IRQ
     HAL_NVIC_SetPriority(TIM1_IRQn, 0, 0); //what priority am I even setting? check
     HAL_NVIC_EnableIRQ(TIM1_IRQn);
-}
+}*/
 
 /**
  * Does all necessary initialisation for interrupts
@@ -104,7 +104,7 @@ void init_interrupts()
     // attachInterrupt(digitalPinToInterrupt(BUMPzER_BACK), collision_back, RISING);
 
     // init timer interrupt
-    initialise_timer();
+    // initialise_timer();
 }
 
 /**
