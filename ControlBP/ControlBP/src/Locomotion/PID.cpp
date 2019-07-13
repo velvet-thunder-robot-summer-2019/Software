@@ -1,9 +1,20 @@
 #include "GlobalInfo/HardwareDefs.h"
 #include "Locomotion/PID.h"
 
-int kp;
-int kd;
+// PID related values
+#define NUM_PAST_ERRORS 10 // number of errors to save
+#define MAX_ANALOG 1023.0
+#define PIN_PROP PB0
+#define PIN_DERIV PB1
 
+// declare values necessary for calculations
+int past_errors[NUM_PAST_ERRORS];
+int last_error_index;
+int kp, kd;
+
+float getP(int error);
+float getD(int error);
+void updateError(int error);
 
 /**
  * Initialises PID module
@@ -12,8 +23,13 @@ int kd;
  */
 void init_PID()
 {
-    Serial.println("init_PID");
-    kp = 0;
+    // Serial.println("init_PID");
+    int i = 0;
+    for (i = 0; i < NUM_PAST_ERRORS; i++) {
+        past_errors[i] = 0;
+    }
+    last_error_index = 0;
+    kp = 250;
     kd = 0;
 }
 
@@ -24,8 +40,15 @@ void init_PID()
  */
 float get_PID_output(int error)
 {
-    Serial.println("init_PID");
-    return 0.0;
+    // Serial.println("get_PID_output");
+    float out = getP(error) + getD(error);
+
+    updateError(error);
+
+    if (out > 0.5) {
+        out = 0.5;
+    }
+    return out;
 }
 
 /**
@@ -34,7 +57,9 @@ float get_PID_output(int error)
  */
 int update_kp() 
 {
-    kp = analogRead(CALIBRATION_POTENTIOMETER);
+    // Serial.print("kp being updated ALERT");
+
+    // kp = analogRead(CALIBRATION_POTENTIOMETER);
     return kp;
 }
 
@@ -44,7 +69,8 @@ int update_kp()
  */
 int update_kd()
 {
-    kd = analogRead(CALIBRATION_POTENTIOMETER);
+    // Serial.print("kd being updated ALERT");
+    // kd = analogRead(CALIBRATION_POTENTIOMETER);
     return kd;
 }
 
@@ -63,4 +89,49 @@ int get_kp()
 int get_kd()
 {
     return kd;
+}
+
+/**
+ * Returns: correction due to proportional error
+ */
+float getP(int error)
+{
+    /*
+     Serial.print("Error is: ");
+    Serial.println(error);
+    Serial.print("P value is: ");
+    Serial.print("kp: ");
+    Serial.println(kp);
+
+    Serial.println((error * 0.2 * kp) / MAX_ANALOG);
+    */
+    return (error * 0.2 * kp) / MAX_ANALOG;
+}
+
+/**
+ * Returns: correction due to derivative error
+ */
+float getD(int error)
+{
+    /*
+    Serial.print("D value is: ");
+    Serial.println((float)(error - past_errors[last_error_index]) * kd * 0.05 / MAX_ANALOG);
+    Serial.println("");
+    */
+
+    return (float) (error - past_errors[last_error_index]) * kd * 00.05 / MAX_ANALOG;
+}
+
+/**
+ * Updates record of 10 previous errors
+ * This is so that we can get better derivative estimates for D
+ * Deals with threshold
+ */
+void updateError(int error)
+{
+    past_errors[last_error_index] = error;
+    last_error_index++;
+    if (last_error_index == NUM_PAST_ERRORS) {
+        last_error_index = 0;
+    }
 }

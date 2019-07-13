@@ -6,7 +6,6 @@
 #include "AllPurposeInclude.h"
 
 #define MENU_REFRESH_DELAY 400 //ms, bring this down once display set up
-#define CALIBRATION_DELTA 10
 
 typedef enum 
 {
@@ -63,6 +62,11 @@ void menu()
             case CALIBRATION_MENU:
                 Serial.println("Calibration menu");
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    if (digitalRead(MASTER_SWITCH) == COMP) {
+                        Serial.println("Is comp, switching states");
+                        switch_state(MENU, REACH_RAMP);
+                        return;
+                    }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
@@ -75,6 +79,11 @@ void menu()
             case DEBUG_MENU:
                Serial.println("Debug menu");
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    if (digitalRead(MASTER_SWITCH) == COMP) {
+                        Serial.println("Is comp, switching states");
+                        switch_state(MENU, REACH_RAMP);
+                        return;
+                    }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
@@ -87,6 +96,11 @@ void menu()
                 Serial.println("State menu");
 
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    if (digitalRead(MASTER_SWITCH) == COMP) {
+                        Serial.println("Is comp, switching states");
+                        switch_state(MENU, REACH_RAMP);
+                        return;
+                    }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
@@ -119,9 +133,13 @@ void calibration_menu()
                 Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
                 
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    if (digitalRead(MASTER_SWITCH) == COMP) {
+                        switch_state(MENU, REACH_RAMP);
+                        return;
+                    }
                     int calibration_value = analogRead(CALIBRATION_POTENTIOMETER);
 
-                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA) {
+                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA_TO_PRINT) {
                         previous_calibration_value = calibration_value;
                         Serial.print("Current tape sensor threshold: ");
                         Serial.println(get_tape_sensor_threshold());
@@ -145,9 +163,13 @@ void calibration_menu()
                 Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
                 
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    if (digitalRead(MASTER_SWITCH) == COMP) {
+                        switch_state(MENU, REACH_RAMP);
+                        return;
+                    }
                     int calibration_value = analogRead(CALIBRATION_POTENTIOMETER);
 
-                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA) {
+                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA_TO_PRINT) {
                         previous_calibration_value = calibration_value;
 
                         Serial.print("Current kp: ");
@@ -172,9 +194,13 @@ void calibration_menu()
                 Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
 
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {   
+                    if (digitalRead(MASTER_SWITCH) == COMP) {
+                        switch_state(MENU, REACH_RAMP);
+                        return;
+                    }
                     int calibration_value = analogRead(CALIBRATION_POTENTIOMETER);
                     
-                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA) {
+                    if (abs(previous_calibration_value - calibration_value) > CALIBRATION_DELTA_TO_PRINT) {
                         previous_calibration_value = calibration_value;
                         Serial.print("Current kd: ");
                         Serial.println(get_kd());
@@ -195,6 +221,10 @@ void calibration_menu()
                 Serial.println("Exit");
                 
                 while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                    if (digitalRead(MASTER_SWITCH) == COMP) {
+                        switch_state(MENU, REACH_RAMP);
+                        return;
+                    }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (digitalRead(NAVIGATE)) {
@@ -208,6 +238,7 @@ void calibration_menu()
             switch_state(MENU, REACH_RAMP);
         }
         if (robot_state() != MENU) {
+            Serial.println("going back to menu");
             return;
         }
     }

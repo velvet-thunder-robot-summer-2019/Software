@@ -7,7 +7,7 @@
  * Doesn't wait for response bc we can prob just GO without return 
  * Requests for Infinity BP to position arm for travel
  */
-void request_arm_position__travel();
+int request_arm_position__travel();
 
 /**
  * Requests for Infinity BP to position arm for ascent
@@ -59,7 +59,7 @@ int grab_infinity_stone();
 /**
  * Request put stone in gauntlet
  */
-void request_put_stone_in_gauntlet(int next_slot_available);
+int request_put_stone_in_gauntlet(int next_slot_available);
 
 /**
  * Request angle of lazy susan, ccw from standard axis

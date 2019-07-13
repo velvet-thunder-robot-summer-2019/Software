@@ -31,4 +31,9 @@ void collision_back();
  */
 void timer_interrupt_handler();
 
+/**
+ * Interrupt function due to time
+ */
+// void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
+
 #endif // INTERRUPTS_H_

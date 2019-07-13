@@ -15,6 +15,7 @@
 #include "StateControl/HandleCollision.h"
 #include "StateControl/GoodnightSweetPrince.h"
 
+void reset();
 
 /**
  * Calls all initialisation routines (vary between DEV and COMP modes)
@@ -26,19 +27,10 @@
 void setup() {
   // put your setup code here, to run once:
   // Initialisation of everything here
-
+  delay(3000);
   Serial.begin(9600);
-  
-  if (digitalRead(MASTER_SWITCH) == COMP) {
-    Serial.println("COMP MODE");
-    initialise_competition_data();
-    init_robot_state(REACH_RAMP);
-  } else {
-    Serial.println("DEV MODE");
-    init_robot_state(MENU);
-  }
-  init_menu();
-  init_interrupts();
+  Serial.print("begin setup");
+  reset();
 }
 
 void loop() {
@@ -93,4 +85,19 @@ void loop() {
   }
   
   delay(1000); // just for now, so that Julie can see what went down
+}
+
+void reset() 
+{
+  if (digitalRead(MASTER_SWITCH) == COMP) {
+    Serial.println("COMP MODE");
+    initialise_competition_data();
+    init_robot_state(REACH_RAMP);
+  } else {
+    Serial.println("DEV MODE");
+    init_robot_state(MENU);
+  }
+  init_menu();
+  init_tape_following();
+  init_interrupts();
 }
