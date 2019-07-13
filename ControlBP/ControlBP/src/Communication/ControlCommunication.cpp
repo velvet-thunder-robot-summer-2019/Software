@@ -10,7 +10,8 @@
 #define MAX_RETRIES_COMM 3 //max retries when a communication fails
 #define WAIT_BETWEEN_COMM_RETRIES 5 
 
-//Commands to Infinity
+//Commands to Infinity 
+//Arm commands
 #define GET_ACK 0x00
 #define GET_U_TURN_STATUS 0x01
 #define GET_LEFT_WHEEL_ROT 0x02
@@ -22,6 +23,8 @@
 #define CONFIRM_POST_PRESENCE 0x07
 #define ASCEND_POST 0x08
 #define GRAB_STONE 0x09
+
+//TODO: Gauntlet commands
 
 int send_command(byte command);
 int get_response(int byte_num);
