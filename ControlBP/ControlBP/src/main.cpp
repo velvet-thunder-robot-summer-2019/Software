@@ -37,7 +37,7 @@ void loop() {
   // MAIN CONTROL LOOP
   Serial.println("Begin control loop");
   state bot_state = robot_state();
-
+  
   switch(bot_state) {
     case MENU :
       menu();

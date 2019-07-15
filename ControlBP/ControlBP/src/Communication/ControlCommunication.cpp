@@ -56,6 +56,7 @@ void init_communication()
  */
 uint8_t establish_communication()
 {
+    Serial.println("establish communication");
     uint8_t send_status = send_command(GET_ACK);
     if (send_status != COMM_SUCCESS) {
         return send_status;
@@ -65,6 +66,7 @@ uint8_t establish_communication()
     if (response_status == COMM_TIMEOUT) {
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("corrupt response");
         return COMM_CORRUPT_RESPONSE;
     }
     if (infinity_response[1] == COMM_SUCCESS) {
@@ -87,12 +89,15 @@ uint8_t get_arm_angles(uint8_t *angles)
     uint8_t send_status = send_command(GET_ARM_POSITION);
 
     if (send_status == COMM_TIMEOUT) {
+        Serial.println("send timeout");
         return COMM_TIMEOUT;
     }
     uint8_t response_status = get_response(4);
     if (response_status == COMM_TIMEOUT) {
+        Serial.println("timeout");
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("corrupt");
         return COMM_CORRUPT_RESPONSE;
     }
 
@@ -105,7 +110,7 @@ uint8_t get_arm_angles(uint8_t *angles)
     angles[1] = (uint8_t) infinity_response[3];
     angles[2] = (uint8_t) infinity_response[4];
     angles[3] = (uint8_t) infinity_response[5];
-    
+    Serial.println("angle received");
     return COMM_SUCCESS;
 }
 
@@ -119,16 +124,20 @@ uint8_t request_arm_position__travel()
 
     uint8_t send_status = send_command(SET_TRAVEL_POSITION);
     if (send_status == COMM_TIMEOUT) {
+        Serial.println("send timeout");
         return COMM_TIMEOUT;
     }
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+        Serial.println("received timeout");
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("corrupt response");
         return COMM_CORRUPT_RESPONSE;
     }
-
+    Serial.print("response from infinity: ");
+    Serial.println(infinity_response[1]);
     return infinity_response[1];
 }
 
@@ -141,16 +150,20 @@ uint8_t request_put_stone_in_gauntlet()
     Serial.println("request_put_infinity_in_gauntlet: putting stone in gauntlet");
     uint8_t send_status = send_command(SET_STONE_IN_GAUNTLET);
     if (send_status == COMM_TIMEOUT) {
+        Serial.println("send timeout");
         return COMM_TIMEOUT;
     }
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+        Serial.println("received timeout");
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("corrupt response");
         return COMM_CORRUPT_RESPONSE;
     }
-
+    Serial.print("response from infinity: ");
+    Serial.println(infinity_response[1]);
     return infinity_response[1];
 }
 
@@ -164,15 +177,20 @@ uint8_t request_arm_position__ascent()
     Serial.println("request_arm_position__ascent");
     uint8_t send_status = send_command(SET_ASCENT_POSITION);
     if (send_status == COMM_TIMEOUT) {
+        Serial.println("send timeout");
         return COMM_TIMEOUT;
     }
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+        Serial.println("received timeout");
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("corrupt response");
         return COMM_CORRUPT_RESPONSE;
     }
+    Serial.print("response from infinity: ");
+    Serial.println(infinity_response[1]);
     return infinity_response[1];
 }
 
@@ -184,6 +202,7 @@ uint8_t request_confirmation_post_presence(uint8_t side)
     Serial.print("request_confirmation_post_presence: ");
     uint8_t send_status = send_command(CONFIRM_POST_PRESENCE);
     if (send_status == COMM_TIMEOUT) {
+        Serial.println("send timeout");
         return COMM_TIMEOUT;
     }
 
@@ -191,10 +210,14 @@ uint8_t request_confirmation_post_presence(uint8_t side)
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+        Serial.println("received timeout");
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("corrupt response");
         return COMM_CORRUPT_RESPONSE;
     }
+    Serial.print("response from infinity: ");
+    Serial.println(infinity_response[1]);
     return infinity_response[1]; 
 }
 
@@ -209,6 +232,7 @@ uint8_t request_post_ascent()
 
     uint8_t send_status = send_command(ASCEND_POST);
     if (send_status == COMM_TIMEOUT) {
+        Serial.println("send timeout");
         return COMM_TIMEOUT;
     }
 
@@ -216,11 +240,14 @@ uint8_t request_post_ascent()
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+        Serial.println("received timeout");
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("corrupt response");
         return COMM_CORRUPT_RESPONSE;
     }
-
+    Serial.print("response from infinity: ");
+    Serial.println(infinity_response[1]);
     return infinity_response[1]; 
 }
 
@@ -230,10 +257,11 @@ uint8_t request_post_ascent()
  */
 uint8_t grab_infinity_stone()
 {
-    Serial.println("grab_infinity_stone... stone grabbed!");
+    Serial.println("grab_infinity_stone");
 
     uint8_t send_status = send_command(GRAB_STONE);
     if (send_status == COMM_TIMEOUT) {
+        Serial.println("send timeout");
         return COMM_TIMEOUT;
     }
 
@@ -241,11 +269,14 @@ uint8_t grab_infinity_stone()
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+        Serial.println("receive timeout");
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+        Serial.println("Corrupt response");
         return COMM_CORRUPT_RESPONSE;
     }
-    
+    Serial.print("response from infinity: ");
+    Serial.println(infinity_response[1]);
     return infinity_response[1]; 
 }
 

@@ -5,10 +5,10 @@
 
 /* Pin mapping */
 //DEBUG BOARD
-#define MASTER_SWITCH PB13
-#define THANOS_v_METHANOS_SWITCH PB12
-#define NAVIGATE PB15
-#define SET PB14
+#define MASTER_SWITCH PB15 // green switch
+#define THANOS_v_METHANOS_SWITCH PB14 // red switch
+#define NAVIGATE PB12
+#define SET PB13
 #define CALIBRATION_POTENTIOMETER PA7
 
 //bumpers

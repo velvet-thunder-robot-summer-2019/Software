@@ -61,7 +61,7 @@ void menu()
         switch (menu_display) {
             case CALIBRATION_MENU:
                 Serial.println("Calibration menu");
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     if (digitalRead(MASTER_SWITCH) == COMP) {
                         Serial.println("Is comp, switching states");
                         switch_state(MENU, REACH_RAMP);
@@ -69,16 +69,16 @@ void menu()
                     }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     menu_display = DEBUG_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     calibration_menu();
                 }
                 break;
 
             case DEBUG_MENU:
                Serial.println("Debug menu");
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     if (digitalRead(MASTER_SWITCH) == COMP) {
                         Serial.println("Is comp, switching states");
                         switch_state(MENU, REACH_RAMP);
@@ -86,16 +86,16 @@ void menu()
                     }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     menu_display = STATE_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     debug();
                 }
                 break;
             case STATE_MENU:
                 Serial.println("State menu");
 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     if (digitalRead(MASTER_SWITCH) == COMP) {
                         Serial.println("Is comp, switching states");
                         switch_state(MENU, REACH_RAMP);
@@ -103,9 +103,9 @@ void menu()
                     }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     menu_display = CALIBRATION_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     state_menu();
                 }
                 break;
@@ -132,7 +132,7 @@ void calibration_menu()
                 Serial.print("Current potentiometer val: "); 
                 Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
                 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     if (digitalRead(MASTER_SWITCH) == COMP) {
                         switch_state(MENU, REACH_RAMP);
                         return;
@@ -149,9 +149,9 @@ void calibration_menu()
 
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     calibration_val = CAL_PID_PROP;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     update_threshold_tape_sensor();
                 }
                 break;
@@ -162,7 +162,7 @@ void calibration_menu()
                 Serial.print("Current potentiometer val: "); 
                 Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
                 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     if (digitalRead(MASTER_SWITCH) == COMP) {
                         switch_state(MENU, REACH_RAMP);
                         return;
@@ -180,9 +180,9 @@ void calibration_menu()
 
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     calibration_val = CAL_PID_DERIV;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     update_kp();
                 }
                 break;
@@ -193,7 +193,7 @@ void calibration_menu()
                 Serial.print("Current potentiometer val: "); 
                 Serial.println(analogRead(CALIBRATION_POTENTIOMETER));
 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {   
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {   
                     if (digitalRead(MASTER_SWITCH) == COMP) {
                         switch_state(MENU, REACH_RAMP);
                         return;
@@ -210,9 +210,9 @@ void calibration_menu()
 
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     calibration_val = CAL_EXIT;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     update_kd();
                 }
                 break;
@@ -220,16 +220,16 @@ void calibration_menu()
             case CAL_EXIT:
                 Serial.println("Exit");
                 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     if (digitalRead(MASTER_SWITCH) == COMP) {
                         switch_state(MENU, REACH_RAMP);
                         return;
                     }
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     calibration_val = CAL_TAPE_SENSOR;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     return;
                 }
                 break;
@@ -254,12 +254,12 @@ void state_menu()
         switch (displayed_state) {
             case REACH_RAMP_MENU:
                 Serial.println("reach ramp menu");
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = ASCEND_RAMP_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, REACH_RAMP);
                     Serial.println("Entering reach ramp state");
                 }
@@ -267,12 +267,12 @@ void state_menu()
             
             case ASCEND_RAMP_MENU:
                 Serial.println("ascend ramp menu");
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = CALIBRATE_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, CALIBRATE);
                     Serial.println("Entering ascend ramp state");
                 }
@@ -280,12 +280,12 @@ void state_menu()
 
             case CALIBRATE_MENU:
                 Serial.println("calibrate menu");
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = FIND_POST_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, CALIBRATE);
                     Serial.println("Entering calibrate state");
                 }
@@ -294,12 +294,12 @@ void state_menu()
             case FIND_POST_MENU:
                 Serial.println("find post menu");
 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = GET_INFINITY_STONE_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, REACH_RAMP);
                     Serial.println("Entering find post state");
                 }
@@ -308,12 +308,12 @@ void state_menu()
             case GET_INFINITY_STONE_MENU:
                 Serial.println("get infinity stone menu");
 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = HANDLE_COLLISION_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, GET_INFINITY_STONE);
                     Serial.println("Entering get infinity stone state");
                 }
@@ -322,12 +322,12 @@ void state_menu()
             case HANDLE_COLLISION_MENU:
                 Serial.println("handle collision menu");
 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = RETURN_TO_GAUNTLET_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, HANDLE_COLLISION);
                     Serial.println("Entering handle collision state");
                 }
@@ -336,12 +336,12 @@ void state_menu()
             case RETURN_TO_GAUNTLET_MENU:
                 Serial.println("return to gauntlet menu");
 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = FIT_TO_GAUNTLET_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, RETURN_TO_GAUNTLET);
                     Serial.println("Entering return to gauntlet state");
                 }
@@ -350,12 +350,12 @@ void state_menu()
             case FIT_TO_GAUNTLET_MENU:
                 Serial.println("fit to gauntlet menu");
 
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = GOODNIGHT_SWEET_PRINCE_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, FIT_TO_GAUNTLET);
                     Serial.println("Entering fit to gauntlet state");
                 }
@@ -363,26 +363,25 @@ void state_menu()
 
             case GOODNIGHT_SWEET_PRINCE_MENU:
                 Serial.println("goodnight sweet prince menu");
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = EXIT_STATE_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     switch_state(MENU, GOODNIGHT_SWEET_PRINCE);
                     Serial.println("Entering goodnight sweet prince state");
                 }
                 break;
             
             case EXIT_STATE_MENU:
-                while (!digitalRead(NAVIGATE) && !digitalRead(SET)) {
-                    Serial.println("Exit");
-
+            Serial.println("Exit");
+                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
                     delay(MENU_REFRESH_DELAY / 10);
                 }
-                if (digitalRead(NAVIGATE)) {
+                if (!digitalRead(NAVIGATE)) {
                     displayed_state = REACH_RAMP_MENU;
-                } else if (digitalRead(SET)) {
+                } else if (!digitalRead(SET)) {
                     return;
                 }
                 break;
