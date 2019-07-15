@@ -4,6 +4,11 @@
 #include <Arduino.h>
 
 /**
+ * Confirm that communication is functional
+ */
+uint8_t establish_communication();
+
+/**
  * Doesn't wait for response bc we can prob just GO without return 
  * Requests for Infinity BP to position arm for travel
  */
@@ -28,7 +33,7 @@ uint8_t request_confirmation_post_presence(uint8_t side);
  * 3. Elbow (0 to 180)
  * 4. Wrist (0 to 180)
  */
-uint8_t get_arm_angles();
+uint8_t get_arm_angles(uint8_t *angles);
 
 /**
  * Requests ascent of post (kind of climb up post, abstract this)
@@ -47,7 +52,7 @@ uint8_t grab_infinity_stone();
 /**
  * Request put stone in gauntlet
  */
-uint8_t request_put_stone_in_gauntlet(uint8_t next_slot_available);
+uint8_t request_put_stone_in_gauntlet();
 
 // /**
 //  * Request angle of lazy susan, ccw from standard axis

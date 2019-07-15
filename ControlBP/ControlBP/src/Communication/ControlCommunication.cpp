@@ -54,7 +54,7 @@ void init_communication()
  * Returns:     COMM_SUCCESS if communication established and we received ACK
  *              Various error messages otherwise
  */
-uint8_t communication_established()
+uint8_t establish_communication()
 {
     uint8_t send_status = send_command(GET_ACK);
     if (send_status != COMM_SUCCESS) {
@@ -98,6 +98,7 @@ uint8_t get_arm_angles(uint8_t *angles)
 
     if (infinity_response[1] != COMM_SUCCESS) {
         return infinity_response[1];
+        Serial.print("arm angle obtained");
     }
 
     angles[0] = (uint8_t) infinity_response[2];
@@ -135,7 +136,7 @@ uint8_t request_arm_position__travel()
  * Request put stone in gauntlet
  * Does not wait for reply
  */
-uint8_t request_put_stone_in_gauntlet(uint8_t next_slot_available) 
+uint8_t request_put_stone_in_gauntlet() 
 {
     Serial.println("request_put_infinity_in_gauntlet: putting stone in gauntlet");
     uint8_t send_status = send_command(SET_STONE_IN_GAUNTLET);
