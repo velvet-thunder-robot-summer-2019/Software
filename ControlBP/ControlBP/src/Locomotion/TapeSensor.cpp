@@ -11,6 +11,8 @@
 int lastSensor = LEFT_SENSOR; // arbitrarily set, we just need one
 int left_sensor();
 int right_sensor();
+int right_wing_sensor();
+int left_wing_sensor();
 
 int branch_reach_calls = 0;
 uint32_t tape_sensor_threshold = 400;
@@ -67,11 +69,17 @@ int branch_reached(int expected_side)
 {
     Serial.print("branch_reached, expected side: ");
     Serial.println(expected_side);
-    if (branch_reach_calls < DEBUG_BRANCH_REACH_EXPECTED) {
-        branch_reach_calls++;
-        return 0;
+
+    if ((expected_side == LEFT && left_wing_sensor()) ||
+        (expected_side == RIGHT && right_wing_sensor())) {
+        return TRUE;
     }
-    return 1;
+    return FALSE;
+    // if (branch_reach_calls < DEBUG_BRANCH_REACH_EXPECTED) {
+    //     branch_reach_calls++;
+    //     return 0;
+    // }
+    // return 1;
 }
 
 /**
@@ -111,4 +119,24 @@ int right_sensor()
     // Serial.print("right sensor");
     // Serial.println(analogRead(RIGHT_SENSOR));
     return analogRead(RIGHT_SENSOR) > tape_sensor_threshold;
+}
+
+/**
+ * Returns:     0 if sensor off
+ *              1 if sensor on
+ */
+int right_wing_sensor()
+{
+    return analogRead(RIGHT_WING_SENSOR) > tape_sensor_threshold;
+}
+
+/**
+ * Returns:     0 if neither sensors on
+ *              1 if outer sensor but not the inner is on tape
+ *              -1 if inner sensor but not the outer is on tape
+ *              2 if both sensors are on it
+ */
+int left_wing_sensor()
+{
+    return analogRead(LEFT_WING_SENSOR) > tape_sensor_threshold;
 }
