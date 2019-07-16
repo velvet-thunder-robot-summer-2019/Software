@@ -90,9 +90,6 @@ void loop() {
 
 void reset() 
 {
-  Serial.println(digitalRead(MASTER_SWITCH) == DEV);
-  Serial.println(digitalRead(MASTER_SWITCH) == COMP);
-
   if (digitalRead(MASTER_SWITCH) == COMP) {
     Serial.println("COMP MODE");
     initialise_competition_data();
