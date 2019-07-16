@@ -33,14 +33,19 @@ void send_response(byte *response, int response_length);
 void init_communication() 
 {
     CommSerial.begin(115200);
-    while (!CommSerial);
+    while (!CommSerial) {
+         Serial.println("you better not optimise me away, I'm USEFUL");
+    }
+    while (CommSerial.available()) {
+        CommSerial.readString();
+    }
     
     Serial.println("init_communication");
 }
 
 void execute_command() 
 {
-    if (!CommSerial.available()) {
+    if (CommSerial.available() < 3) {
         return;
     }
     byte start = CommSerial.read();

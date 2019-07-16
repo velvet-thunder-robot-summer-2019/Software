@@ -8,7 +8,7 @@
 
 // Communication details
 #define BUFFER_SIZE 7 // 2 for start/stop, 1 for return code, up to 4 for data
-#define MAX_TIMEOUT 2 //ms, max time to wait for availability
+#define MAX_TIMEOUT 5000 //ms, max time to wait for availability
 #define MAX_RETRIES_COMM 3 //max retries when a communication fails
 #define WAIT_BETWEEN_COMM_RETRIES 5 
 
@@ -44,7 +44,9 @@ byte infinity_response[BUFFER_SIZE];
 void init_communication()
 {
     CommSerial.begin(115200);
-    while (!CommSerial);
+    while (!CommSerial) {
+        Serial.println("don't let the compiler optimise me away!!");
+    }
 
     Serial.println("init_communication");
 }
@@ -328,7 +330,12 @@ uint8_t send_command_no_retries(byte command)
             return COMM_TIMEOUT;
         }
     }
+    Serial.println("sending buffer contents: ");
+    Serial.println(command_buff[0]);
+    Serial.println(command_buff[1]);
+    Serial.println(command_buff[2]);
     CommSerial.write(command_buff, 3);
+    CommSerial.flush();
     return COMM_SUCCESS;
 }
 

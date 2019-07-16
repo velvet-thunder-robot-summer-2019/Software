@@ -4,6 +4,12 @@
 #include <Arduino.h>
 
 /**
+ * Initialises inter BP communication
+ */
+void init_communication();
+
+
+/**
  * Confirm that communication is functional
  */
 uint8_t establish_communication();
