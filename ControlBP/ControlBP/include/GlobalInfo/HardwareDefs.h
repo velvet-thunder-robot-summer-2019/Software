@@ -36,6 +36,12 @@
 #define LEFT_MOTOR_PWM_BACK PB_1
 #define LEFT_MOTOR_PWM_FWD PB_0
 
+//encoders
+#define ENCODER_RIGHT_A PB9
+#define ENCODER_RIGHT_B PA8
+#define ENCODER_LEFT_A PB5
+#define ENCODER_LEFT_B PB4
+
 //communication
 #define TX PB10
 #define RX PB11

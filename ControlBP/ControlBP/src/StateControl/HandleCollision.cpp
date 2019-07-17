@@ -16,4 +16,5 @@ void handle_collision()
     } else {
         switch_state(HANDLE_COLLISION, REACH_RAMP);
     }
+    run_status.last_collision = NO_COLLISION;
 }

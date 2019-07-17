@@ -25,7 +25,7 @@ void reach_ramp()
         return;
     }
 
-    while (!U_turn_status()) {
+    while (!ramp_reached()) {
         uint8_t response = follow_tape(REACH_RAMP_TORQUE);
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
