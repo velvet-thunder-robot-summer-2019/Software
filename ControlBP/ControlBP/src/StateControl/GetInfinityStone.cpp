@@ -35,8 +35,7 @@ void get_infinity_stone()
         // for whichever post we're at, set corresponding stone status to MISSING
         Serial.println("Stone was missing");
     }
-    int next_slot_available = 0; // THIS IS JUST A STANDIN
-    request_put_stone_in_gauntlet(next_slot_available);
+    request_put_stone_in_gauntlet();
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(GET_INFINITY_STONE, FIND_POST);

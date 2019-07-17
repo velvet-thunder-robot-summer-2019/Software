@@ -1,11 +1,14 @@
+#ifndef HARDWAREDEFS_H_
+#define HARDWAREDEFS_H_
+
 #include <Arduino.h>
 
 /* Pin mapping */
 //DEBUG BOARD
-#define MASTER_SWITCH PB13
-#define THANOS_v_METHANOS_SWITCH PB12
-#define NAVIGATE PB15
-#define SET PB14
+#define MASTER_SWITCH PB15 // green switch
+#define THANOS_v_METHANOS_SWITCH PB14 // red switch
+#define NAVIGATE PB12
+#define SET PB13
 #define CALIBRATION_POTENTIOMETER PA7
 
 //bumpers
@@ -18,8 +21,13 @@
 #define TORQUE_OF_MOTION_AVG 10
 
 //sensors
-#define LEFT_SENSOR PA4
-#define RIGHT_SENSOR PA5
+#define OUTER_LEFT_SENSOR PA2
+#define LEFT_SENSOR PA3
+#define RIGHT_SENSOR PA4
+#define OUTER_RIGHT_SENSOR PA5
+
+#define LEFT_WING_SENSOR PA1
+#define RIGHT_WING_SENSOR PA0
 
 //motors
 #define RIGHT_MOTOR_PWM_BACK PB_9
@@ -66,10 +74,14 @@
 #define RIGHT_MOTOR 1
 
 // communication status
-#define TIMEOUT -1
-#define CORRUPT_RESPONSE -2
+// when communication fails
+#define COMM_TIMEOUT 0xAA // i.e. no response
+#define COMM_CORRUPT_RESPONSE 0xAB
 
-#define ACK 0xAA // cool all went well OR ok i'll try
-#define FAIL 0xAB // task failed (e.g. post not found)
-#define BUSY 0xAC // haven't completed the previous task CHILL
-#define NO_RESPONSE 0xAD // Infinity is ghosting us
+// command status from Infinity
+#define COMM_SUCCESS 0xAC // note that success can ALSO double as meaning acknowledged, for those tasks that don't wait on completion to reply
+#define COMM_TASK_FAILED 0xAD
+#define COMM_BUSY 0xAE
+#define COMM_CORRUPT_COMMAND 0xAF
+
+#endif // HARDWAREDEFS_H_
