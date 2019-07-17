@@ -15,6 +15,8 @@
 #include "StateControl/HandleCollision.h"
 #include "StateControl/GoodnightSweetPrince.h"
 
+#include "Communication/ControlCommunication.h"
+
 void reset();
 
 /**
@@ -29,15 +31,14 @@ void setup() {
   // Initialisation of everything here
   delay(3000);
   Serial.begin(9600);
-  Serial.print("begin setup");
-  reset();
+  Serial.println("begin setup");
 }
 
 void loop() {
   // MAIN CONTROL LOOP
+  reset();
   Serial.println("Begin control loop");
-  state bot_state = robot_state();
-
+  state bot_state = robot_state();  
   switch(bot_state) {
     case MENU :
       menu();
@@ -93,11 +94,12 @@ void reset()
     Serial.println("COMP MODE");
     initialise_competition_data();
     init_robot_state(REACH_RAMP);
-  } else {
+  } else if (digitalRead(MASTER_SWITCH) == DEV) {
     Serial.println("DEV MODE");
     init_robot_state(MENU);
   }
   init_menu();
   init_tape_following();
   init_interrupts();
+  init_communication();
 }

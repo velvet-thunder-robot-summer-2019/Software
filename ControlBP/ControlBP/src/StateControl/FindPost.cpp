@@ -39,14 +39,15 @@ void find_post()
     if (align_to_branch() == STATE_CHANGED)
         return;
     
-    int susan_angle = (side == LEFT) ? 0 : 360;
+    // int susan_angle = (side == LEFT) ? 0 : 360;
 
+    /*
     if (request_susan_angle(susan_angle) == STATE_CHANGED)
         return;
     
     if (request_confirmation_post_presence(side) == STATE_CHANGED)
         return;
-    
+    */
     debug_iterations++;
     Serial.print("debug iterations: ");
     Serial.println(debug_iterations);
