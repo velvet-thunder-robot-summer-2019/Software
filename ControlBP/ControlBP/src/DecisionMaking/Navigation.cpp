@@ -1,5 +1,9 @@
 #include "DecisionMaking/Navigation.h"
 #include "AllPurposeInclude.h"
+#include "GlobalInfo/Interrupts.h"
+
+#define UP_RAMP_ENCODER_DT 10 // ms, dummy val rn
+#define ENCODER_DT_DELTA 4 // ms
 
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
@@ -8,6 +12,14 @@ int branch_side_expected(location next_location);
 int ramp_reached()
 {
     // TODO: implement based on encoder speed
+    uint32_t avg_velocity_left = (left_wheel_dt[0] + left_wheel_dt[1] + left_wheel_dt[2]) / 3;
+    uint32_t avg_velocity_right = (right_wheel_dt[0] + right_wheel_dt[1] + right_wheel_dt[2]) / 3;
+    
+    if ((abs((int) (UP_RAMP_ENCODER_DT - avg_velocity_left)) < ENCODER_DT_DELTA) && 
+        (abs((int)(UP_RAMP_ENCODER_DT - avg_velocity_right) < ENCODER_DT_DELTA)))
+    {
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -280,12 +292,17 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
             return STATE_CHANGED;
         }
         back_reached_branch = branch_reached();
+        // update ze bloody position
     }
     // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
-    while (!branch_reached()) {
-        reverse(FLAT_GROUND_APPROACHING_STOP_PWM);
+    if (stopping_at_branch) 
+    {
+        while (!branch_reached()) {
+           reverse(FLAT_GROUND_APPROACHING_STOP_PWM);
+        }
+        stop_motors();
     }
-    stop_motors();
+    // handle the intersection cases where it's NOT the end?
     return SUCCESS;
 }
 
@@ -293,7 +310,10 @@ int reach_adjacent_branch_cross_country(location location_1, location location_2
 {
     // start by turning to face correct area
     // go forward till we hit other tape with ANY of the front sensors
-
+    while (!right_sensor() && !left_sensor() && !outer_left_sensor() && ! outer_right_sensor()) {
+        // run_cross_country();
+    }
+    return 0;
 }
 
 
@@ -329,6 +349,11 @@ int face_reverse_direction(state expected_state)
         return STATE_CHANGED;
     }
     return SUCCESS;
+}
+
+void update_position(location new_location)
+{
+
 }
 
  

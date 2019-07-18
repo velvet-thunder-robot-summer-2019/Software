@@ -2,10 +2,10 @@
 
 #include "AllPurposeInclude.h"
 
-#include "Locomotion/Locomotion.h"
 #include "Locomotion/PID.h"
-#include "Locomotion/TapeSensor.h"
 #include "Locomotion/Motor.h"
+
+#define CLICKS_PER_DEGREE 
 
 float PID_output = 0;
 
@@ -60,6 +60,20 @@ int rotate_on_spot(float pwm)
 }
 
 /**
+ * Turns the robot along circle of arc length rho (cm), at speed prop to pwm,
+ * to turn in direction given
+ */
+int follow_arc_rho(int direction, int rho, float smaller_pwm)
+{
+    float larger_pwm = (rho + 0.5 * 11.5) / (rho - 0.5 * 11.5) * smaller_pwm;
+    if (direction == RIGHT) {
+        run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
+        run_motor(LEFT_MOTOR, FWD, larger_pwm);
+    }
+    return SUCCESS;
+}
+
+/**
  * backs up the robot
  */
 int reverse(float pwm)
@@ -89,6 +103,7 @@ int stop_motors()
 int backtrack_to_tape()
 {
     Serial.println("backtrack_to_tape");
+    digitalWrite(BLINKY, HIGH);
     return SUCCESS;
 }
 

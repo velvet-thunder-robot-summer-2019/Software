@@ -24,6 +24,13 @@ int reverse(float pwm);
  */
 int stop_motors();
 
+
+/**
+ * Turns the robot along circle of arc length rho (cm), at speed prop to pwm,
+ * to turn in direction given
+ */
+int follow_arc_rho(int direction, int rho, float smaller_pwm);
+
 /**
  * Backtracks to reach tape, using historical information of movement
  * Checks for any change of state during backtracking

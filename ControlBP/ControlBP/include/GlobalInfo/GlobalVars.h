@@ -65,8 +65,8 @@ typedef struct
     /* data */
     location last_location;
     location next_location;
-    float left_wheel_rotations; // x dist in cm from last location
-    float right_wheel_rotations; // y dist
+    float left_wheel_ticks; // x dist in cm from last location
+    float right_wheel_ticks; // y dist
 
      // either last_location or next_location
     // int fraction_to_next;  //fraction of the dist made to the next location

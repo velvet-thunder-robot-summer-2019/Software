@@ -16,24 +16,10 @@
 void encoder_left_handle();
 void encoder_right_handle();
 
-/**
- * Sets state to handle collision when bumpers detect collision from left
- */
+
 void collision_left();
-
-/**
- * Sets state to handle collision when bumpers detect collision from right
- */
 void collision_right();
-
-/**
- * Sets state to handle collision when bumpers detect collision from front
- */
 void collision_front();
-
-/**
- * Sets state to handle collision when bumpers detect collision from back
- */
 void collision_back();
 
 // encoder interrupts on wheels
@@ -43,6 +29,11 @@ volatile byte seqB_left = 0;
 volatile byte seqA_right = 0;
 volatile byte seqB_right = 0;
 
+volatile uint32_t right_wheel_dt[DT_ARRAY_SIZE] = {0};
+volatile uint8_t right_wheel_dt_index = 0;
+
+volatile uint32_t left_wheel_dt[DT_ARRAY_SIZE] = {0};
+volatile uint8_t left_wheel_dt_index = 0;
 
 /**
  * Does all necessary initialisation for interrupts
@@ -148,9 +139,14 @@ void encoder_left_handle()
     seqB_left &= 0b00001111;
 
     if (seqA_left == 0b00001001 && seqB_left == 0b00000011) {
-        run_status.bot_position.left_wheel_rotations++;
+        run_status.bot_position.left_wheel_ticks++;
+        int last_index = left_wheel_dt_index == 0 ? DT_ARRAY_SIZE - 1 : left_wheel_dt_index - 1;
+        left_wheel_dt[left_wheel_dt_index++] = millis() - left_wheel_dt[last_index];
+        if (left_wheel_dt_index == DT_ARRAY_SIZE) {
+            left_wheel_dt_index = 0;
+        }
     } else if (seqA_left == 0b00000011 && seqB_left == 0b00001001) {
-        run_status.bot_position.left_wheel_rotations--;
+        run_status.bot_position.left_wheel_ticks--;
     }
 }
 
@@ -172,9 +168,14 @@ void encoder_right_handle()
     seqB_right &= 0b00001111;
 
     if (seqA_right == 0b00001001 && seqB_right == 0b00000011) {
-        run_status.bot_position.right_wheel_rotations++;
+        run_status.bot_position.right_wheel_ticks++;
+        int last_index = right_wheel_dt_index == 0 ? DT_ARRAY_SIZE - 1 : right_wheel_dt_index - 1;
+        right_wheel_dt[right_wheel_dt_index++] = millis() - right_wheel_dt[last_index];
+        if (right_wheel_dt_index == DT_ARRAY_SIZE) {
+            right_wheel_dt_index = 0;
+        }
     } else if (seqA_right == 0b00000011 && seqB_right == 0b00001001) {
-        run_status.bot_position.right_wheel_rotations--;
+        run_status.bot_position.right_wheel_ticks--;
     }
 }
 

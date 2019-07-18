@@ -37,10 +37,9 @@ void reach_ramp()
         Serial.print("IF this says 1, currently in dev: ");
         Serial.println(digitalRead(MASTER_SWITCH));
         */
-        if (digitalRead(MASTER_SWITCH) == DEV) {
-            // Serial.println("Breaking out of this rubbish loop");
-            break;
-        }
+        // if (digitalRead(MASTER_SWITCH) == DEV) {
+        //     break;
+        // }
     }
 
     if (digitalRead(MASTER_SWITCH) == COMP) {

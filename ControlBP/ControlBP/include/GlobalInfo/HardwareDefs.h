@@ -42,6 +42,9 @@
 #define ENCODER_LEFT_A PB5
 #define ENCODER_LEFT_B PB4
 
+// fault light
+#define BLINKY PC13
+
 //communication
 #define TX PB10
 #define RX PB11
