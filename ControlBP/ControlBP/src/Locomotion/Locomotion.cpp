@@ -49,6 +49,17 @@ int follow_tape(float torque)
 }
 
 /**
+ * Rotates bot on the spot (clockwise bc I felt like it)
+ */
+int rotate_on_spot(float pwm)
+{
+    run_motor(RIGHT_MOTOR, FWD, pwm);
+    run_motor(LEFT_MOTOR, BACK, pwm);
+    
+    return SUCCESS;
+}
+
+/**
  * Backtracks to reach tape, using historical information of movement
  * Checks for any change of state during backtracking
  * Returns:     SUCCESS - if tape successfully found 

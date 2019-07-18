@@ -13,6 +13,29 @@
 #define RETURN_TIME 130 // in seconds, arbitrary rn
 #define BLINKY PC13
 
+void encoder_left_handle();
+void encoder_right_handle();
+
+/**
+ * Sets state to handle collision when bumpers detect collision from left
+ */
+void collision_left();
+
+/**
+ * Sets state to handle collision when bumpers detect collision from right
+ */
+void collision_right();
+
+/**
+ * Sets state to handle collision when bumpers detect collision from front
+ */
+void collision_front();
+
+/**
+ * Sets state to handle collision when bumpers detect collision from back
+ */
+void collision_back();
+
 // encoder interrupts on wheels
 volatile byte seqA_left = 0;
 volatile byte seqB_left = 0;

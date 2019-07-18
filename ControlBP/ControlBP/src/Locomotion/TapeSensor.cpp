@@ -61,6 +61,11 @@ int get_tape_following_error()
     }
 }
 
+int branch_reached()
+{
+    return left_wing_sensor() || right_wing_sensor();
+}
+
 /**
  * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
  * Params:  expected_side - side on which we expect a branch to appear
@@ -75,11 +80,6 @@ int branch_reached(int expected_side)
         return TRUE;
     }
     return FALSE;
-    // if (branch_reach_calls < DEBUG_BRANCH_REACH_EXPECTED) {
-    //     branch_reach_calls++;
-    //     return 0;
-    // }
-    // return 1;
 }
 
 /**
@@ -111,6 +111,25 @@ int left_sensor()
 }
 
 /**
+ * Returns: 0 if outer left sensor is over threshold (over white)
+ *          1 if outer left sensor is below threshold (over tape)
+ */
+int outer_left_sensor()
+{
+    return analogRead(OUTER_LEFT_SENSOR) > tape_sensor_threshold;
+}
+
+/**
+ * Returns: 0 if outer left sensor is over threshold (over white)
+ *          1 if outer left sensor is below threshold (over tape)
+ */
+int outer_right_sensor()
+{
+    return analogRead(OUTER_RIGHT_SENSOR) > tape_sensor_threshold;
+}
+
+
+/**
  * Returns: 0 if right sensor is over threshold (over white)
  *          1 if right sensor is below threshold (over tape)
  */
@@ -131,10 +150,8 @@ int right_wing_sensor()
 }
 
 /**
- * Returns:     0 if neither sensors on
- *              1 if outer sensor but not the inner is on tape
- *              -1 if inner sensor but not the outer is on tape
- *              2 if both sensors are on it
+ * Returns:     0 if sensor off
+ *              1 if sensor on
  */
 int left_wing_sensor()
 {

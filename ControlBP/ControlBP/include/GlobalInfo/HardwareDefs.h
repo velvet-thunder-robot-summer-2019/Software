@@ -79,6 +79,8 @@
 #define LEFT_MOTOR 0
 #define RIGHT_MOTOR 1
 
+#define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.3
+
 // communication status
 // when communication fails
 #define COMM_TIMEOUT 0xAA // i.e. no response
