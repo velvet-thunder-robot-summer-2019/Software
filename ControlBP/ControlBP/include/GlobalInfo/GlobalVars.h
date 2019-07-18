@@ -13,7 +13,6 @@ typedef enum
     DEBUG,
     REACH_RAMP,
     ASCEND_RAMP,
-    CALIBRATE,
     FIND_POST,
     GET_INFINITY_STONE,
     RETURN_TO_GAUNTLET,

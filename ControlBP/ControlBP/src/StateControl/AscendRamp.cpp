@@ -47,7 +47,7 @@ void ascend_ramp()
     }
     // ok so we should've turned onto the right branch, let's go
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        switch_state(ASCEND_RAMP, CALIBRATE);
+        switch_state(ASCEND_RAMP, FIND_POST);
     } else {
         switch_state(ASCEND_RAMP, MENU);
     }

@@ -7,7 +7,6 @@
 
 #include "StateControl/ReachRamp.h"
 #include "StateControl/AscendRamp.h"
-#include "StateControl/Calibrate.h"
 #include "StateControl/FindPost.h"
 #include "StateControl/GetInfinityStone.h"
 #include "StateControl/ReturnToGauntlet.h"
@@ -54,10 +53,6 @@ void loop() {
     
     case ASCEND_RAMP :
       ascend_ramp();
-      break;
-
-    case CALIBRATE :
-      calibrate();
       break;
 
     case FIND_POST :

@@ -26,7 +26,6 @@ typedef enum
 {
     REACH_RAMP_MENU,
     ASCEND_RAMP_MENU,
-    CALIBRATE_MENU,
     FIND_POST_MENU,
     GET_INFINITY_STONE_MENU,
     RETURN_TO_GAUNTLET_MENU,
@@ -271,23 +270,10 @@ void state_menu()
                     delay(MENU_REFRESH_DELAY / 10);
                 }
                 if (!digitalRead(NAVIGATE)) {
-                    displayed_state = CALIBRATE_MENU;
-                } else if (!digitalRead(SET)) {
-                    switch_state(MENU, CALIBRATE);
-                    Serial.println("Entering ascend ramp state");
-                }
-                break;
-
-            case CALIBRATE_MENU:
-                Serial.println("calibrate menu");
-                while (digitalRead(NAVIGATE) && digitalRead(SET)) {
-                    delay(MENU_REFRESH_DELAY / 10);
-                }
-                if (!digitalRead(NAVIGATE)) {
                     displayed_state = FIND_POST_MENU;
                 } else if (!digitalRead(SET)) {
-                    switch_state(MENU, CALIBRATE);
-                    Serial.println("Entering calibrate state");
+                    switch_state(MENU, ASCEND_RAMP);
+                    Serial.println("Entering ascend ramp state");
                 }
                 break;
                 
