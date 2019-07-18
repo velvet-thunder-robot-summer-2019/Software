@@ -266,7 +266,7 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
         front_reached_branch = branch_reached_front();
         back_reached_branch = branch_reached();
     }
-    while (!back_reached_branch()) {
+    while (!back_reached_branch) {
         uint8_t response;
         if (!stopping_at_branch) {
             response = follow_tape(FLAT_GROUND_APPROACHING_STOP_PWM);

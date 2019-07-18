@@ -26,6 +26,13 @@ int branch_reached(int expected_side);
 int branch_reached();
 
 /**
+ * Returns TRUE if the front sensors reach a branch, FALSE otherwise
+ * Essentially, if a side sensor and ANY other sensor are on tape, we can deduce that 
+ * there must be a branch
+ */
+int branch_reached_front();
+
+/**
  * Updates cutoff threshold for tape sensors to potentiometer value
  */
 void update_threshold_tape_sensor();

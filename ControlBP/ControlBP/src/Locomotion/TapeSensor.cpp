@@ -73,8 +73,8 @@ int branch_reached()
  */
 int branch_reached_front()
 {
-    return (left_sensor() || right_sensor() || right_wing_sensor()) && left_wing_sensor()) ||
-            (left_sensor() || right_sensor() || left_wing_sensor()) && right_wing_sensor());
+    return ((left_sensor() || right_sensor() || right_wing_sensor()) && left_wing_sensor()) ||
+            ((left_sensor() || right_sensor() || left_wing_sensor()) && right_wing_sensor());
 }
 
 /**
