@@ -2,77 +2,97 @@
  *      correct position
  */
 
+#include "ArmController/ArmDriver.h"
+
 /** Move the arm to the position specified by the angles
- *  @param theta1: angle of the base arm clockwise from the z-axis in degrees
- *  @param theta2: angle of the forearm clockwise from the direction of the base arm in degrees.
- *  @param theta3: angle of the wrist clockwise from the direction of the forearm in degrees
- *  @param phi: The turning angle of the turntable from the x axis in degrees.
- *  Returns: status of operation
+ *  @param base_arm_angle: angle of the base arm clockwise from the z-axis in degrees
+ *  @param forearm_angle: angle of the forearm clockwise from the direction of the base arm in degrees.
+ *  @param wrist_angle: angle of the wrist clockwise from the direction of the forearm in degrees
+ *  @param turntable_angle: The turning angle of the turntable from the x axis in degrees.
+ *  Returns: MOVE_SUCCESS if the required configuration is reached
+ *           MOVE_FAILED if the required configuration cannot be obtained
  */
-int move_whole_arm_position(float theta1, float theta2, float theta3, float phi)
+byte move_whole_arm_position(float base_arm_angle, float forearm_angle, float wrist_angle, float turntable_angle)
 {
-    return 0;
+    return MOVE_SUCCESS;
+}
+
+/** Move the turntable to the new position
+ *  @param delta_turntable_angle: difference between expected base arm angle and actual potentiometer value
+ *  Returns: MOVE_SUCCESS if the required configuration is reached
+ *           MOVE_FAILED if the required configuration cannot be obtained
+ */
+byte move_turntable_position(float delta_turntable_angle)
+{
+    uint16_t duration = calculate_turntable_movement_time(delta_turntable_angle);
+
+    return MOVE_SUCCESS;
 }
 
 /** Move the base arm to the new position
- *  @param deltaTheta1: difference between expected base arm angle and actual potentiometer value
- *  Returns: status of operation
+ *  @param delta_base_arm_angle: difference between expected base arm angle and actual potentiometer value
+ *  Returns: MOVE_SUCCESS if the required configuration is reached
+ *           MOVE_FAILED if the required configuration cannot be obtained
  */
-int move_base_arm_position(float deltaTheta1)
+byte move_base_arm_position(float delta_base_arm_angle)
 {
-    return 0;
+    uint16_t duration = calculate_base_arm_movement_time(delta_base_arm_angle);
+
+    return MOVE_SUCCESS;
 }
 
 /** Move the forearm to the new position
- *  @param deltaTheta2: difference between expected forearm angle and actual potentiometer value
- *  Returns: status of operation
+ *  @param delta_forearm_angle: difference between expected forearm angle and actual potentiometer value
+ *  Returns: MOVE_SUCCESS if the required configuration is reached
+ *           MOVE_FAILED if the required configuration cannot be obtained
  */
-int move_forearm_position(float deltaTheta2)
+byte move_forearm_position(float delta_forearm_angle)
 {
-    return 0;
+    return MOVE_SUCCESS;
 }
 
 /** Move the wrist to the new position
- *  @param deltaTheta3: difference between expected wrist angle and actual potentiometer value
- *  Returns: status of operation
+ *  @param delta_wrist_angle: difference between expected wrist angle and actual potentiometer value
+ *  Returns: MOVE_SUCCESS if the required configuration is reached
+ *           MOVE_FAILED if the required configuration cannot be obtained
  */
-int move_wrist_position(float deltaTheta3)
+byte move_wrist_position(float delta_wrist_angle)
 {
-    return 0;
+    return MOVE_SUCCESS;
 }
 
 /** Calculate an estimated duration needed to move the turntable to the new position
- *  @param deltaPhi: difference between expected turntable angle and actual potentiometer value
- *  Returns: status of operation
+ *  @param delta_turntable_angle: difference between expected turntable angle and actual potentiometer value
+ *  Returns: movement time in ms
  */
-int calculate_turntable_movement_time(float deltaPhi)
+uint16_t calculate_turntable_movement_time(float delta_turntable_angle)
 {
     return 0;
 }
 
 /** Calculate an estimated duration needed to move the base arm to the new position
- *  @param deltaTheta1: difference between expected base arm angle and actual potentiometer value
- *  Returns: status of operation
+ *  @param delta_base_arm_angle: difference between expected base arm angle and actual potentiometer value
+ *  Returns: movement time in ms
  */
-int calculate_base_arm_movement_time(float deltaTheta1)
+uint16_t calculate_base_arm_movement_time(float delta_base_arm_angle)
 {
     return 0;
 }
 
 /** Calculate an estimated duration needed to move the forearm to the new position
- *  @param deltaTheta2: difference between expected forearm angle and actual potentiometer value
- *  Returns: status of operation
+ *  @param delta_forearm_angle: difference between expected forearm angle and actual potentiometer value
+ *  Returns: movement time in ms
  */
-int calculate_forearm_movement_time(float deltaTheta2)
+uint16_t calculate_forearm_movement_time(float delta_forearm_angle)
 {
     return 0;
 }
 
 /** Calculate an estimated duration needed to move the wrist to the new position
- *  @param deltaTheta3: difference between expected wrist angle and actual potentiometer value
- *  Returns: status of operation
+ *  @param delta_wrist_angle: difference between expected wrist angle and actual potentiometer value
+ *  Returns: movement time in ms
  */
-int calculate_wrist_movement_time(float deltaTheta3)
+uint16_t calculate_wrist_movement_time(float delta_wrist_angle)
 {
     return 0;
 }

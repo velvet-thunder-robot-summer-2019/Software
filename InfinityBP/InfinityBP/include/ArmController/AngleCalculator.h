@@ -14,6 +14,10 @@
 #define RAD_DEG 180.0/3.1415926535
 #define DEG_RAD 3.1415925635/180.0
 
+#define UNREACHABLE_ERROR ;
+
+#define EXTENSION_LENGTH 0
+
 /** Calculates the absolute length of the extended arm, projected onto the xy plane
  * @param x: The x-coordinate of the arm in mm
  * @param y: The y-coordinate of the arm in mm
@@ -57,3 +61,38 @@ float calculate_forearm_angle(float xy, float z);
  * Returns: The necessary rotational angle of the wrist joint of the forearm. This angle has values between -180 and 180 inclusive
  */
 float calculate_wrist_angle(float armAngle, float foreArmAngle);
+
+/** Calculates the x position in mm of the tip of the arm from the base of the arm
+ *  @param turntableAngle: The angle in degrees of the turntable, measured anticlockwise from the x-axis. This angle has values
+ *                              between 0 and 360 inclusive 
+ *  @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
+ *                              -180 and 180 inclusive
+ *  @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
+ *                              has values between -180 and 180 inclusive
+ *  Returns: The x-position in mm of the tip of the arm from the base of the arm
+ */
+float calculate_xpos(float turntableAngle, float armAngle, float foreArmAngle);
+
+/** Calculates the y position in mm of the tip of the arm from the base of the arm
+ *  @param turntableAngle: The angle in degrees of the turntable, measured anticlockwise from the x-axis. This angle has values
+ *                              between 0 and 360 inclusive 
+ *  @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
+ *                              -180 and 180 inclusive
+ *  @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
+ *                              has values between -180 and 180 inclusive
+ *  Returns: The y-position in mm of the tip of the arm from the base of the arm
+ */
+float calculate_ypos(float turntableAngle, float armAngle, float foreArmAngle);
+
+/** Calculates the z position in mm of the tip of the arm from the base of the arm
+ *  @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
+ *                              -180 and 180 inclusive
+ *  @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
+ *                              has values between -180 and 180 inclusive
+ *  Returns: The z-position in mm of the tip of the arm from the base of the arm
+ */
+float calculate_zpos(float armAngle, float foreArmAngle);
+
+float calculate_x_extension(float x, float y);
+
+float calculate_y_extension(float x, float y);

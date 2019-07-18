@@ -1,6 +1,10 @@
 #ifndef CONTROL_COMMUNICATION_H_
 #define CONTROL_COMMUNICATION_H_
 
+#define COMM_SUCCESS 0
+#define COMM_TIMEOUT 1
+#define COMM_CORRUPT_RESPONSE 2
+
 #include <Arduino.h>
 
 /**

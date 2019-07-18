@@ -48,7 +48,7 @@ float calculate_turntable_angle(float x, float y)
  * @param z: The z-coordinate of the tip of the arm in mm
  * Returns: If the specified position is reachable, return the necessary angle clockwise from the z-axis.
  *              The angle is in degrees, having possible values between -180 to 180 inclusive.
- *          If the specified position is unreachable, return an error code.
+ *          If the specified position is unreachable, returns an error code
  */
 float calculate_arm_angle(float xy, float z)
 {
@@ -71,8 +71,7 @@ float calculate_arm_angle(float xy, float z)
     }
     else
     {
-        //TODO: Return an error code.
-        return 1000;
+        return UNREACHABLE_ERROR;
     }
 
 }
@@ -96,8 +95,7 @@ float calculate_forearm_angle(float xy, float z)
     }
     else
     {
-        //TODO: Return an error code
-        theta = 1000;
+        return UNREACHABLE_ERROR
     }
     
     return theta;
@@ -115,3 +113,74 @@ float calculate_wrist_angle(float armAngle, float foreArmAngle)
 {   
     return 90 - armAngle - foreArmAngle;
 }
+
+/** Calculates the x position in mm of the tip of the arm from the base of the arm
+ *  @param turntableAngle: The angle in degrees of the turntable, measured anticlockwise from the x-axis. This angle has values
+ *                              between 0 and 360 inclusive 
+ *  @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
+ *                              -180 and 180 inclusive
+ *  @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
+ *                              has values between -180 and 180 inclusive
+ *  Returns: The x-position in mm of the tip of the arm from the base of the arm
+ */
+float calculate_xpos(float turntableAngle, float armAngle, float foreArmAngle)
+{
+    
+    float xyPos;
+
+    xyPos = L1*sin(armAngle * DEG_RAD) + L2*cos((90 - armAngle - foreArmAngle) * DEG_RAD) + L3;
+
+    return xyPos * cos(turntableAngle * DEG_RAD);
+    
+}
+
+/** Calculates the y position in mm of the tip of the arm from the base of the arm
+ *  @param turntableAngle: The angle in degrees of the turntable, measured anticlockwise from the x-axis. This angle has values
+ *                              between 0 and 360 inclusive 
+ *  @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
+ *                              -180 and 180 inclusive
+ *  @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
+ *                              has values between -180 and 180 inclusive
+ *  Returns: The y-position in mm of the tip of the arm from the base of the arm
+ */
+float calculate_ypos(float turntableAngle, float armAngle, float foreArmAngle)
+{
+
+    float xyPos;
+
+    xyPos = L1*sin(armAngle * DEG_RAD) + L2*cos((90 - armAngle - foreArmAngle) * DEG_RAD) + L3;
+
+    return xyPos * sin(turntableAngle * DEG_RAD);
+    
+}
+
+/** Calculates the z position in mm of the tip of the arm from the base of the arm
+ *  @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
+ *                              -180 and 180 inclusive
+ *  @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
+ *                              has values between -180 and 180 inclusive
+ *  Returns: The z-position in mm of the tip of the arm from the base of the arm
+ */
+float calculate_zpos(float armAngle, float foreArmAngle)
+{
+
+    float zPos;
+
+    zPos = L1*cos(armAngle * DEG_RAD) + L2*cos((armAngle + foreArmAngle) * DEG_RAD);
+
+    return zPos;
+    
+}
+
+float calculate_x_extension(float x, float y)
+{
+    return EXTENSION_LENGTH * x / sqrt(pow(x,2) + pow(y,2));
+}
+
+float calculate_y_extension(float x, float y)
+{
+    return EXTENSION_LENGTH * y / sqrt(pow(x,2) + pow(y,2));
+}
+
+
+
