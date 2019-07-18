@@ -40,10 +40,12 @@ void ascend_ramp()
         while (!outer_left_sensor()) {
             follow_arc_rho(LEFT, ARC_LENGTH_FOR_TURN, TURN_PWM);
         }
+        update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
     } else {
         while (!outer_right_sensor()) {
             follow_arc_rho(RIGHT, ARC_LENGTH_FOR_TURN, TURN_PWM);
         }
+        update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
     }
     // ok so we should've turned onto the right branch, let's go
     if (digitalRead(MASTER_SWITCH) == COMP) {

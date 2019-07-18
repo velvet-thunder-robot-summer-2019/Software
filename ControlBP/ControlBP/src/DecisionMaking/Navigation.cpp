@@ -351,9 +351,12 @@ int face_reverse_direction(state expected_state)
     return SUCCESS;
 }
 
-void update_position(location new_location)
+void update_position(location last_location, location next_location)
 {
-
+    run_status.bot_position.last_location = last_location;
+    run_status.bot_position.next_location = next_location;
+    run_status.bot_position.left_wheel_ticks = 0;
+    run_status.bot_position.right_wheel_ticks = 0;
 }
 
  

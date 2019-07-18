@@ -5,5 +5,6 @@
 
 int ramp_reached();
 void move_to(location next_location);
+void update_position(location last_location, location next_location);
 
 #endif // POSITIONING_H_
