@@ -67,6 +67,17 @@ int branch_reached()
 }
 
 /**
+ * Returns TRUE if the front sensors reach a branch, FALSE otherwise
+ * Essentially, if a side sensor and ANY other sensor are on tape, we can deduce that 
+ * there must be a branch
+ */
+int branch_reached_front()
+{
+    return (left_sensor() || right_sensor() || right_wing_sensor()) && left_wing_sensor()) ||
+            (left_sensor() || right_sensor() || left_wing_sensor()) && right_wing_sensor());
+}
+
+/**
  * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
  * Params:  expected_side - side on which we expect a branch to appear
  */

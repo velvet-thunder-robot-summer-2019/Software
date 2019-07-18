@@ -80,6 +80,7 @@
 #define RIGHT_MOTOR 1
 
 #define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.3
+#define FLAT_GROUND_APPROACHING_STOP_PWM 0.05
 
 // communication status
 // when communication fails

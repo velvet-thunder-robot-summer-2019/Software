@@ -15,6 +15,16 @@ void init_tape_following();
 int follow_tape(float torque);
 
 /**
+ * move backwards in straight line
+ */
+int reverse(float pwm);
+
+/**
+ * Stops motors
+ */
+int stop_motors();
+
+/**
  * Backtracks to reach tape, using historical information of movement
  * Checks for any change of state during backtracking
  * Returns:     SUCCESS - if tape successfully found 

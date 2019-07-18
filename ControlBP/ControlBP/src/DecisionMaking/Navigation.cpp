@@ -243,24 +243,57 @@ void move_to(location next_location)
     }
 }
 
-int reach_adjacent_location_on_tape(location next_location, state expected_state)
-{
+int reach_adjacent_location_on_tape(location next_location, state expected_state, bool stopping_at_branch)
+{  
+    // turn around if need be  
     if (run_status.bot_position.last_location == next_location) {
         int reversal_success = face_reverse_direction(expected_state);
         if (reversal_success == STATE_CHANGED) {
             return STATE_CHANGED;
         }
     }
-    while (!branch_reached()) {
+    // move till the point, be aware that we may overshoot
+    int front_reached_branch = branch_reached_front();
+    int back_reached_branch = branch_reached();
+    while (!front_reached_branch && !back_reached_branch) {
         uint8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (response == TAPE_NOT_FOUND) {
-            backtrack_to_tape();
+             backtrack_to_tape();
         }
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
+        front_reached_branch = branch_reached_front();
+        back_reached_branch = branch_reached();
     }
+    while (!back_reached_branch()) {
+        uint8_t response;
+        if (!stopping_at_branch) {
+            response = follow_tape(FLAT_GROUND_APPROACHING_STOP_PWM);
+        } else {
+            response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+        }
+        if (response == TAPE_NOT_FOUND) {
+             backtrack_to_tape();
+        }
+        if (robot_state() != expected_state) {
+            return STATE_CHANGED;
+        }
+        back_reached_branch = branch_reached();
+    }
+    // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
+    while (!branch_reached()) {
+        reverse(FLAT_GROUND_APPROACHING_STOP_PWM);
+    }
+    stop_motors();
     return SUCCESS;
+}
+
+int reach_adjacent_branch_cross_country(location location_1, location location_2, state expected_state)
+{
+    // start by turning to face correct area
+    // go forward till we hit other tape with ANY of the front sensors
+
 }
 
 

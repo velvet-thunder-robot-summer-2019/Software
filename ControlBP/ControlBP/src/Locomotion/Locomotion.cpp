@@ -60,6 +60,27 @@ int rotate_on_spot(float pwm)
 }
 
 /**
+ * backs up the robot
+ */
+int reverse(float pwm)
+{
+    run_motor(RIGHT_MOTOR, BACK, pwm);
+    run_motor(LEFT_MOTOR, BACK, pwm);
+    return SUCCESS;
+}
+
+/**
+ * Stops the robot's motors
+ */
+int stop_motors()
+{
+    run_motor(RIGHT_MOTOR, FWD, 0);
+    run_motor(LEFT_MOTOR, FWD, 0);
+    return SUCCESS;
+}
+
+
+/**
  * Backtracks to reach tape, using historical information of movement
  * Checks for any change of state during backtracking
  * Returns:     SUCCESS - if tape successfully found 
