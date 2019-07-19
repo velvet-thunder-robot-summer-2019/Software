@@ -25,6 +25,9 @@
 #define FORE_ARM_POS_PIN 0
 #define FORE_ARM_NEG_PIN 0
 
+#define PWM_CLOCK_FREQ 0
+#define PWM_PERIOD 0
+
 enum motor_direction 
 {
     CLOCKWISE,
@@ -72,3 +75,18 @@ pwm_response calculate_base_arm_pwm(float delta_base_arm_angle);
  *  Returns: pwm_response_struct
  */
 pwm_response calculate_forearm_pwm(float delta_forearm_angle);
+
+/** Updates the register of past errors for the turntable angle
+ *  @param error: the most recent error
+ */
+void turntable_update_error(float error);
+
+/** Updates the register of past errors for the base arm angle
+ *  @param error: the most recent error
+ */
+void base_arm_update_error(float error);
+
+/** Updates the register of past errors for the forearm agnle
+ *  @param error: the most recent error
+ */
+void forearm_update_error(float error);
