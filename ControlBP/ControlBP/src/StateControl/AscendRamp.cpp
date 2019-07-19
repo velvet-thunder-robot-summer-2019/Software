@@ -19,12 +19,12 @@ void ascend_ramp()
     }
 
     //determine which side top of ramp tape would be at
-    uint8_t tape_side;
-    if (run_status.bot_identity == METHANOS) {
-        tape_side = RIGHT;
-    } else {
-        tape_side = LEFT;
-    }
+    // uint8_t tape_side;
+    // if (run_status.bot_identity == METHANOS) {
+    //     tape_side = RIGHT;
+    // } else {
+    //     tape_side = LEFT;
+    // }
 
     while (!branch_reached_front()) {
         uint8_t response = follow_tape(ASCEND_RAMP_TORQUE);
@@ -36,13 +36,22 @@ void ascend_ramp()
         }
     }
     // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
+    // int (*const fcnPtr)() = I_am_inevitable ? outer_left_se
+    if (turn_onto_branch() == STATE_CHANGED) {
+        return;
+    }
+
     if (run_status.bot_identity == THANOS) {
         while (!outer_left_sensor()) {
             follow_arc_rho(LEFT, ARC_LENGTH_FOR_TURN, TURN_PWM);
         }
         update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
     } else {
-        while (!outer_right_sensor()) {
+        while (outer_right_sensor()) {
+            // goal here is to get the right sensor off that tape in the first place
+            follow_arc_rho(RIGHT, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        }
+        while (!right_sensor()) {
             follow_arc_rho(RIGHT, ARC_LENGTH_FOR_TURN, TURN_PWM);
         }
         update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
@@ -53,4 +62,22 @@ void ascend_ramp()
     } else {
         switch_state(ASCEND_RAMP, MENU);
     }
+}
+
+int turn_onto_branch()
+{
+    int I_am_inevitable = run_status.bot_identity == THANOS;
+    int side_to_turn = I_am_inevitable ? LEFT : RIGHT;
+    int (*const sensor_on_turn_side)() = I_am_inevitable ? outer_left_sensor : outer_right_sensor;
+    if (robot_state() != ASCEND_RAMP) {
+        return STATE_CHANGED;
+    }
+
+    if (!sensor_on_turn_side()) {
+        // we should already be on the good path, don't fuss
+        return SUCCESS;
+    }
+
+    return SUCCESS;
+
 }
