@@ -82,8 +82,11 @@
 #define LEFT_MOTOR 0
 #define RIGHT_MOTOR 1
 
+// drivings vals and PWMs
 #define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.3
 #define FLAT_GROUND_APPROACHING_STOP_PWM 0.05
+#define ARC_LENGTH_FOR_TURN 100
+#define TURN_PWM 0.1
 
 // communication status
 // when communication fails

@@ -24,6 +24,11 @@ int reverse(float pwm);
  */
 int stop_motors();
 
+/**
+ * Turns onto the LEFT or RIGHT path of a fork (direction specified by param)
+ * Params:      direction - LEFT or RIGHT, this is the fork direction we want
+ */
+int turn_onto_branch(int direction);
 
 /**
  * Turns the robot along circle of arc length rho (cm), at speed prop to pwm,
