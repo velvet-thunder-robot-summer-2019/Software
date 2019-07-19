@@ -42,30 +42,21 @@ void return_to_gauntlet()
     update_position(my_first_post, my_intersection);
 
     // move and turn into intersection
-    while (!branch_reached_front()) {
-        int8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-        if (response == TAPE_NOT_FOUND) {
-             backtrack_to_tape();
-        }
-        if (robot_state() != RETURN_TO_GAUNTLET) {
-            return;
-        }
+    if (follow_tape_till_branch(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+        return;
     }
+
     int direction = inevitable ? RIGHT : LEFT;
     if (turn_onto_branch(direction, RETURN_TO_GAUNTLET) == STATE_CHANGED)
     {
         return;
     }
     update_position(my_intersection, my_gauntlet);
-    while (!branch_reached_front()) {
-        int8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-        if (response == TAPE_NOT_FOUND) {
-             backtrack_to_tape();
-        }
-        if (robot_state() != RETURN_TO_GAUNTLET) {
-            return;
-        }
+
+    if (follow_tape_till_branch(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+        return;
     }
+    
     direction = inevitable ? LEFT : RIGHT;
     if (turn_onto_branch(direction, RETURN_TO_GAUNTLET)) {
         return;

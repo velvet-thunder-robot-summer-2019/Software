@@ -15,23 +15,9 @@ void ascend_ramp()
     if (robot_state() != ASCEND_RAMP) {
         return;
     }
-
-    //determine which side top of ramp tape would be at
-    // uint8_t tape_side;
-    // if (run_status.bot_identity == METHANOS) {
-    //     tape_side = RIGHT;
-    // } else {
-    //     tape_side = LEFT;
-    // }
-
-    while (!branch_reached_front()) {
-        uint8_t response = follow_tape(ASCEND_RAMP_TORQUE);
-        if (response == TAPE_NOT_FOUND) {
-            backtrack_to_tape();
-        }
-        if (robot_state() != ASCEND_RAMP) {
-            return;
-        }
+    
+    if (follow_tape_till_branch(ASCEND_RAMP) == STATE_CHANGED) {
+        return;
     }
     // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
     

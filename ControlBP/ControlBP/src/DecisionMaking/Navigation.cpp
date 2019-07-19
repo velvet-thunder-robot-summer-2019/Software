@@ -348,6 +348,18 @@ int turn_onto_branch(int direction, state expected_state)
     return SUCCESS;
 }
 
+int follow_tape_till_branch(state expected_state) {
+    while (!branch_reached_front()) {
+        int8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+        if (response == TAPE_NOT_FOUND) {
+             backtrack_to_tape();
+        }
+        if (robot_state() != expected_state) {
+            return STATE_CHANGED;
+        }
+    }
+}
+
 
 int reach_adjacent_branch_cross_country(location location_1, location location_2, state expected_state)
 {
