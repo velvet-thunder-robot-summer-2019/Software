@@ -96,48 +96,6 @@ int stop_motors()
 }
 
 /**
- * Turns onto the LEFT or RIGHT path of a fork (direction specified by param)
- * Params:      direction - LEFT or RIGHT, this is the fork direction we want
- */
-int turn_onto_branch(int direction)
-{
-    bool outer_left = outer_left_sensor();
-    bool outer_right = outer_right_sensor();
-
-    int (*const inner_sensor_on_turn_side)() = (direction == LEFT) ? left_sensor : right_sensor;
-    int outer_turn_side_on_tape = (direction == LEFT) ? outer_left : outer_right;
-
-    if (robot_state() != ASCEND_RAMP) {
-        return STATE_CHANGED;
-    }
-
-    if (!outer_turn_side_on_tape) {
-        // we should already be on the good path, don't fuss
-        return SUCCESS;
-    }
-
-    if (outer_right || outer_left) {
-        // if not BOTH are on, this means that one or both of the middle ones are one
-        // get the middle one on the side we care about off
-        while (inner_sensor_on_turn_side()) {
-            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
-            if (run_status.bot_state != ASCEND_RAMP) {
-                return STATE_CHANGED;
-            }
-        }
-    }
-    // when the middle sensor on the side we care about comes back onto the tape, we should be back on the correct path (wanted path)~
-    while (!inner_sensor_on_turn_side()) {
-        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
-        if (run_status.bot_state != ASCEND_RAMP) {
-            return STATE_CHANGED;
-        }
-    }
-    return SUCCESS;
-}
-
-
-/**
  * Backtracks to reach tape, using historical information of movement
  * Checks for any change of state during backtracking
  * Returns:     SUCCESS - if tape successfully found 

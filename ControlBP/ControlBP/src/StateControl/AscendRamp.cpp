@@ -37,7 +37,7 @@ void ascend_ramp()
     
     int branch_to_follow = run_status.bot_identity == THANOS ? LEFT : RIGHT;
 
-    if (turn_onto_branch(branch_to_follow) == STATE_CHANGED) {
+    if (turn_onto_branch(branch_to_follow, ASCEND_RAMP) == STATE_CHANGED) {
         return;
     }
 

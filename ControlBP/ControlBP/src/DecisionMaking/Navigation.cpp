@@ -292,7 +292,7 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
             return STATE_CHANGED;
         }
         back_reached_branch = branch_reached();
-        // update ze bloody position
+        // update ze bloody location outside of this code. It's a pain otherwise
     }
     // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
     if (stopping_at_branch) 
@@ -305,6 +305,49 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     // handle the intersection cases where it's NOT the end?
     return SUCCESS;
 }
+
+
+/**
+ * Turns onto the LEFT or RIGHT path of a fork (direction specified by param)
+ * Params:      direction - LEFT or RIGHT, this is the fork direction we want
+ */
+int turn_onto_branch(int direction, state expected_state)
+{
+    bool outer_left = outer_left_sensor();
+    bool outer_right = outer_right_sensor();
+
+    int (*const inner_sensor_on_turn_side)() = (direction == LEFT) ? left_sensor : right_sensor;
+    int outer_turn_side_on_tape = (direction == LEFT) ? outer_left : outer_right;
+
+    if (robot_state() != expected_state) {
+        return STATE_CHANGED;
+    }
+
+    if (!outer_turn_side_on_tape) {
+        // we should already be on the good path, don't fuss
+        return SUCCESS;
+    }
+
+    if (outer_right || outer_left) {
+        // if not BOTH are on, this means that one or both of the middle ones are one
+        // get the middle one on the side we care about off
+        while (inner_sensor_on_turn_side()) {
+            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+            if (run_status.bot_state != expected_state) {
+                return STATE_CHANGED;
+            }
+        }
+    }
+    // when the middle sensor on the side we care about comes back onto the tape, we should be back on the correct path (wanted path)~
+    while (!inner_sensor_on_turn_side()) {
+        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        if (run_status.bot_state != expected_state) {
+            return STATE_CHANGED;
+        }
+    }
+    return SUCCESS;
+}
+
 
 int reach_adjacent_branch_cross_country(location location_1, location location_2, state expected_state)
 {
