@@ -6,6 +6,7 @@
  */
 
 #include "ArmController/AngleCalculator.h"
+#include "HardwareDefs.h"
 
 /** Calculates the absolute length of the extended arm, projected onto the xy plane
  * @param x: The x-coordinate of the arm in mm

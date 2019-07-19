@@ -8,16 +8,6 @@
 #include "Arduino.h"
 #include <math.h>
 
-#define L1 20
-#define L2 20
-#define L3 5
-#define RAD_DEG 180.0/3.1415926535
-#define DEG_RAD 3.1415925635/180.0
-
-#define UNREACHABLE_ERROR ;
-
-#define EXTENSION_LENGTH 0
-
 /** Calculates the absolute length of the extended arm, projected onto the xy plane
  * @param x: The x-coordinate of the arm in mm
  * @param y: The y-coordinate of the arm in mm

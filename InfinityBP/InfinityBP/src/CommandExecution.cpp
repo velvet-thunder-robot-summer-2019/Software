@@ -5,6 +5,7 @@
 #include "CommandExecution.h"
 #include "HardwareDefs.h"
 #include "ArmController/ArmController.h"
+#include "GauntletController/GauntletController.h"
 
 //Commands to be received
 #define GET_ACK 0x00
@@ -16,6 +17,7 @@
 #define CONFIRM_POST_PRESENCE 0x07
 #define ASCEND_POST 0x08
 #define GRAB_STONE 0x09
+#define DEPLOY_GAUNTLET 0xA
 
 // command status from Infinity
 #define COMM_BUSY 0xAE
@@ -29,7 +31,9 @@ HardwareSerial CommSerial = HardwareSerial(RX, TX);
 
 void send_response(byte *response, int response_length);
 
-void init_communication() 
+/** Initialize communications
+ */
+void init_communication(void) 
 {
     CommSerial.begin(115200);
     while (!CommSerial) {
@@ -42,11 +46,13 @@ void init_communication()
     Serial.println("init_communication");
 }
 
-void execute_command() 
+/** Executes commands sent by the blue pill, if they exist
+ */
+void execute_command(void) 
 {
     if (CommSerial.available() < 3) {
 
-        //TODO: maintain the current arm position as it is
+        maintain_current_arm_position();
 
         return;
     }
@@ -108,7 +114,9 @@ void execute_command()
         case SET_STONE_IN_GAUNTLET:
         {
             Serial.println("SET_STONE_IN_GAUNTLET");
+            gauntlet_open_position();
             response[0] = put_stone_in_gauntlet();
+            gauntlet_storage_position();
             send_response(response, 1);
             break;
         }
@@ -134,6 +142,13 @@ void execute_command()
             send_response(response, 1);
             break;
         }
+        case DEPLOY_GAUNTLET:
+        {
+            Serial.println("DEPLOY_GAUNTLET");
+            response[0] = gauntlet_deploy_position();
+            send_response(response, 1);
+            break;
+        }
         default:
         {
             Serial.println("command not recognised");
@@ -144,7 +159,7 @@ void execute_command()
     }
 }
 
-/**
+/** Sends some response
  * Add some error catching / retries after
  */
 void send_response(byte *response, int response_length) 

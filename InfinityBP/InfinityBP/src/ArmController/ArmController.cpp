@@ -6,7 +6,9 @@
 #include "ArmController/ArmController.h"
 #include "ArmController/AngleCalculator.h"
 #include "ArmController/ArmSensors.h"
+#include "GauntletController/GauntletController.h"
 #include "CommandExecution.h"
+#include "HardwareDefs.h"
 
 /** Set up the initial position of the arm, the value of the gauntlet positions, and the post heights
  *  Returns: COMM_SUCCESS if the operation is successful
