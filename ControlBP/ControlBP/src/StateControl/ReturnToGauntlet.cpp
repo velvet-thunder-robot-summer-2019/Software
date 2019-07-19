@@ -1,40 +1,80 @@
 #include "AllPurposeInclude.h"
 #include "StateControl/ReturnToGauntlet.h"
 #include "DecisionMaking/DecisionMaking.h"
+#include "AllPurposeInclude.h"
+
+#define GO_INTO_GAUNTLET_TIME 2000 // 2 seconds
 
 void return_to_gauntlet()
 {
-    Serial.println("RETURN_TO_GAUNTLET state entered!");
-    Serial.println("______________________");
+    // Serial.println("RETURN_TO_GAUNTLET state entered!");
+    // Serial.println("______________________");
 
-    if (align_direction_to_return() == STATE_CHANGED)
-    {
+    // this is the case where we've hit up 3 posts and life is chill. 
+    bool inevitable = run_status.bot_identity == THANOS;
+    location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
+    location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
+    location my_first_post = inevitable ? POST_4 : POST_1;
+    location my_second_post = inevitable ? POST_3 : POST_2;
+    location my_third_post = inevitable ? POST_2 : POST_3;
+    location my_fourth_post = inevitable ? POST_1 : POST_4;
+
+    if (run_status.bot_state != RETURN_TO_GAUNTLET) {
         return;
     }
 
-    int gauntlet = (run_status.bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
-    int branch_side = get_checkpoint_expected_side();
+    if (face_reverse_direction(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+        return;
+    }
+    update_position(my_fourth_post, my_third_post);
 
-    while (run_status.bot_position.last_location != gauntlet) {
-        uint8_t response = follow_tape(TORQUE_OF_MOTION_AVG);
+    if (reach_adjacent_location_on_tape(my_third_post, RETURN_TO_GAUNTLET, false) == STATE_CHANGED) {
+        return;
+    }
+    update_position(my_third_post, my_second_post);
+    if (reach_adjacent_location_on_tape(my_second_post, RETURN_TO_GAUNTLET, false)) {
+        return;
+    }
+    update_position(my_second_post, my_first_post);
+    if (reach_adjacent_location_on_tape(my_first_post, RETURN_TO_GAUNTLET, false)) {
+        return;
+    }
+    update_position(my_first_post, my_intersection);
+
+    // move and turn into intersection
+    while (!branch_reached_front()) {
+        int8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (response == TAPE_NOT_FOUND) {
-            backtrack_to_tape();
+             backtrack_to_tape();
         }
         if (robot_state() != RETURN_TO_GAUNTLET) {
             return;
         }
-        if (branch_reached(branch_side)) {
-            update_position();
-        }
-
-        //TODO: remove this stupid line
-        run_status.bot_position.last_location = (run_status.bot_identity == METHANOS) ? METHANOS_GAUNTLET : THANOS_GAUNTLET;
     }
-
-    if (align_to_gauntlet() != SUCCESS) {
+    int direction = inevitable ? RIGHT : LEFT;
+    if (turn_onto_branch(direction, RETURN_TO_GAUNTLET) == STATE_CHANGED)
+    {
         return;
     }
-    
+    update_position(my_intersection, my_gauntlet);
+    while (!branch_reached_front()) {
+        int8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+        if (response == TAPE_NOT_FOUND) {
+             backtrack_to_tape();
+        }
+        if (robot_state() != RETURN_TO_GAUNTLET) {
+            return;
+        }
+    }
+    direction = inevitable ? LEFT : RIGHT;
+    if (turn_onto_branch(direction, RETURN_TO_GAUNTLET)) {
+        return;
+    }
+    // hardcode in way in
+    int start_time = millis();
+    while (millis() - start_time < GO_INTO_GAUNTLET_TIME) {
+        follow_tape(FLAT_GROUND_APPROACHING_STOP_PWM);
+    }
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(RETURN_TO_GAUNTLET, FIT_TO_GAUNTLET);

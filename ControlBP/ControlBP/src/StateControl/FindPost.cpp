@@ -99,11 +99,10 @@ void find_post()
 
         if (run_status.stones_status[post_index] == UNKNOWN) {
             // reach next location
-            if (reach_adjacent_location_on_tape(my_third_post, FIND_POST, TRUE) == STATE_CHANGED) {
+            if (reach_adjacent_location_on_tape(my_fourth_post, FIND_POST, TRUE) == STATE_CHANGED) {
                 return;
             }
-            location fourth_post = I_am_inevitable ? POST_1 : POST_4;
-            update_position(my_third_post, fourth_post);
+            update_position(my_fourth_post, I_am_inevitable ? METHANOS_INTERSECTION : THANOS_INTERSECTION);
         } else {
             digitalWrite(BLINKY, HIGH); // error bad things happened
             delay(1000);
