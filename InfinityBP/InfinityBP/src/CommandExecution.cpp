@@ -45,6 +45,9 @@ void init_communication()
 void execute_command() 
 {
     if (CommSerial.available() < 3) {
+
+        //TODO: maintain the current arm position as it is
+
         return;
     }
     byte param;

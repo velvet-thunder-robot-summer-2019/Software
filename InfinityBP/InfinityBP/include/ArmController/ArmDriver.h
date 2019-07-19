@@ -2,58 +2,73 @@
  *      correct position
  */
 
-#include "Arduino.h"
-
 #define MOVE_SUCCESS 1
 #define MOVE_FAIL 0
 
+#define FORWARD 1
+#define BACKWARD 0
+
+#define CLAW_SERVO_PIN 0
+#define WRIST_SERVO_PIN 0
+
+#define CLAW_SERVO_OPEN 0
+#define CLAW_SERVO_CLOSE 0
+
+#define WRIST_SERVO_MID 0
+
+#define TURNTABLE_POS_PIN 0
+#define TURNTABLE_NEG_PIN 0
+
+#define BASE_ARM_POS_PIN 0
+#define BASE_ARM_NEG_PIN 0
+
+#define FORE_ARM_POS_PIN 0
+#define FORE_ARM_NEG_PIN 0
+
+enum motor_direction 
+{
+    CLOCKWISE,
+    ANTI_CLOCKWISE
+};
+
+struct pwm_response 
+{
+    motor_direction dir;
+    float   pwm_val;
+}
+
 /** Move the arm to the position specified by the angles
- *  @param theta1: angle of the base arm clockwise from the z-axis in degrees
- *  @param theta2: angle of the forearm clockwise from the direction of the base arm in degrees.
- *  @param theta3: angle of the wrist clockwise from the direction of the forearm in degrees
- *  @param phi: The turning angle of the turntable from the x axis in degrees.
- *  Returns: status of operation
+ *  @param base_arm_angle: angle of the base arm clockwise from the z-axis in degrees
+ *  @param forearm_angle: angle of the forearm clockwise from the direction of the base arm in degrees.
+ *  @param wrist_angle: angle of the wrist clockwise from the direction of the forearm in degrees
+ *  @param turntable_angle: The turning angle of the turntable from the x axis in degrees.
+ *  Returns: MOVE_SUCCESS if the required configuration is reached
+ *           MOVE_FAILED if the required configuration cannot be obtained
  */
-byte move_whole_arm_position(float theta1, float theta2, float theta3, float phi);
+byte move_whole_arm_position(float base_arm_angle, float forearm_angle, float wrist_angle, float turntable_angle);
 
-/** Move the base arm to the new position
- *  @param deltaTheta1: difference between expected base arm angle and actual potentiometer value
- *  Returns: status of operation
+/** Opens the claw
  */
-byte move_base_arm_position(float deltaTheta1);
+void open_claw(void);
 
-/** Move the forearm to the new position
- *  @param deltaTheta2: difference between expected forearm angle and actual potentiometer value
- *  Returns: status of operation
+/** Closes the claw
  */
-byte move_forearm_position(float deltaTheta2);
+void close_claw(void);
 
-/** Move the wrist to the new position
- *  @param deltaTheta3: difference between expected wrist angle and actual potentiometer value
- *  Returns: status of operation
+/** Calculate a PID pwm response to the angular difference of the turntable
+ *  @param delta_turntable_angle: difference between expected turntable angle and actual potentiometer value
+ *  Returns: pwm_response struct
  */
-byte move_wrist_position(float deltaTheta3);
+pwm_response calculate_turntable_pwm(float delta_turntable_angle);
 
-/** Calculate an estimated duration needed to move the turntable to the new position
- *  @param deltaPhi: difference between expected turntable angle and actual potentiometer value
- *  Returns: movement time in ms
+/** Calculate a PID pwm response to the angular difference of the base arm
+ *  @param delta_base_arm_angle: difference between expected base arm angle and actual potentiometer value
+ *  Returns: pwm_response struct
  */
-uint16_t calculate_turntable_movement_time(float deltaPhi);
+pwm_response calculate_base_arm_pwm(float delta_base_arm_angle);
 
-/** Calculate an estimated duration needed to move the base arm to the new position
- *  @param deltaTheta1: difference between expected base arm angle and actual potentiometer value
- *  Returns: movement time in ms
+/** Calculate a PID pwm response to the angular difference of the forearm
+ *  @param delta_forearm_angle: difference between expected forearm angle and actual potentiometer value
+ *  Returns: pwm_response_struct
  */
-uint16_t calculate_base_arm_movement_time(float deltaTheta1);
-
-/** Calculate an estimated duration needed to move the forearm to the new position
- *  @param deltaTheta2: difference between expected forearm angle and actual potentiometer value
- *  Returns: movement time in ms
- */
-uint16_t calculate_forearm_movement_time(float deltaTheta2);
-
-/** Calculate an estimated duration needed to move the wrist to the new position
- *  @param deltaTheta3: difference between expected wrist angle and actual potentiometer value
- *  Returns: movement time in ms
- */
-uint16_t calculate_wrist_movement_time(float deltaTheta3);
+pwm_response calculate_forearm_pwm(float delta_forearm_angle);

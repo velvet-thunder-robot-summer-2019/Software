@@ -93,6 +93,16 @@ float calculate_ypos(float turntableAngle, float armAngle, float foreArmAngle);
  */
 float calculate_zpos(float armAngle, float foreArmAngle);
 
+/** Calculate how much the arm needs to extend in the x direction to grab a stone
+ *  @param x: x-position of the tip of the claw in mm
+ *  @param y: y-position of the tip of the claw in mm
+ *  Returns: the extension length in the x direction in mm
+ */
 float calculate_x_extension(float x, float y);
 
+/** Calculate how much the arm needs to extend in the y direction to grab a stone
+ *  @param x: x-position of the tip of the claw in mm
+ *  @param y: y-position of the tip of the claw in mm
+ *  Returns: the extension length in the y direction in mm
+ */
 float calculate_y_extension(float x, float y);
