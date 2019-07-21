@@ -11,7 +11,7 @@ void return_to_gauntlet()
     Serial.println("RETURN_TO_GAUNTLET state entered!");
     Serial.println("______________________");
     Serial.println("starting state: ");
-    Serial.println(run_status.bot_state);
+    Serial.println(robot_state());
 #endif
 
     // this is the case where we've hit up 3 posts and life is chill. 
@@ -23,11 +23,11 @@ void return_to_gauntlet()
     location my_third_post = inevitable ? POST_2 : POST_3;
     location my_fourth_post = inevitable ? POST_1 : POST_4;
 
-    if (run_status.bot_state != RETURN_TO_GAUNTLET) {
+    if (robot_state() != RETURN_TO_GAUNTLET) {
 #if TESTING_ORDER_OF_EVENTS
     Serial.println("status changed");
     Serial.print("status is: ");
-    Serial.println(run_status.bot_state);
+    Serial.println(robot_state());
 #endif
         return;
     }

@@ -36,10 +36,10 @@ int switch_state(state current_state, state new_state)
     return OTHER_STATE_CHANGE_IN_PROGRESS;
     */
     if (current_state == bot_state) {
-            previous_bot_state = bot_state;
-            bot_state = new_state;
-            return STATE_CHANGE_SUCCESSFUL;
-        }
+        previous_bot_state = bot_state;
+        bot_state = new_state;
+        return STATE_CHANGE_SUCCESSFUL;
+    }
     return OTHER_STATE_CHANGE_OCCURRED_FIRST;
 }
 

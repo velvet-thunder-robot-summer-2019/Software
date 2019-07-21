@@ -38,7 +38,7 @@ void setup() {
 
 void loop() {
   // MAIN CONTROL LOOP
-state bot_state = run_status.bot_state;  
+state bot_state = robot_state();  
 #if TESTING_ORDER_OF_EVENTS
   Serial.println("Begin control loop");
   Serial.print("bot state is: ");

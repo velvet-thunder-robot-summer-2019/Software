@@ -76,8 +76,6 @@ typedef struct
 typedef struct
 {
     /* data */
-    state bot_state;
-    state bot_previous_state;
     stone_status stones_status[TOTAL_NUM_STONE];
     position bot_position;
     identity bot_identity;

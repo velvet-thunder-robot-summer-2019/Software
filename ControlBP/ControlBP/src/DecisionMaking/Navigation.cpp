@@ -351,7 +351,7 @@ return SUCCESS;
         // get the middle one on the side we care about off
         while (inner_sensor_on_turn_side()) {
             follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
-            if (run_status.bot_state != expected_state) {
+            if (robot_state() != expected_state) {
                 return STATE_CHANGED;
             }
         }
@@ -359,7 +359,7 @@ return SUCCESS;
     // when the middle sensor on the side we care about comes back onto the tape, we should be back on the correct path (wanted path)~
     while (!inner_sensor_on_turn_side()) {
         follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
-        if (run_status.bot_state != expected_state) {
+        if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
@@ -406,27 +406,27 @@ return SUCCESS;
     while (!outer_left_sensor()) {
         // turn fairly fast until then
         rotate_on_spot(0.3);
-        if (run_status.bot_state != expected_state) {
+        if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
     while (!left_sensor()) {
         // turn slower around
         rotate_on_spot(0.1);
-        if (run_status.bot_state != expected_state) {
+        if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
     while (!(left_sensor() && right_sensor())) {
         // slow down to not overshoot!
         rotate_on_spot(0.07);
-        if (run_status.bot_state != expected_state) {
+        if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
     // stop motion once on line
     rotate_on_spot(0);
-    if (run_status.bot_state != expected_state) {
+    if (robot_state() != expected_state) {
         return STATE_CHANGED;
     }
     return SUCCESS;

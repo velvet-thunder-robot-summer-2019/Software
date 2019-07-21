@@ -32,7 +32,7 @@ void find_post()
             // tape follow till fork in road
             while (!branch_reached_front()) {
                 follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-                if (run_status.bot_state != FIND_POST) {
+                if (robot_state() != FIND_POST) {
                     return;
                 }
             }
@@ -130,7 +130,7 @@ void find_post()
         delay(1000);
         digitalWrite(BLINKY, HIGH);
         Serial.print("state is: ");
-        Serial.print(run_status.bot_state);
+        Serial.print(robot_state());
 #endif
         if (switch_state(FIND_POST, RETURN_TO_GAUNTLET) == OTHER_STATE_CHANGE_OCCURRED_FIRST) {
             Serial.println("other state changed preceeded this one");
@@ -141,7 +141,7 @@ void find_post()
 #if TESTING_ORDER_OF_EVENTS
         Serial.println("Robot state has changed from find_post");
         Serial.print("the state is: ");
-        Serial.println(run_status.bot_state);
+        Serial.println(robot_state());
 #endif
         return;
     }

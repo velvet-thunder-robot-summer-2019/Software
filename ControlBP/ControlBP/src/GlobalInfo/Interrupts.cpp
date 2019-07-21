@@ -76,8 +76,8 @@ void collision_left()
 #if TESTING_ORDER_OF_EVENTS
 Serial.println("collision_left");
 #endif
-    if (run_status.bot_state != GET_INFINITY_STONE) {
-        switch_state(run_status.bot_state, HANDLE_COLLISION);
+    if (robot_state() != GET_INFINITY_STONE) {
+        switch_state(robot_state(), HANDLE_COLLISION);
     }
     run_status.last_collision = LEFT_COLLISION;
 }
@@ -127,7 +127,7 @@ void timer_interrupt_handler()
 #if TESTING_ORDER_OF_EVENTS
 Serial.println("timer interrupt handler");
 #endif
-    switch_state(run_status.bot_state, RETURN_TO_GAUNTLET);
+    switch_state(robot_state(), RETURN_TO_GAUNTLET);
 }
 
 

@@ -20,9 +20,6 @@ void initialise_competition_data(position start_position)
     run_status.bot_position.next_location = start_position.next_location;
     run_status.bot_position.left_wheel_ticks = start_position.left_wheel_ticks;
     run_status.bot_position.right_wheel_ticks = start_position.right_wheel_ticks;
-    /* run_status.bot_position.fraction_to_next = start_position.fraction_to_next;
-    run_status.bot_position.wheel_rot_since_last_left = 0;
-    run_status.bot_position.wheel_rot_since_last_right = 0;*/
 
     if (digitalRead(THANOS_v_METHANOS_SWITCH) == METHANOS)
     {
@@ -31,7 +28,6 @@ void initialise_competition_data(position start_position)
         run_status.bot_identity = THANOS;
     }
 
-    run_status.bot_previous_state = MENU; //previous state of robot
     int i;
     for (i = 0; i < TOTAL_NUM_STONE; i++) {
         run_status.stones_status[i] = UNKNOWN;
