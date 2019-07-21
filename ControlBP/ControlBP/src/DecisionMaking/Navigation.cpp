@@ -8,12 +8,22 @@
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
 int branch_side_expected(location next_location);
+String get_location_string(location my_loc);
+void print_position();
 
 int ramp_reached()
 {
     // TODO: implement based on encoder speed
     uint32_t avg_velocity_left = (left_wheel_dt[0] + left_wheel_dt[1] + left_wheel_dt[2]) / 3;
     uint32_t avg_velocity_right = (right_wheel_dt[0] + right_wheel_dt[1] + right_wheel_dt[2]) / 3;
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("ramp_reached method");
+    Serial.print("avg velocity left: ");
+    Serial.println(avg_velocity_left);
+    Serial.print("avg velocity right");
+    Serial.println(avg_velocity_right);
+    return TRUE;
+#endif
     
     if ((abs((int) (UP_RAMP_ENCODER_DT - avg_velocity_left)) < ENCODER_DT_DELTA) && 
         (abs((int)(UP_RAMP_ENCODER_DT - avg_velocity_right) < ENCODER_DT_DELTA)))
@@ -256,7 +266,11 @@ void move_to(location next_location)
 }
 
 int reach_adjacent_location_on_tape(location next_location, state expected_state, bool stopping_at_branch)
-{  
+{ 
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("reaching next location on tape");
+    return SUCCESS;
+#endif
     // turn around if need be  
     if (run_status.bot_position.last_location == next_location) {
         int reversal_success = face_reverse_direction(expected_state);
@@ -313,6 +327,10 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
  */
 int turn_onto_branch(int direction, state expected_state)
 {
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("following tape till branch, remove this if later!!");
+return SUCCESS;
+#endif
     bool outer_left = outer_left_sensor();
     bool outer_right = outer_right_sensor();
 
@@ -349,6 +367,9 @@ int turn_onto_branch(int direction, state expected_state)
 }
 
 int follow_tape_till_branch(state expected_state) {
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("follow_tape_till_branch");
+#endif
     while (!branch_reached_front()) {
         int8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (response == TAPE_NOT_FOUND) {
@@ -358,6 +379,7 @@ int follow_tape_till_branch(state expected_state) {
             return STATE_CHANGED;
         }
     }
+    return SUCCESS;
 }
 
 
@@ -377,6 +399,10 @@ int reach_adjacent_branch_cross_country(location location_1, location location_2
  */
 int face_reverse_direction(state expected_state)
 {
+#if TESTING_ORDER_OF_EVENTS
+delay(1000);
+return SUCCESS;
+#endif
     while (!outer_left_sensor()) {
         // turn fairly fast until then
         rotate_on_spot(0.3);
@@ -412,6 +438,64 @@ void update_position(location last_location, location next_location)
     run_status.bot_position.next_location = next_location;
     run_status.bot_position.left_wheel_ticks = 0;
     run_status.bot_position.right_wheel_ticks = 0;
+#if TESTING_ORDER_OF_EVENTS
+print_position();
+#endif
+}
+
+void print_position()
+{
+    String last_loc = get_location_string(run_status.bot_position.last_location);
+    String next_loc = get_location_string(run_status.bot_position.next_location);
+    Serial.println("_______location info_________");
+    Serial.print("last location: ");
+    Serial.println(last_loc);
+    Serial.print("next location: ");
+    Serial.println(next_loc);
+}
+
+String get_location_string(location my_loc)
+{    
+    String loc;
+    switch (my_loc) {
+        case METHANOS_GAUNTLET:
+            loc = "Methanos gauntlet";
+            break;
+        case METHANOS_INTERSECTION:
+            loc = "Methanos intersection";
+            break;
+        case POST_1:
+            loc = "post 1";
+            break;
+        case POST_2:
+            loc = "post 2";
+            break;
+        case POST_3:
+            loc = "post 3";
+            break;
+        case POST_4:
+            loc = "post 4";
+            break;
+        case POST_5:
+            loc = "post 5";
+            break;
+        case POST_6:
+            loc = "post 6";
+            break;
+        case THANOS_GAUNTLET:
+            loc = "Thanos gauntlet";
+            break;
+        case THANOS_INTERSECTION:
+            loc = "Thanos intersection";
+            break;
+        case METHANOS_START:
+            loc = "Methanos start";
+            break;
+        default:
+            loc = "Thanos start";
+            break;
+    }
+    return loc;
 }
 
  

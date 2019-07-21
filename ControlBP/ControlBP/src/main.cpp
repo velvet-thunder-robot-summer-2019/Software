@@ -30,14 +30,21 @@ void setup() {
   // Initialisation of everything here
   delay(3000);
   Serial.begin(9600);
+#if TESTING_ORDER_OF_EVENTS
   Serial.println("begin setup");
+#endif
+  reset();
 }
 
 void loop() {
   // MAIN CONTROL LOOP
-  reset();
+state bot_state = run_status.bot_state;  
+#if TESTING_ORDER_OF_EVENTS
   Serial.println("Begin control loop");
-  state bot_state = robot_state();  
+  Serial.print("bot state is: ");
+  Serial.println(bot_state);
+#endif
+  
   switch(bot_state) {
     case MENU :
       menu();
@@ -85,16 +92,17 @@ void loop() {
 
 void reset() 
 {
+  init_menu();
+  init_tape_following();
+  init_interrupts();
+  init_communication();
+
   if (digitalRead(MASTER_SWITCH) == COMP) {
     Serial.println("COMP MODE");
-    initialise_competition_data();
+  initialise_competition_data();
     init_robot_state(REACH_RAMP);
   } else if (digitalRead(MASTER_SWITCH) == DEV) {
     Serial.println("DEV MODE");
     init_robot_state(MENU);
   }
-  init_menu();
-  init_tape_following();
-  init_interrupts();
-  init_communication();
 }

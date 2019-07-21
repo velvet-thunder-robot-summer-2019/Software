@@ -73,6 +73,11 @@ int branch_reached()
  */
 int branch_reached_front()
 {
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("branch reached front of robot");
+return TRUE;
+#endif
+
     return ((left_sensor() || right_sensor() || right_wing_sensor()) && left_wing_sensor()) ||
             ((left_sensor() || right_sensor() || left_wing_sensor()) && right_wing_sensor());
 }

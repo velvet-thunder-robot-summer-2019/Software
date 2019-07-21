@@ -30,6 +30,7 @@ void debug()
 
         int available = Serial.available();
         while (!available) {
+            Serial.print("!available punk");
             available = Serial.available();
         }
         String command = Serial.readString();

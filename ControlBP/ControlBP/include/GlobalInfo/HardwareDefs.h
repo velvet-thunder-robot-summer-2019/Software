@@ -99,4 +99,8 @@
 #define COMM_BUSY 0xAE
 #define COMM_CORRUPT_COMMAND 0xAF
 
+
+// just for testing w/o bot
+#define TESTING_ORDER_OF_EVENTS TRUE
+
 #endif // HARDWAREDEFS_H_

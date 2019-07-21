@@ -59,7 +59,7 @@ int update_kp()
 {
     // Serial.print("kp being updated ALERT");
 
-    // kp = analogRead(CALIBRATION_POTENTIOMETER);
+    kp = analogRead(CALIBRATION_POTENTIOMETER);
     return kp;
 }
 
@@ -70,7 +70,7 @@ int update_kp()
 int update_kd()
 {
     // Serial.print("kd being updated ALERT");
-    // kd = analogRead(CALIBRATION_POTENTIOMETER);
+    kd = analogRead(CALIBRATION_POTENTIOMETER);
     return kd;
 }
 

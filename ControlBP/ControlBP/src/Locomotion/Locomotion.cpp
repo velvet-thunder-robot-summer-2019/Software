@@ -15,7 +15,7 @@ float PID_output = 0;
  */
 void init_tape_following()
 {
-    Serial.println("init_tape_following");
+    // Serial.println("init_tape_following");
     init_PID();
 }
 

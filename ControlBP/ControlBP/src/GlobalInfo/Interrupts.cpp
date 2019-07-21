@@ -11,7 +11,6 @@
 #include "GlobalInfo/Interrupts.h"
 
 #define RETURN_TIME 130 // in seconds, arbitrary rn
-#define BLINKY PC13
 
 void encoder_left_handle();
 void encoder_right_handle();
@@ -41,7 +40,6 @@ volatile uint8_t left_wheel_dt_index = 0;
 void init_interrupts()
 {
     Serial.println("init_interrupts");
-    pinMode(BLINKY, OUTPUT);
 
     //set up pins for collision interrupt
     pinMode(BUMPER_LEFT, INPUT);
@@ -50,10 +48,10 @@ void init_interrupts()
     pinMode(BUMPER_BACK, INPUT);
 
     // attach collision interrupt
-    attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), collision_left, RISING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), collision_right, RISING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, RISING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_BACK), collision_back, RISING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), collision_left, RISING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), collision_right, RISING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, RISING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_BACK), collision_back, RISING);
 
     // init timer interrupt
     // initialise_timer();
@@ -64,10 +62,10 @@ void init_interrupts()
     pinMode(ENCODER_RIGHT_A, INPUT);
     pinMode(ENCODER_RIGHT_B, INPUT);
     
-    attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_A), encoder_left_handle, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_B), encoder_left_handle, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_A), encoder_right_handle, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_B), encoder_right_handle, CHANGE);
+    // attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_A), encoder_left_handle, CHANGE);
+    // attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_B), encoder_left_handle, CHANGE);
+    // attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_A), encoder_right_handle, CHANGE);
+    // attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_B), encoder_right_handle, CHANGE);
 }
 
 /**
@@ -75,8 +73,12 @@ void init_interrupts()
  */
 void collision_left()
 {
-    Serial.println("collision_left");
-    switch_state(robot_state(), HANDLE_COLLISION);
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("collision_left");
+#endif
+    if (run_status.bot_state != GET_INFINITY_STONE) {
+        switch_state(run_status.bot_state, HANDLE_COLLISION);
+    }
     run_status.last_collision = LEFT_COLLISION;
 }
 
@@ -85,7 +87,9 @@ void collision_left()
  */
 void collision_right()
 {
-    Serial.println("collision_right");
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("collision_right");
+#endif
     switch_state(robot_state(), HANDLE_COLLISION);
     run_status.last_collision = RIGHT_COLLISION;
 }
@@ -95,7 +99,9 @@ void collision_right()
  */
 void collision_front()
 {
-    Serial.println("collision_front");
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("collision_front");
+#endif
     switch_state(robot_state(), HANDLE_COLLISION);
     run_status.last_collision = FRONT_COLLISION;
 }
@@ -105,7 +111,9 @@ void collision_front()
  */
 void collision_back()
 {
-    Serial.println("collision_back");
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("collision_back");
+#endif
     switch_state(robot_state(), HANDLE_COLLISION);
     run_status.last_collision = BACK_COLLISION;
 }
@@ -116,8 +124,10 @@ void collision_back()
 void timer_interrupt_handler()
 {
     digitalWrite(BLINKY, !digitalRead(BLINKY));
-    Serial.println("timer_interrupt_handler");
-    // switch_state(robot_state(), RETURN_TO_GAUNTLET);
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("timer interrupt handler");
+#endif
+    switch_state(run_status.bot_state, RETURN_TO_GAUNTLET);
 }
 
 

@@ -7,16 +7,13 @@
 
 void reach_ramp()
 {
-    //int dev_or_comp = digitalRead(MASTER_SWITCH);
-    /*
-    Serial.print("IF this says 1, I was dev: ");
-    Serial.println(dev_or_comp);
-
+#if TESTING_ORDER_OF_EVENTS
     Serial.println("");
     Serial.println("");
     Serial.println("REACH_RAMP state entered!");
     Serial.println("______________________");
-    */
+#endif
+    
 
     request_arm_position__travel();
 
@@ -33,14 +30,9 @@ void reach_ramp()
         if (robot_state() != REACH_RAMP) {
             return;
         }
-        /*
-        Serial.print("IF this says 1, currently in dev: ");
-        Serial.println(digitalRead(MASTER_SWITCH));
-        */
-        // if (digitalRead(MASTER_SWITCH) == DEV) {
-        //     break;
-        // }
+        Serial.println("going towards ramp"); // remove later
     }
+    Serial.println("ramp reached");
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(REACH_RAMP, ASCEND_RAMP);

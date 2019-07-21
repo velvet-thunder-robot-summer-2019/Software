@@ -48,7 +48,7 @@ void init_communication()
         Serial.println("don't let the compiler optimise me away!!");
     }
 
-    Serial.println("init_communication");
+    // Serial.println("init_communication");
 }
 
 /**

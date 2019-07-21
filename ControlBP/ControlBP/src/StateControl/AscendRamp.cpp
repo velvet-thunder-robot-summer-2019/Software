@@ -5,10 +5,12 @@
 
 void ascend_ramp()
 {
-    // Serial.println("");
-    // Serial.println("");
-    // Serial.println("ASCEND_RAMP state entered!");    
-    // Serial.println("______________________");
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("");
+    Serial.println("");
+    Serial.println("ASCEND_RAMP state entered!");    
+    Serial.println("______________________");
+#endif
 
     request_arm_position__ascent();
 
@@ -20,12 +22,16 @@ void ascend_ramp()
         return;
     }
     // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
+    int inevitable = run_status.bot_identity == THANOS;
     
-    int branch_to_follow = run_status.bot_identity == THANOS ? LEFT : RIGHT;
+    int turn_direction = inevitable ? LEFT : RIGHT;
 
-    if (turn_onto_branch(branch_to_follow, ASCEND_RAMP) == STATE_CHANGED) {
+    if (turn_onto_branch(turn_direction, ASCEND_RAMP) == STATE_CHANGED) {
         return;
     }
+    location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
+    location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
+    update_position(my_gauntlet, my_intersection);
 
     // ok so we should've turned onto the right branch, let's go into next state
     if (digitalRead(MASTER_SWITCH) == COMP) {

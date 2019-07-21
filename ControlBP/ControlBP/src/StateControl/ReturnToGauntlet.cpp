@@ -7,8 +7,12 @@
 
 void return_to_gauntlet()
 {
-    // Serial.println("RETURN_TO_GAUNTLET state entered!");
-    // Serial.println("______________________");
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("RETURN_TO_GAUNTLET state entered!");
+    Serial.println("______________________");
+    Serial.println("starting state: ");
+    Serial.println(run_status.bot_state);
+#endif
 
     // this is the case where we've hit up 3 posts and life is chill. 
     bool inevitable = run_status.bot_identity == THANOS;
@@ -20,18 +24,26 @@ void return_to_gauntlet()
     location my_fourth_post = inevitable ? POST_1 : POST_4;
 
     if (run_status.bot_state != RETURN_TO_GAUNTLET) {
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("status changed");
+    Serial.print("status is: ");
+    Serial.println(run_status.bot_state);
+#endif
         return;
     }
 
     if (face_reverse_direction(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("direction reversal failed");
+#endif
         return;
     }
     update_position(my_fourth_post, my_third_post);
-
     if (reach_adjacent_location_on_tape(my_third_post, RETURN_TO_GAUNTLET, false) == STATE_CHANGED) {
         return;
     }
     update_position(my_third_post, my_second_post);
+
     if (reach_adjacent_location_on_tape(my_second_post, RETURN_TO_GAUNTLET, false)) {
         return;
     }
