@@ -30,11 +30,8 @@ void find_post()
             // go to POST_4 / POST_1
 
             // tape follow till fork in road
-            while (!branch_reached_front()) {
-                follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-                if (robot_state() != FIND_POST) {
-                    return;
-                }
+            if (follow_tape_till_branch(FIND_POST) == STATE_CHANGED) {
+                return;
             }
 
             // turn the correct direction at the fork
