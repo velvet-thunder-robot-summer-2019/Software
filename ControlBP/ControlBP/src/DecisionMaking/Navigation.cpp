@@ -10,6 +10,7 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
 int branch_side_expected(location next_location);
 String get_location_string(location my_loc);
 void print_position();
+int get_branch_side(location next);
 
 int ramp_reached()
 {
@@ -279,8 +280,10 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
         }
     }
     // move till the point, be aware that we may overshoot
+    int branch_side = get_branch_side(next_location);
+
     int front_reached_branch = branch_reached_front();
-    int back_reached_branch = branch_reached();
+    int back_reached_branch = branch_reached(branch_side);
     while (!front_reached_branch && !back_reached_branch) {
         uint8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (response == TAPE_NOT_FOUND) {
@@ -290,7 +293,7 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
             return STATE_CHANGED;
         }
         front_reached_branch = branch_reached_front();
-        back_reached_branch = branch_reached();
+        back_reached_branch = branch_reached(branch_side);
     }
     while (!back_reached_branch) {
         uint8_t response;
@@ -305,13 +308,13 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
-        back_reached_branch = branch_reached();
+        back_reached_branch = branch_reached(branch_side);
         // update ze bloody location outside of this code. It's a pain otherwise
     }
     // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
     if (stopping_at_branch) 
     {
-        while (!branch_reached()) {
+        while (!branch_reached(branch_side)) {
            reverse(FLAT_GROUND_APPROACHING_STOP_PWM);
         }
         stop_motors();
@@ -429,6 +432,8 @@ return SUCCESS;
     if (robot_state() != expected_state) {
         return STATE_CHANGED;
     }
+    // flip robot positioning system
+    update_position(run_status.bot_position.next_location, run_status.bot_position.last_location);
     return SUCCESS;
 }
 
@@ -496,6 +501,32 @@ String get_location_string(location my_loc)
             break;
     }
     return loc;
+}
+
+int get_branch_side(location next)
+{
+    location last = run_status.bot_position.last_location;
+    if ((last == THANOS_INTERSECTION && next == POST_4) ||
+        (last == POST_4 && next == POST_3) ||
+        (last == POST_3 && next == POST_2) ||
+        (last == POST_2 && next == POST_1) ||
+        (last == POST_1 && next == THANOS_INTERSECTION) ||
+        (last == METHANOS_INTERSECTION && next == POST_6) ||
+        (last == POST_6 && next == POST_5) ||
+        (last == POST_5 && next == THANOS_INTERSECTION)) {
+            return LEFT;
+    } 
+    if ((last == THANOS_INTERSECTION && next == POST_5) ||
+        (last == POST_5 && next == POST_6) ||
+        (last == POST_6 && next == METHANOS_INTERSECTION) ||
+        (last == METHANOS_INTERSECTION && next == POST_1) ||
+        (last == POST_1 && next == POST_2) ||
+        (last == POST_2 && next == POST_3) ||
+        (last == POST_3 && next == POST_4) ||
+        (last == POST_4 && next == THANOS_INTERSECTION)) {
+            return RIGHT;
+        }
+    return BOTH_SIDES;
 }
 
  

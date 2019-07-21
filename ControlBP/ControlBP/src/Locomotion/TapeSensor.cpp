@@ -61,10 +61,10 @@ int get_tape_following_error()
     }
 }
 
-int branch_reached()
-{
-    return left_wing_sensor() || right_wing_sensor();
-}
+// int branch_reached()
+// {
+//     return left_wing_sensor() || right_wing_sensor();
+// }
 
 /**
  * Returns TRUE if the front sensors reach a branch, FALSE otherwise
@@ -88,11 +88,14 @@ return TRUE;
  */
 int branch_reached(int expected_side)
 {
+#if TESTING_ORDER_OF_EVENTS
     Serial.print("branch_reached, expected side: ");
     Serial.println(expected_side);
+#endif
 
     if ((expected_side == LEFT && left_wing_sensor()) ||
-        (expected_side == RIGHT && right_wing_sensor())) {
+        (expected_side == RIGHT && right_wing_sensor()) ||
+        (expected_side == BOTH_SIDES && (left_wing_sensor() || right_wing_sensor()))) {
         return TRUE;
     }
     return FALSE;

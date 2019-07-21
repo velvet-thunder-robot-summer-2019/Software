@@ -70,6 +70,7 @@
 #define TAPE_NOT_FOUND 2
 #define LEFT 0
 #define RIGHT 1
+#define BOTH_SIDES 2
 #define FWD 1
 #define BACK 0
 

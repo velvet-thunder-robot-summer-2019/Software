@@ -20,10 +20,10 @@ int get_tape_following_error();
  */
 int branch_reached(int expected_side);
 
-/**
- * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
- */
-int branch_reached();
+// /**
+//  * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
+//  */
+// int branch_reached();
 
 /**
  * Returns TRUE if the front sensors reach a branch, FALSE otherwise
