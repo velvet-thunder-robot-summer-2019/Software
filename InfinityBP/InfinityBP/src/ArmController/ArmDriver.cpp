@@ -210,7 +210,7 @@ pwm_response calculate_turntable_pwm(float delta_turntable_angle)
     turntable_d_response = turntable_kd * (delta_turntable_angle - turntable_past_errors[turntable_last_error_pos]);
 
     turntable_update_error(delta_turntable_angle);
-    response.pwm_val = turntable_p_response + turntable_i_response + turntable_d_response;
+    response.pwm_val = abs(turntable_p_response + turntable_i_response + turntable_d_response);
     if (delta_turntable_angle > 0)
     {
         response.dir = CLOCKWISE;
@@ -249,7 +249,7 @@ pwm_response calculate_base_arm_pwm(float delta_base_arm_angle)
 
     base_arm_update_error(delta_base_arm_angle);
 
-    response.pwm_val = base_arm_p_response + base_arm_i_response + base_arm_d_response;
+    response.pwm_val = abs(base_arm_p_response + base_arm_i_response + base_arm_d_response);
     if (delta_base_arm_angle > 0)
     {
         response.dir = CLOCKWISE;
@@ -289,7 +289,7 @@ pwm_response calculate_forearm_pwm(float delta_forearm_angle)
 
     forearm_update_error(delta_forearm_angle);
 
-    response.pwm_val = forearm_p_response + forearm_i_response + forearm_d_response;
+    response.pwm_val = abs(forearm_p_response + forearm_i_response + forearm_d_response);
     if (delta_forearm_angle > 0)
     {
         response.dir = CLOCKWISE;
