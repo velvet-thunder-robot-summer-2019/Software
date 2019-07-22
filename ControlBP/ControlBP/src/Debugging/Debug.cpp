@@ -97,6 +97,9 @@ void debug()
             follow_arc_rho(RIGHT, 50, TURN_PWM);
         } else if (command.equals("follow tape till branch")) {
             follow_tape_till_branch(MENU);
+        } else if (command.equals("get_arm_angles")) {
+            uint8_t arm_angles[4];
+            get_arm_angles(&arm_angles[0]);
         }
 
         delay(DELAY_BETWEEN_COMMANDS);
