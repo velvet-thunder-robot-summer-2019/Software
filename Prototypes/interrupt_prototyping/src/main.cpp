@@ -2,7 +2,6 @@
 #include <Arduino.h>
 
 #define PIN_INTERRUPT PB3
-
 #define ENCODER_INTERRUPT_A PB5 // left side pin
 #define ENCODER_INTERRUPT_B PB4 // right side of pin
 
@@ -42,6 +41,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   while(1) {
+
     delay(500);
     Serial.print("count 1: ");
     Serial.println(cnt1);

@@ -2,10 +2,10 @@
 
 #include <Arduino.h>
 
-#include "CommandExecution.h"
-#include "Arm.h"
-#include "Gauntlet.h"
-#include "HardwareDefs.h"
+#include "Communications/CommandExecution.h"
+#include "GlobalInfo/HardwareDefs.h"
+#include "ArmController/ArmController.h"
+#include "GauntletController/GauntletController.h"
 
 //Commands to be received
 #define GET_ACK 0x00
@@ -17,6 +17,7 @@
 #define CONFIRM_POST_PRESENCE 0x07
 #define ASCEND_POST 0x08
 #define GRAB_STONE 0x09
+#define DEPLOY_GAUNTLET 0xA
 
 // command status from Infinity
 #define COMM_BUSY 0xAE
@@ -30,7 +31,9 @@ HardwareSerial CommSerial = HardwareSerial(RX, TX);
 
 void send_response(byte *response, int response_length);
 
-void init_communication() 
+/** Initialize communications
+ */
+void init_communication(void) 
 {
     CommSerial.begin(115200);
     while (!CommSerial) {
@@ -43,22 +46,37 @@ void init_communication()
     Serial.println("init_communication");
 }
 
-void execute_command() 
+/** Executes commands sent by the blue pill, if they exist
+ */
+void execute_command(void) 
 {
+
+    //If there are less than 3 bytes in the buffer, no message is through yet
     if (CommSerial.available() < 3) {
+
+        maintain_current_arm_position();
+
         return;
     }
+    byte param;
+
     byte start = CommSerial.read();
     Serial.print("start: ");
     Serial.println(start);
+
     byte command = CommSerial.read();
     Serial.print("command: ");
     Serial.println(command);
+    //to confirm the post presence, it is necessary to search either left or right
+    if (command == CONFIRM_POST_PRESENCE || command == ASCEND_POST) {
+        param = CommSerial.read();
+    }
+
     byte stop = CommSerial.read();
     Serial.print("stop: ");
     Serial.println(stop);
 
-    if (start != START || STOP != STOP) {
+    if (start != START || stop != STOP) {
         byte corrupted[1] = {COMM_CORRUPT_COMMAND};
         send_response(corrupted, 1);
     }
@@ -87,42 +105,52 @@ void execute_command()
         case SET_TRAVEL_POSITION:
         {
             Serial.println("SET_TRAVEL_POSITION");
-            response[0] = set_travel_position();
+            response[0] = position_arm_for_travel();
             send_response(response, 1);
             break;
         }
         case SET_ASCENT_POSITION:
         {
             Serial.println("SET_ASCENT_POSITION");
-            response[0] = set_ascent_position();
+            response[0] = position_arm_for_ascent();
             send_response(response, 1);
             break;
         }
         case SET_STONE_IN_GAUNTLET:
         {
             Serial.println("SET_STONE_IN_GAUNTLET");
-            response[0] = set_stone_in_gauntlet();
+            gauntlet_open_position();
+            response[0] = put_stone_in_gauntlet();
+            gauntlet_storage_position();
             send_response(response, 1);
             break;
         }
         case CONFIRM_POST_PRESENCE:
         {
+
             Serial.println("CONFIRM_POST_PRESENCE");
-            response[0] = confirm_post_presence();
+            response[0] = find_post(param);
             send_response(response, 1);
             break;
         }
         case ASCEND_POST:
         {
             Serial.println("ASCEND_POST");
-            response[0] = ascend_post();
+            response[0] = ascend_post_to_top(param);
             send_response(response, 1);
             break;
         }
         case GRAB_STONE:
         {
             Serial.println("GRAB_STONE");
-            response[0] = grab_stone();
+            response[0] = grab_infinity_stone();
+            send_response(response, 1);
+            break;
+        }
+        case DEPLOY_GAUNTLET:
+        {
+            Serial.println("DEPLOY_GAUNTLET");
+            response[0] = gauntlet_deploy_position();
             send_response(response, 1);
             break;
         }
@@ -136,7 +164,7 @@ void execute_command()
     }
 }
 
-/**
+/** Sends some response
  * Add some error catching / retries after
  */
 void send_response(byte *response, int response_length) 
