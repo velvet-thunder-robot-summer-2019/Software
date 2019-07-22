@@ -1,12 +1,12 @@
+#ifndef ANGLE_CALCULATOR_H_
+#define ANGLE_CALCULATOR_H_
+
 /** This module calculates and returns the angles position the arm at a given xyz coordinate.
  *  The coordinate system used is centred at the joint securing the lower arm to the chassis
  *  The x-axis is directed 90 degrees clockwise from the forward direction of the chassis
  *  The y-axis is directed to the forward direction of the chassis
  *  The z-axis is directed upwards, perpendicular to the x and y axis.
  */
-
-#include "Arduino.h"
-#include <math.h>
 
 /** Calculates the absolute length of the extended arm, projected onto the xy plane
  * @param x: The x-coordinate of the arm in mm
@@ -45,10 +45,12 @@ float calculate_forearm_angle(float xy, float z);
 /** Calculates the necessary rotational angle of the wrist joint of the forearm, relative to the current direction of
  *      the upper arm, in a clockwise direction.
  * @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
- *                      -180 and 180 inclusive
+ *                      -90 and 270 inclusive
  * @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
  *                      has values between -180 and 180 inclusive
- * Returns: The necessary rotational angle of the wrist joint of the forearm. This angle has values between -180 and 180 inclusive
+ * Returns: The necessary rotational angle of the wrist joint of the forearm. This angle has values between 0 and 180 inclusive, where
+ *                      the wrist at 90 degrees is collinear to the forearm.
+ *          If the angle is unreachable, return an error code
  */
 float calculate_wrist_angle(float armAngle, float foreArmAngle);
 
@@ -96,3 +98,5 @@ float calculate_x_extension(float x, float y);
  *  Returns: the extension length in the y direction in mm
  */
 float calculate_y_extension(float x, float y);
+
+#endif

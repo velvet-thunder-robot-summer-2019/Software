@@ -1,14 +1,12 @@
+#ifndef GAUNTLET_CONTROLLER_H_
+#define GAUNTLET_CONTROLLER_H_
+
 /** 
  * This module positions the gauntlet to different positions
  */
 
 #include "Arduino.h"
-
-#define GAUNTLET_SERVO_PIN 0
-
-#define GAUNTLET_STORAGE_POS 0
-#define GAUNTLET_OPEN_POS 0
-#define GAUNTLET_DEPLOY_POS 0
+#include "GlobalInfo/HardwareDefs.h"
 
 /** Initialize the gauntlet
  *  Returns: COMM_SUCCESS if the operation is successful
@@ -32,4 +30,6 @@ byte gauntlet_open_position(void);
  *  Returns: COMM_SUCCESS if the operation is successful
  *           COMM_TASK_FAILED if the operation failed
  */
-byte gauntlet_deploy_position(void)
+byte gauntlet_deploy_position(void);
+
+#endif

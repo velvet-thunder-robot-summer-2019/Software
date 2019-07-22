@@ -2,11 +2,11 @@
  * This module positions the gauntlet to different positions
  */
 
-#include "CommandExecution.h"
+#include "Communications/CommandExecution.h"
 #include "GauntletController/GauntletController.h"
 #include "Servo.h"
 
-Servo gauntlet_servo 0;
+Servo gauntlet_servo;
 
 /** Initialize the gauntlet
  *  Returns: COMM_SUCCESS if the operation is successful

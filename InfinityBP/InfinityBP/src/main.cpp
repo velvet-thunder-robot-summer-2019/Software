@@ -1,11 +1,12 @@
 #include <Arduino.h>
 
-#include "CommandExecution.h"
+#include "Communications/CommandExecution.h"
 #include "ArmController/ArmController.h"
 #include "GauntletController/GauntletController.h"
 
 void setup() {
 
+    //Initiialize ALL the peripherals
     Serial.begin(9600);
     init_communication();
     init_arm();

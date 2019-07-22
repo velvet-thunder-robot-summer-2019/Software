@@ -1,27 +1,16 @@
+#ifndef ARM_CONTROLLER_H_
+#define ARM_CONTROLLER_H_
+
+#include <Arduino.h>
+
 /** This module translates high-level positioning instructions into a series of arm angle adjustments.
  *      These angle adjustments are then passed into an arm driver, which executes the corrections
  */
 
-#include <Arduino.h>
-
-float turntable_angle;
-float base_arm_angle;
-float forearm_angle;
-float wrist_angle;
-
-float x, y, z, xy;
-
-struct coordinate 
-{
-    float x;
-    float y;
-    float z;
-}gauntlet_positions[4];
-
-uint8_t current_slot;
-uint8_t arm_move_status;
-
-uint16_t post_heights[6];
+extern float turntable_angle;
+extern float base_arm_angle;
+extern float forearm_angle;
+extern float wrist_angle;
 
 /** Set up the initial position of the arm, the value of the gauntlet positions, and the post heights
  *  Returns: COMM_SUCCESS if the operation is successful
@@ -78,3 +67,5 @@ byte put_stone_in_gauntlet(void);
 /** Maintain the arm at its current position
  */
 void maintain_current_arm_position(void);
+
+#endif

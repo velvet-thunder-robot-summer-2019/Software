@@ -1,17 +1,7 @@
-#define TAPE_SENSOR_THRESHOLD 0
-#define TAPE_SENSOR 0
+#ifndef ARM_SENSORS_H_
+#define ARM_SENSORS_H_
 
-#define TURNTABLE_POTENTIOMETER 0
-#define BASE_ARM_POTENTIOMETER 0
-#define FORE_ARM_POTENTIOMETER 0
-
-#define TURNTABLE_SCALE_FACTOR 0
-#define BASE_ARM_SCALE_FACTOR 0
-#define FORE_ARM_SCALE_FACTOR 0
-
-#define TURNTABLE_ANGLE_OFFSET 0
-#define BASE_ARM_ANGLE_OFFSET 0
-#define FORE_ARM_ANGLE_OFFSET 0
+#include <Arduino.h>
 
 /** Initialize all the sensors on the arm
  */
@@ -41,3 +31,5 @@ float read_base_arm_angle(void);
  *  Returns: The fore arm angle in degrees, between -180 and +180
  */
 float read_fore_arm_angle(void);
+
+#endif

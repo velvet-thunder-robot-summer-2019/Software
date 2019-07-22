@@ -6,7 +6,8 @@
  */
 
 #include "ArmController/AngleCalculator.h"
-#include "HardwareDefs.h"
+#include "GlobalInfo/HardwareDefs.h"
+#include <math.h>
 
 /** Calculates the absolute length of the extended arm, projected onto the xy plane
  * @param x: The x-coordinate of the arm in mm
@@ -96,7 +97,7 @@ float calculate_forearm_angle(float xy, float z)
     }
     else
     {
-        return UNREACHABLE_ERROR
+        return UNREACHABLE_ERROR;
     }
     
     return theta;
@@ -105,14 +106,24 @@ float calculate_forearm_angle(float xy, float z)
 /** Calculates the necessary rotational angle of the wrist joint of the forearm, relative to the current direction of
  *      the upper arm, in a clockwise direction.
  * @param armAngle: The angle in degrees of the lower arm, measured clockwise from the z-axis. This angle has values between
- *                      -180 and 180 inclusive
+ *                      -90 and 270 inclusive
  * @param foreArmAngle: The angle in degrees of the upper arm, measured clockwise from the direction of the lower arm. This angle
  *                      has values between -180 and 180 inclusive
- * Returns: The necessary rotational angle of the wrist joint of the forearm. This angle has values between -180 and 180 inclusive
+ * Returns: The necessary rotational angle of the wrist joint of the forearm. This angle has values between 0 and 180 inclusive, where
+ *                      the wrist at 90 degrees is collinear to the forearm.
+ *          If the angle is unreachable, return an error code
  */
 float calculate_wrist_angle(float armAngle, float foreArmAngle)
 {   
-    return 90 - armAngle - foreArmAngle;
+    float theta = 180 - armAngle - foreArmAngle;
+
+    if (theta <= 180 && theta >= 0)
+    {
+        return theta;
+    }
+    
+    return UNREACHABLE_ERROR;
+
 }
 
 /** Calculates the x position in mm of the tip of the arm from the base of the arm

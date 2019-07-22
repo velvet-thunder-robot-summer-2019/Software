@@ -2,28 +2,31 @@
  *      correct position
  */
 
+#include <Arduino.h>
+
 #include "ArmController/ArmDriver.h"
 #include "ArmController/ArmController.h"
 #include "ArmController/ArmSensors.h"
-#include "Arduino.h"
+#include "GlobalInfo/HardwareDefs.h"
+#include "GlobalInfo/GlobalVars.h"
 #include "Servo.h"
-
-#define NUM_PAST_ERRORS
 
 Servo claw_servo;
 Servo wrist_servo;
 
-float turntable_kp = 0.0; 
-float base_arm_kp = 0.0;
-float forearm_kp = 0.0;
+pwm_response response;
 
-float turntable_ki = 0.0; 
-float base_arm_ki = 0.0;
-float forearm_ki = 0.0;
+float turntable_kp; 
+float base_arm_kp;
+float forearm_kp;
 
-float turntable_kd = 0.0; 
-float base_arm_kd = 0.0;
-float forearm_kd = 0.0;
+float turntable_ki; 
+float base_arm_ki;
+float forearm_ki;
+
+float turntable_kd; 
+float base_arm_kd;
+float forearm_kd;
 
 float turntable_p_response, turntable_i_response, turntable_d_response;
 float base_arm_p_response, base_arm_i_response, base_arm_d_response;
@@ -33,19 +36,39 @@ float turntable_past_errors[NUM_PAST_ERRORS];
 float base_arm_past_errors[NUM_PAST_ERRORS];
 float forearm_past_errors[NUM_PAST_ERRORS];
 
-float turntable_anti_windup = 0.0;
-float base_arm_anti_windup = 0.0;
-float forearm_anti_windup = 0.0;
+float turntable_anti_windup;
+float base_arm_anti_windup;
+float forearm_anti_windup;
 
-uint8_t turntable_last_error_pos = 0;
-uint8_t base_arm_last_error_pos = 0;
-uint8_t forearm_last_error_pos = 0;
+uint8_t turntable_last_error_pos;
+uint8_t base_arm_last_error_pos;
+uint8_t forearm_last_error_pos;
 
 /** Initializes the arm driver
  */
 void init_arm_driver(void)
 {
-    uin8_t i;
+    uint8_t i;
+
+    turntable_anti_windup = TURNTABLE_ANTI_WINDUP;
+    base_arm_anti_windup = BASE_ARM_ANTI_WINDUP;
+    forearm_anti_windup = FOREARM_ANTI_WINDUP;
+
+    turntable_kp = TURNTABLE_KP; 
+    base_arm_kp = BASE_ARM_KP;
+    forearm_kp = FOREARM_KP;
+
+    turntable_ki = TURNTABLE_KI; 
+    base_arm_ki = BASE_ARM_KI;
+    forearm_ki = FOREARM_KI;
+
+    turntable_kd = TURNTABLE_KD; 
+    base_arm_kd = BASE_ARM_KD;
+    forearm_kd = FOREARM_KD;
+
+    turntable_last_error_pos = 0;
+    base_arm_last_error_pos = 0;
+    forearm_last_error_pos = 0;
 
     claw_servo.attach(CLAW_SERVO_PIN);
     claw_servo.write(CLAW_SERVO_OPEN);
@@ -187,8 +210,18 @@ pwm_response calculate_turntable_pwm(float delta_turntable_angle)
     turntable_d_response = turntable_kd * (delta_turntable_angle - turntable_past_errors[turntable_last_error_pos]);
 
     turntable_update_error(delta_turntable_angle);
+    response.pwm_val = turntable_p_response + turntable_i_response + turntable_d_response;
+    if (delta_turntable_angle > 0)
+    {
+        response.dir = CLOCKWISE;
+    }
+    else
+    {
+        response.dir = ANTI_CLOCKWISE;
+    }
+    
 
-    return turntable_p_response + turntable_i_response + turntable_d_response;
+    return response;
 }
 
 /** Calculate a PID pwm response to the angular difference of the base arm
@@ -216,7 +249,18 @@ pwm_response calculate_base_arm_pwm(float delta_base_arm_angle)
 
     base_arm_update_error(delta_base_arm_angle);
 
-    return base_arm_p_response + base_arm_i_response + base_arm_d_response;
+    response.pwm_val = base_arm_p_response + base_arm_i_response + base_arm_d_response;
+    if (delta_base_arm_angle > 0)
+    {
+        response.dir = CLOCKWISE;
+    }
+    else
+    {
+        response.dir = ANTI_CLOCKWISE;
+    }
+    
+
+    return response;
 }
 
 /** Calculate a PID pwm response to the angular difference of the forearm
@@ -240,12 +284,23 @@ pwm_response calculate_forearm_pwm(float delta_forearm_angle)
         forearm_i_response = forearm_anti_windup * -1.0;
     }
 
-    //calcualte the derivative response
+    //calculate the derivative response
     forearm_d_response = forearm_kd * ( delta_forearm_angle - forearm_past_errors[forearm_last_error_pos] );
 
     forearm_update_error(delta_forearm_angle);
 
-    return forearm_p_response + forearm_i_response + forearm_d_response;
+    response.pwm_val = forearm_p_response + forearm_i_response + forearm_d_response;
+    if (delta_forearm_angle > 0)
+    {
+        response.dir = CLOCKWISE;
+    }
+    else
+    {
+        response.dir = ANTI_CLOCKWISE;
+    }
+    
+
+    return response;
 }
 
 /** Updates the register of past errors for the turntable angle

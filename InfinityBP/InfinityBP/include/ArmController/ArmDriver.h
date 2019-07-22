@@ -1,44 +1,19 @@
+#ifndef ARM_DRIVER_H_
+#define ARM_DRIVER_H_
+
 /** This module translates expected arm angles into movements, and applies PID control to 
  *      correct position
  */
 
-#define MOVE_SUCCESS 1
-#define MOVE_FAIL 0
+#include "GlobalInfo/GlobalVars.h"
+#include <Arduino.h>
+#include "Servo.h"
 
-#define FORWARD 1
-#define BACKWARD 0
+extern Servo wrist_servo;
 
-#define CLAW_SERVO_PIN 0
-#define WRIST_SERVO_PIN 0
-
-#define CLAW_SERVO_OPEN 0
-#define CLAW_SERVO_CLOSE 0
-
-#define WRIST_SERVO_MID 0
-
-#define TURNTABLE_POS_PIN 0
-#define TURNTABLE_NEG_PIN 0
-
-#define BASE_ARM_POS_PIN 0
-#define BASE_ARM_NEG_PIN 0
-
-#define FORE_ARM_POS_PIN 0
-#define FORE_ARM_NEG_PIN 0
-
-#define PWM_CLOCK_FREQ 0
-#define PWM_PERIOD 0
-
-enum motor_direction 
-{
-    CLOCKWISE,
-    ANTI_CLOCKWISE
-};
-
-struct pwm_response 
-{
-    motor_direction dir;
-    float   pwm_val;
-}
+/** Initializes the arm driver
+ */
+void init_arm_driver(void);
 
 /** Move the arm to the position specified by the angles
  *  @param base_arm_angle: angle of the base arm clockwise from the z-axis in degrees
@@ -90,3 +65,6 @@ void base_arm_update_error(float error);
  *  @param error: the most recent error
  */
 void forearm_update_error(float error);
+
+
+#endif

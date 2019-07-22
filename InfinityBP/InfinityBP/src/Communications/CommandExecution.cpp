@@ -2,8 +2,8 @@
 
 #include <Arduino.h>
 
-#include "CommandExecution.h"
-#include "HardwareDefs.h"
+#include "Communications/CommandExecution.h"
+#include "GlobalInfo/HardwareDefs.h"
 #include "ArmController/ArmController.h"
 #include "GauntletController/GauntletController.h"
 
@@ -50,6 +50,8 @@ void init_communication(void)
  */
 void execute_command(void) 
 {
+
+    //If there are less than 3 bytes in the buffer, no message is through yet
     if (CommSerial.available() < 3) {
 
         maintain_current_arm_position();
@@ -61,17 +63,20 @@ void execute_command(void)
     byte start = CommSerial.read();
     Serial.print("start: ");
     Serial.println(start);
+
     byte command = CommSerial.read();
     Serial.print("command: ");
     Serial.println(command);
-    if (command == CONFIRM_POST_PRESENCE) {
+    //to confirm the post presence, it is necessary to search either left or right
+    if (command == CONFIRM_POST_PRESENCE || command == ASCEND_POST) {
         param = CommSerial.read();
     }
+
     byte stop = CommSerial.read();
     Serial.print("stop: ");
     Serial.println(stop);
 
-    if (start != START || STOP != STOP) {
+    if (start != START || stop != STOP) {
         byte corrupted[1] = {COMM_CORRUPT_COMMAND};
         send_response(corrupted, 1);
     }
@@ -131,7 +136,7 @@ void execute_command(void)
         case ASCEND_POST:
         {
             Serial.println("ASCEND_POST");
-            response[0] = ascend_post_to_top();
+            response[0] = ascend_post_to_top(param);
             send_response(response, 1);
             break;
         }

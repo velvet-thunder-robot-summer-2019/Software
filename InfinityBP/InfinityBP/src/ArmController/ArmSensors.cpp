@@ -1,5 +1,5 @@
 #include "ArmController/ArmSensors.h"
-#include "Arduino.h"
+#include "GlobalInfo/HardwareDefs.h"
 
 /** Initialize all the sensors on the arm
  */
