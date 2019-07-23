@@ -30,7 +30,7 @@ void init_PID()
     }
     oldest_error_index = 0;
     kp = 250;
-    kd = 0;
+    kd = 100;
 }
 
 /**

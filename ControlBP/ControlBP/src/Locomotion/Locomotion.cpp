@@ -27,7 +27,7 @@ void init_tape_following()
  */
 int follow_tape(float torque)
 {
-    /*
+#if DEBUG_PRINT
     Serial.println("follow_tape");
     Serial.print("PWM: ");
     Serial.println(torque);
@@ -35,12 +35,14 @@ int follow_tape(float torque)
 
     Serial.print("PID_output: ");
     Serial.println(PID_output);
-    */
+#endif
     run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
-    run_motor(LEFT_MOTOR, BACK, torque - PID_output);
+    run_motor(LEFT_MOTOR, FWD, torque - PID_output);
     int error = get_tape_following_error();
-    // Serial.print("tape following error is: ");
-    // Serial.println(error);
+#if DEBUG_PRINT
+    Serial.print("tape following error is: ");
+    Serial.println(error);
+#endif
     PID_output = get_PID_output(error);
 
     // delay(500);
@@ -55,6 +57,7 @@ int rotate_on_spot(float pwm)
 {
     run_motor(RIGHT_MOTOR, FWD, pwm);
     run_motor(LEFT_MOTOR, BACK, pwm);
+    get_tape_following_error();
     
     return SUCCESS;
 }
@@ -69,7 +72,11 @@ int follow_arc_rho(int direction, int rho, float smaller_pwm)
     if (direction == RIGHT) {
         run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
         run_motor(LEFT_MOTOR, FWD, larger_pwm);
+    } else {
+        run_motor(LEFT_MOTOR, FWD, smaller_pwm);
+        run_motor(RIGHT_MOTOR, FWD, larger_pwm);
     }
+    get_tape_following_error();
     return SUCCESS;
 }
 
@@ -82,6 +89,7 @@ int reverse(float pwm)
 {
     run_motor(RIGHT_MOTOR, BACK, pwm);
     run_motor(LEFT_MOTOR, BACK, pwm);
+    get_tape_following_error();
     return SUCCESS;
 }
 
@@ -92,6 +100,7 @@ int stop_motors()
 {
     run_motor(RIGHT_MOTOR, FWD, 0);
     run_motor(LEFT_MOTOR, FWD, 0);
+    get_tape_following_error();
     return SUCCESS;
 }
 

@@ -8,6 +8,8 @@
 #include "Locomotion/PID.h"
 #include "Locomotion/TapeSensor.h"
 
+#include "GlobalInfo/Interrupts.h"
+
 #include "AllPurposeInclude.h"
 
 //communication
@@ -30,6 +32,7 @@ Example commands: init_tape_follower
 // navigation, suggested testing order (must be on tape unless specified)
 /*
 1. face reverse direction
+- Results: have face reverse direction update tape sensors so that it fixes itself w/ tape sensor
 2. reach location forwards
 3. reach location backwards
 4. follow arc 100 (no tape needed)
@@ -48,7 +51,7 @@ void debug()
 
         int available = Serial.available();
         while (!available) {
-            Serial.print("!available punk");
+            // Serial.print("!available punk");
             available = Serial.available();
         }
         String command = Serial.readString();
@@ -91,15 +94,72 @@ void debug()
             test_reach_location_back();
         } else if (command.equals("turn onto branch")) {
 
-        } else if (command.equals("follow arc 100")) {
-            follow_arc_rho(LEFT, 100, TURN_PWM);
-        } else if (command.equals("follow arc 50")) {
-            follow_arc_rho(RIGHT, 50, TURN_PWM);
+        } else if (command.equals("follow arc 25")) {
+            uint32_t start_time = millis();
+            while (millis() - start_time < 10000) {
+                follow_arc_rho(LEFT, 25, TURN_PWM);
+            }
+        } else if (command.equals("follow arc 45")) {
+            uint32_t start_time = millis();
+            while (millis() - start_time < 10000) {
+                follow_arc_rho(LEFT, 45, TURN_PWM);
+            }      
         } else if (command.equals("follow tape till branch")) {
             follow_tape_till_branch(MENU);
         } else if (command.equals("get_arm_angles")) {
             uint8_t arm_angles[4];
             get_arm_angles(&arm_angles[0]);
+        } else if (command.equals("face reverse direction")) {
+            delay(3000);
+            face_reverse_direction(MENU);
+        } else if (command.equals("get all tape sensors")) {
+            Serial.println();
+            Serial.print("inside left: ");
+            Serial.println(left_sensor());
+            Serial.println(analogRead(LEFT_SENSOR));
+
+            Serial.print("inside right: ");
+            Serial.println(right_sensor());
+            Serial.println(analogRead(RIGHT_SENSOR));
+
+            Serial.print("outside left: ");
+            Serial.println(outer_left_sensor());
+            Serial.println(analogRead(OUTER_LEFT_SENSOR));
+
+            Serial.print("outside right: ");
+            Serial.println(outer_right_sensor());
+            Serial.println(analogRead(OUTER_RIGHT_SENSOR));
+
+            Serial.print("wing left: ");
+            Serial.println(left_wing_sensor());
+            Serial.println(analogRead(LEFT_WING_SENSOR));
+
+            Serial.print("wing right: ");
+            Serial.println(right_wing_sensor());
+            Serial.println(analogRead(OUTER_RIGHT_SENSOR));
+        } else if (command.equals("follow tape")) {
+            uint32_t start_time = millis();
+            while (millis() - start_time < 30000) {
+                follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+            }
+            stop_motors();
+        } else if (command.equals("get last click speed")) {
+            uint32_t avg_velocity_left = (left_wheel_dt[0] + left_wheel_dt[1] + left_wheel_dt[2]) / 3;
+            uint32_t avg_velocity_right = (right_wheel_dt[0] + right_wheel_dt[1] + right_wheel_dt[2]) / 3;
+            Serial.println("ramp_reached method");
+            Serial.print("avg velocity left: ");
+            Serial.println(avg_velocity_left);
+            Serial.print("avg velocity right");
+            Serial.println(avg_velocity_right);
+        } else if (command.equals("run straight")) {
+            while (true) {
+                run_motor(LEFT, FWD, 0.4);
+                run_motor(RIGHT, FWD, 0.4);
+            }
+        } else if (command.equals("run left")) {
+            while (true) {
+                run_motor(LEFT, FWD, 0.4);
+            }
         }
 
         delay(DELAY_BETWEEN_COMMANDS);

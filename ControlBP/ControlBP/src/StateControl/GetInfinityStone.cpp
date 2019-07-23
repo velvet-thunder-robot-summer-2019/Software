@@ -1,5 +1,6 @@
 #include "AllPurposeInclude.h"
 #include "StateControl/GetInfinityStone.h"
+#include "Debugging/Menu.h"
 
 #define MAX_ATTEMPTS_STONE 3
 
@@ -9,10 +10,21 @@ int get_post_index();
 
 void get_infinity_stone()
 {
+#if TESTING_ORDER_OF_EVENTS || DEBUG_PRINT
     Serial.println("");
     Serial.println("");
     Serial.println("GET_INFINITY_STONE state entered!");
     Serial.println("______________________");
+#endif
+#if NO_ARM_TESTING
+    stub_arm_motion();
+    if (digitalRead(MASTER_SWITCH) == COMP) {
+        switch_state(GET_INFINITY_STONE, FIND_POST);
+    } else {
+        switch_state(GET_INFINITY_STONE, MENU);
+    }
+    return;
+#endif
 
     int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
 
@@ -52,7 +64,9 @@ void get_infinity_stone()
 
     if (result == SUCCESS) {
         // for whichever post we're at, set corresponding stone status to COLLECTED
+#if DEBUG_PRINT
         Serial.println("getting stone was a success!");
+#endif
     } else {
         // for whichever post we're at, set corresponding stone status to MISSING
         Serial.println("Stone was missing");

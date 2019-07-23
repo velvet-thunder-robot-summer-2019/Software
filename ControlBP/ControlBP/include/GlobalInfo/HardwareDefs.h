@@ -21,20 +21,20 @@
 #define TORQUE_OF_MOTION_AVG 10
 
 //sensors
-#define OUTER_LEFT_SENSOR PA2
-#define LEFT_SENSOR PA3
-#define RIGHT_SENSOR PA4
-#define OUTER_RIGHT_SENSOR PA5
+#define OUTER_LEFT_SENSOR PA5 //PA2
+#define LEFT_SENSOR PA0 // PA3
+#define RIGHT_SENSOR PA2 //PA4
+#define OUTER_RIGHT_SENSOR PA1 // PA5
 
-#define LEFT_WING_SENSOR PA1
-#define RIGHT_WING_SENSOR PA0
+#define LEFT_WING_SENSOR PA4 // PA1
+#define RIGHT_WING_SENSOR PA3 //PA0
 
 //motors
-#define RIGHT_MOTOR_PWM_BACK PB_9
-#define RIGHT_MOTOR_PWM_FWD PB_8
+#define LEFT_MOTOR_PWM_BACK PB_8
+#define LEFT_MOTOR_PWM_FWD PB_9
 
-#define LEFT_MOTOR_PWM_BACK PB_1
-#define LEFT_MOTOR_PWM_FWD PB_0
+#define RIGHT_MOTOR_PWM_BACK PB_0
+#define RIGHT_MOTOR_PWM_FWD PB_1
 
 //encoders
 #define ENCODER_RIGHT_A PB9
@@ -85,9 +85,9 @@
 
 // drivings vals and PWMs
 #define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.3
-#define FLAT_GROUND_APPROACHING_STOP_PWM 0.05
+#define FLAT_GROUND_APPROACHING_STOP_PWM 0.15
 #define ARC_LENGTH_FOR_TURN 100
-#define TURN_PWM 0.1
+#define TURN_PWM 0.2
 
 // communication status
 // when communication fails
@@ -102,6 +102,8 @@
 
 
 // just for testing w/o bot
-#define TESTING_ORDER_OF_EVENTS TRUE
+#define TESTING_ORDER_OF_EVENTS FALSE
+#define NO_ARM_TESTING TRUE
+#define DEBUG_PRINT FALSE
 
 #endif // HARDWAREDEFS_H_

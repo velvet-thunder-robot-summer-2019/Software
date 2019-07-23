@@ -295,22 +295,23 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
         front_reached_branch = branch_reached_front();
         back_reached_branch = branch_reached(branch_side);
     }
-    while (!back_reached_branch) {
-        uint8_t response;
-        if (!stopping_at_branch) {
-            response = follow_tape(FLAT_GROUND_APPROACHING_STOP_PWM);
-        } else {
-            response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-        }
-        if (response == TAPE_NOT_FOUND) {
-             backtrack_to_tape();
-        }
-        if (robot_state() != expected_state) {
-            return STATE_CHANGED;
-        }
-        back_reached_branch = branch_reached(branch_side);
-        // update ze bloody location outside of this code. It's a pain otherwise
-    }
+    stop_motors();
+    // while (!back_reached_branch) {
+    //     uint8_t response;
+    //     if (!stopping_at_branch) {
+    //         response = follow_tape(FLAT_GROUND_APPROACHING_STOP_PWM);
+    //     } else {
+    //         response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+    //     }
+    //     if (response == TAPE_NOT_FOUND) {
+    //          backtrack_to_tape();
+    //     }
+    //     if (robot_state() != expected_state) {
+    //         return STATE_CHANGED;
+    //     }
+    //     back_reached_branch = branch_reached(branch_side);
+    //     // update ze bloody location outside of this code. It's a pain otherwise
+    // }
     // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
     if (stopping_at_branch) 
     {
@@ -408,21 +409,21 @@ return SUCCESS;
 #endif
     while (!outer_left_sensor()) {
         // turn fairly fast until then
-        rotate_on_spot(0.3);
+        rotate_on_spot(TURN_PWM);
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
     while (!left_sensor()) {
         // turn slower around
-        rotate_on_spot(0.1);
+        rotate_on_spot(TURN_PWM * 0.5);
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
     while (!(left_sensor() && right_sensor())) {
         // slow down to not overshoot!
-        rotate_on_spot(0.07);
+        rotate_on_spot(0);
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }

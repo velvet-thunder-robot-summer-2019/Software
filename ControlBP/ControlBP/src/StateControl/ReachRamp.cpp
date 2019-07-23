@@ -30,9 +30,13 @@ void reach_ramp()
         if (robot_state() != REACH_RAMP) {
             return;
         }
+#if TESTING_ORDER_OF_EVENTS
         Serial.println("going towards ramp"); // remove later
+#endif
     }
+#if TESTING_ORDER_OF_EVENTS
     Serial.println("ramp reached");
+#endif
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(REACH_RAMP, ASCEND_RAMP);

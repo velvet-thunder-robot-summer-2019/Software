@@ -507,3 +507,13 @@ void display_exit()
     display.println("EXIT");
     display.display();
 }
+
+void stub_arm_motion() 
+{
+    display.clearDisplay();
+    display.setCursor(30, 30);
+    display.println("Arm");
+    display.display();
+    delay(5000);
+    display.clearDisplay();
+}
