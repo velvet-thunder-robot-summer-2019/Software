@@ -29,6 +29,7 @@ void ascend_ramp()
     if (turn_onto_branch(turn_direction, ASCEND_RAMP) == STATE_CHANGED) {
         return;
     }
+    stop_motors();
     location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
     location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
     update_position(my_gauntlet, my_intersection);

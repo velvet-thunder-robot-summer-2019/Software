@@ -350,7 +350,7 @@ return SUCCESS;
         return SUCCESS;
     }
 
-    if (outer_right || outer_left) {
+    if (left_sensor() || right_sensor()) {
         // if not BOTH are on, this means that one or both of the middle ones are one
         // get the middle one on the side we care about off
         while (inner_sensor_on_turn_side()) {
@@ -374,8 +374,9 @@ int follow_tape_till_branch(state expected_state) {
 #if TESTING_ORDER_OF_EVENTS
 Serial.println("follow_tape_till_branch");
 #endif
+    digitalWrite(BLINKY, LOW);
     while (!branch_reached_front()) {
-        int8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+        uint8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (response == TAPE_NOT_FOUND) {
              backtrack_to_tape();
         }
@@ -383,6 +384,8 @@ Serial.println("follow_tape_till_branch");
             return STATE_CHANGED;
         }
     }
+    digitalWrite(BLINKY, HIGH); 
+    stop_motors();
     return SUCCESS;
 }
 

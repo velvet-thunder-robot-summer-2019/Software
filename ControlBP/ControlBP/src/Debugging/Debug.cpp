@@ -34,11 +34,15 @@ Example commands: init_tape_follower
 1. face reverse direction
 - Results: have face reverse direction update tape sensors so that it fixes itself w/ tape sensor
 2. reach location forwards
+- Results: make it stop earlier, then back up
 3. reach location backwards
+- Ditto to 2.
 4. follow arc 100 (no tape needed)
+- pretty shallow, not the best choice
 5. follow arc 50 (no tape needed)
-6. turn onto branch (must place down bot in right spot first)
-7. follow tape till branch
+- better angle
+6. follow tape till branch
+7. turn onto branch (must place down bot in right spot first)
 8. reach ramp state
 9. ascend ramp state
 10. find post state (assume you're at the intersection)
@@ -92,8 +96,9 @@ void debug()
             test_reach_location_fwd();
         } else if (command.equals("reach location backwards")) {
             test_reach_location_back();
-        } else if (command.equals("turn onto branch")) {
-
+        } else if (command.equals("turn onto branch right")) {
+            delay(1000);
+            turn_onto_branch(RIGHT, MENU);
         } else if (command.equals("follow arc 25")) {
             uint32_t start_time = millis();
             while (millis() - start_time < 10000) {
@@ -160,6 +165,8 @@ void debug()
             while (true) {
                 run_motor(LEFT, FWD, 0.4);
             }
+        } else if (command.equals("blinky")) {
+            digitalWrite(BLINKY, HIGH);
         }
 
         delay(DELAY_BETWEEN_COMMANDS);

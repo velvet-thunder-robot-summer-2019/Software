@@ -16,7 +16,7 @@ void reach_ramp()
     
 
     request_arm_position__travel();
-
+#if USING_ENCODERS
     //check collision
     if (robot_state() != REACH_RAMP) {
         return;
@@ -37,7 +37,7 @@ void reach_ramp()
 #if TESTING_ORDER_OF_EVENTS
     Serial.println("ramp reached");
 #endif
-
+#endif // USING_ENCODERS
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(REACH_RAMP, ASCEND_RAMP);
     } else {

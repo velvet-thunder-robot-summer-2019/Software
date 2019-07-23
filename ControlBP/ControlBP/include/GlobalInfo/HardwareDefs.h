@@ -79,6 +79,10 @@
 #define RIGHT_OFF_LEFT_ON 1
 #define BOTH_OFF_LAST_RIGHT -5
 #define BOTH_OFF_LAST_LEFT 5
+#define OUTER_LEFT 8
+#define OUTER_RIGHT -8
+#define LAST_OUTER_LEFT 9
+#define LAST_OUTER_RIGHT -9
 
 #define LEFT_MOTOR 0
 #define RIGHT_MOTOR 1
@@ -86,7 +90,7 @@
 // drivings vals and PWMs
 #define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.3
 #define FLAT_GROUND_APPROACHING_STOP_PWM 0.15
-#define ARC_LENGTH_FOR_TURN 100
+#define ARC_LENGTH_FOR_TURN 20
 #define TURN_PWM 0.2
 
 // communication status
@@ -105,5 +109,6 @@
 #define TESTING_ORDER_OF_EVENTS FALSE
 #define NO_ARM_TESTING TRUE
 #define DEBUG_PRINT FALSE
+#define USING_ENCODERS FALSE
 
 #endif // HARDWAREDEFS_H_

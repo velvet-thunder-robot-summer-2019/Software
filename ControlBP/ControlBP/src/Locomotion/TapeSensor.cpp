@@ -34,7 +34,9 @@ void initTapeSensor()
 int get_tape_following_error()
 {
     int left = left_sensor();
+    int far_left = outer_left_sensor();
     int right = right_sensor();
+    int far_right = outer_right_sensor();
 #if DEBUG_PRINT
     Serial.println("get_tape_following_error");
     Serial.print("left sensor says: ");
@@ -52,11 +54,23 @@ int get_tape_following_error()
     } else if (left) {
         lastSensor = LEFT_SENSOR;
         return RIGHT_OFF_LEFT_ON;
+    } else if (far_left) {
+        lastSensor = OUTER_LEFT_SENSOR;
+        return OUTER_LEFT;
+    } else if (far_right) {
+        lastSensor = OUTER_RIGHT_SENSOR;
+        return OUTER_RIGHT;
     } else if (lastSensor == RIGHT_SENSOR) {
         return BOTH_OFF_LAST_RIGHT;
-    } else {
+    } else if (lastSensor == LEFT_SENSOR) {
         return BOTH_OFF_LAST_LEFT;
+    } else if (lastSensor == OUTER_LEFT_SENSOR) {
+        return LAST_OUTER_LEFT;
+    } else if (lastSensor == OUTER_RIGHT_SENSOR) {
+        return LAST_OUTER_RIGHT;
     }
+    // should never happen
+    return LAST_OUTER_LEFT;
 }
 
 // int branch_reached()
@@ -75,9 +89,16 @@ int branch_reached_front()
 Serial.println("branch reached front of robot");
 return TRUE;
 #endif
+    bool branch_reached =  ((left_sensor() || right_sensor() || outer_right_sensor()) && outer_left_sensor()) ||
+            ((left_sensor() || right_sensor() || outer_left_sensor()) && outer_right_sensor());
+    // Serial.println(left_sensor());
+    // Serial.println(right_sensor());
+    // Serial.println(outer_left_sensor());
+    // Serial.println(outer_right_sensor());
 
-    return ((left_sensor() || right_sensor() || right_wing_sensor()) && left_wing_sensor()) ||
-            ((left_sensor() || right_sensor() || left_wing_sensor()) && right_wing_sensor());
+    // Serial.println((left_sensor() || right_sensor() || right_wing_sensor());
+    // Serial.print(branch_reached);
+    return branch_reached;
 }
 
 /**
