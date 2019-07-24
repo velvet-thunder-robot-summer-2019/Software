@@ -14,7 +14,7 @@ int right_sensor();
 int right_wing_sensor();
 int left_wing_sensor();
 
-uint32_t tape_sensor_threshold = 440;
+uint32_t tape_sensor_threshold = 615;
 
 /**
  * Initialising pins for tape sensing

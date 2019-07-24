@@ -4,6 +4,7 @@
 
 #define UP_RAMP_ENCODER_DT 10 // ms, dummy val rn
 #define ENCODER_DT_DELTA 4 // ms
+#define TURN_TIME 1000 //ms
 
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
@@ -349,7 +350,7 @@ return SUCCESS;
         // we should already be on the good path, don't fuss
         return SUCCESS;
     }
-
+    
     if (left_sensor() || right_sensor()) {
         // if not BOTH are on, this means that one or both of the middle ones are one
         // get the middle one on the side we care about off
@@ -367,6 +368,14 @@ return SUCCESS;
             return STATE_CHANGED;
         }
     }
+    /*
+   uint32_t start_time = millis();
+   while (millis() - start_time < TURN_TIME) {
+       follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+       if (robot_state() != expected_state) {
+           return STATE_CHANGED;
+       }
+   }*/
     return SUCCESS;
 }
 
@@ -385,7 +394,6 @@ Serial.println("follow_tape_till_branch");
         }
     }
     digitalWrite(BLINKY, HIGH); 
-    stop_motors();
     return SUCCESS;
 }
 

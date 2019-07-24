@@ -98,9 +98,14 @@ int reverse(float pwm)
  */
 int stop_motors()
 {
+    run_motor(RIGHT_MOTOR, BACK, 0.2);
+    run_motor(LEFT_MOTOR, BACK, 0.2);
+    uint32_t start_time = millis();
+    while (millis() - start_time > 2) {
+        get_tape_following_error();
+    }
     run_motor(RIGHT_MOTOR, FWD, 0);
     run_motor(LEFT_MOTOR, FWD, 0);
-    get_tape_following_error();
     return SUCCESS;
 }
 

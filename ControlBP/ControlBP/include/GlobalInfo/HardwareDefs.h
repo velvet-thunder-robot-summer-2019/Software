@@ -77,12 +77,12 @@
 #define ON_TAPE 0
 #define LEFT_OFF_RIGHT_ON -1
 #define RIGHT_OFF_LEFT_ON 1
-#define BOTH_OFF_LAST_RIGHT -5
-#define BOTH_OFF_LAST_LEFT 5
-#define OUTER_LEFT 8
-#define OUTER_RIGHT -8
-#define LAST_OUTER_LEFT 9
-#define LAST_OUTER_RIGHT -9
+#define BOTH_OFF_LAST_RIGHT -4
+#define BOTH_OFF_LAST_LEFT 4
+#define OUTER_LEFT 5
+#define OUTER_RIGHT -5
+#define LAST_OUTER_LEFT 6
+#define LAST_OUTER_RIGHT -6
 
 #define LEFT_MOTOR 0
 #define RIGHT_MOTOR 1

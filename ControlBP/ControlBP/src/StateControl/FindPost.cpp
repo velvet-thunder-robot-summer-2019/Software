@@ -129,7 +129,7 @@ void find_post()
         Serial.print("state is: ");
         Serial.print(robot_state());
 #endif
-        if (switch_state(FIND_POST, RETURN_TO_GAUNTLET) == OTHER_STATE_CHANGE_OCCURRED_FIRST) {
+        if (switch_state(FIND_POST, MENU) == OTHER_STATE_CHANGE_OCCURRED_FIRST) {
             Serial.println("other state changed preceeded this one");
         }
     }
@@ -146,6 +146,6 @@ void find_post()
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(FIND_POST, GET_INFINITY_STONE);
     } else {
-        switch_state(FIND_POST, MENU);
+        switch_state(FIND_POST, GET_INFINITY_STONE);
     }
 }

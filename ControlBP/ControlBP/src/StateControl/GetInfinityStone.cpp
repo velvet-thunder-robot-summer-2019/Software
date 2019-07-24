@@ -21,7 +21,7 @@ void get_infinity_stone()
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(GET_INFINITY_STONE, FIND_POST);
     } else {
-        switch_state(GET_INFINITY_STONE, MENU);
+        switch_state(GET_INFINITY_STONE, FIND_POST);
     }
     return;
 #endif

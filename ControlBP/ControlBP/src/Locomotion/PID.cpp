@@ -29,8 +29,8 @@ void init_PID()
         past_errors[i] = 0;
     }
     oldest_error_index = 0;
-    kp = 300;
-    kd = 500;
+    kp = 212;
+    kd = 200;
 }
 
 /**
