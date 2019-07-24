@@ -56,66 +56,74 @@ void find_post()
             delay(1000);
             return;
         }
+    } else if (run_status.bot_position.last_location == my_intersection && run_status.bot_position.next_location == my_first_post)
+    {
+        if (reach_adjacent_location_on_tape(my_first_post, FIND_POST, TRUE) == STATE_CHANGED) {
+            return;
+        }
+        update_position(my_first_post, my_second_post);
     } else if (run_status.bot_position.last_location == my_first_post && run_status.bot_position.next_location == my_second_post)
     {
         int post_index = I_am_inevitable ? 2 : 1;
 
-        if (run_status.stones_status[post_index] == UNKNOWN) {
+        // if (run_status.stones_status[post_index] == UNKNOWN) {
             // reach next location
             if (reach_adjacent_location_on_tape(my_second_post, FIND_POST, TRUE) == STATE_CHANGED) {
                 return;
             }
             update_position(my_second_post, my_third_post);
-        } else {
-            digitalWrite(BLINKY, HIGH); // error bad things happened
-            delay(1000);
-            digitalWrite(BLINKY, LOW);
-            delay(1000);
-            digitalWrite(BLINKY, HIGH);
-            delay(1000);
-            digitalWrite(BLINKY, LOW);
-            return;
-        }
+        // }
+        // } else {
+        //     digitalWrite(BLINKY, HIGH); // error bad things happened
+        //     delay(1000);
+        //     digitalWrite(BLINKY, LOW);
+        //     delay(1000);
+        //     digitalWrite(BLINKY, HIGH);
+        //     delay(1000);
+        //     digitalWrite(BLINKY, LOW);
+        //     return;
+        // }
     } else if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.next_location == my_third_post) 
     {
-        int post_index = I_am_inevitable ? 1 : 2;
+        // int post_index = I_am_inevitable ? 1 : 2;
 
-        if (run_status.stones_status[post_index] == UNKNOWN) {
+        // if (run_status.stones_status[post_index] == UNKNOWN) {
             // reach next location
             if (reach_adjacent_location_on_tape(my_third_post, FIND_POST, TRUE) == STATE_CHANGED) {
                 return;
             }
             update_position(my_third_post, my_fourth_post);
-        } else {
-            digitalWrite(BLINKY, HIGH); // error bad things happened
-            delay(1000);
-            digitalWrite(BLINKY, LOW);
-            delay(1000);
-            digitalWrite(BLINKY, HIGH);
-            delay(1000);
-            digitalWrite(BLINKY, LOW);
-            return;
-        }
+
+        // } else {
+        //     digitalWrite(BLINKY, HIGH); // error bad things happened
+        //     delay(1000);
+        //     digitalWrite(BLINKY, LOW);
+        //     delay(1000);
+        //     digitalWrite(BLINKY, HIGH);
+        //     delay(1000);
+        //     digitalWrite(BLINKY, LOW);
+        //     return;
+        // }
     } else if (run_status.bot_position.last_location == my_third_post && run_status.bot_position.next_location == my_fourth_post) 
     {
-        int post_index = I_am_inevitable ? 1 : 2;
+        // int post_index = I_am_inevitable ? 1 : 2;
 
-        if (run_status.stones_status[post_index] == UNKNOWN) {
+        // if (run_status.stones_status[post_index] == UNKNOWN) {
             // reach next location
             if (reach_adjacent_location_on_tape(my_fourth_post, FIND_POST, TRUE) == STATE_CHANGED) {
                 return;
             }
             update_position(my_fourth_post, I_am_inevitable ? METHANOS_INTERSECTION : THANOS_INTERSECTION);
-        } else {
-            digitalWrite(BLINKY, HIGH); // error bad things happened
-            delay(1000);
-            digitalWrite(BLINKY, LOW);
-            delay(1000);
-            digitalWrite(BLINKY, HIGH);
-            delay(1000);
-            digitalWrite(BLINKY, LOW);
-            return;
-        }
+        // } else {
+        //     digitalWrite(BLINKY, HIGH); // error bad things happened
+        //     delay(1000);
+        //     digitalWrite(BLINKY, LOW);
+        //     delay(1000);
+        //     digitalWrite(BLINKY, HIGH);
+        //     delay(1000);
+        //     digitalWrite(BLINKY, LOW);
+        //     return;
+        // }
     } else 
     {
         // this is temporary for the next tuning run, we just go Home

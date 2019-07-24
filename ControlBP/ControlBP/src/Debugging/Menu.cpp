@@ -352,7 +352,7 @@ void state_menu()
                 if (!digitalRead(NAVIGATE)) {
                     displayed_state = GET_INFINITY_STONE_MENU;
                 } else if (!digitalRead(SET)) {
-                    switch_state(MENU, REACH_RAMP);
+                    switch_state(MENU, FIND_POST);
                     Serial.println("Entering find post state");
                     if (run_status.bot_identity == THANOS) {
                         update_position(THANOS_INTERSECTION, POST_4);
@@ -516,4 +516,5 @@ void stub_arm_motion()
     display.display();
     delay(5000);
     display.clearDisplay();
+    display.display();
 }

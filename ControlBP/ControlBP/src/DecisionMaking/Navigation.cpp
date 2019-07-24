@@ -284,8 +284,8 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     int branch_side = get_branch_side(next_location);
 
     int front_reached_branch = branch_reached_front();
-    int back_reached_branch = branch_reached(branch_side);
-    while (!front_reached_branch && !back_reached_branch) {
+    // int back_reached_branch = branch_reached(branch_side);
+    while (!front_reached_branch) {// && !back_reached_branch) {
         uint8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (response == TAPE_NOT_FOUND) {
              backtrack_to_tape();
@@ -294,9 +294,10 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
             return STATE_CHANGED;
         }
         front_reached_branch = branch_reached_front();
-        back_reached_branch = branch_reached(branch_side);
+        // back_reached_branch = branch_reached(branch_side);
     }
     stop_motors();
+
     // while (!back_reached_branch) {
     //     uint8_t response;
     //     if (!stopping_at_branch) {
@@ -313,14 +314,14 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     //     back_reached_branch = branch_reached(branch_side);
     //     // update ze bloody location outside of this code. It's a pain otherwise
     // }
-    // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
-    if (stopping_at_branch) 
-    {
-        while (!branch_reached(branch_side)) {
-           reverse(FLAT_GROUND_APPROACHING_STOP_PWM);
-        }
-        stop_motors();
-    }
+    // // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
+    // if (stopping_at_branch) 
+    // {
+    //     while (!branch_reached(branch_side)) {
+    //        reverse(FLAT_GROUND_APPROACHING_STOP_PWM);
+    //     }
+    //     stop_motors();
+    // }
     // handle the intersection cases where it's NOT the end?
     return SUCCESS;
 }

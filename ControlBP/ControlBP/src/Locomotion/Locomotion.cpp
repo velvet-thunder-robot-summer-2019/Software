@@ -6,6 +6,8 @@
 #include "Locomotion/Motor.h"
 
 #define CLICKS_PER_DEGREE 
+#define STOP_TIME 4
+#define STOP_PWM 0.6
 
 float PID_output = 0;
 
@@ -98,10 +100,10 @@ int reverse(float pwm)
  */
 int stop_motors()
 {
-    run_motor(RIGHT_MOTOR, BACK, 0.2);
-    run_motor(LEFT_MOTOR, BACK, 0.2);
+    run_motor(RIGHT_MOTOR, BACK, STOP_PWM);
+    run_motor(LEFT_MOTOR, BACK, STOP_PWM);
     uint32_t start_time = millis();
-    while (millis() - start_time > 2) {
+    while (millis() - start_time > STOP_TIME) {
         get_tape_following_error();
     }
     run_motor(RIGHT_MOTOR, FWD, 0);
