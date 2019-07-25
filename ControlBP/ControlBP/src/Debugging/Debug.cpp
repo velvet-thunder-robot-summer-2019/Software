@@ -21,6 +21,10 @@
 void test_ramp_reached();
 void test_reach_location_fwd();
 void test_reach_location_back();
+void test_turn_onto_branch();
+void test_follow_arc(int arc_val);
+void get_click_speeds();
+void get_all_tape_sensors();
 
 /*
 Example commands: init_tape_follower
@@ -99,16 +103,15 @@ void debug()
         } else if (command.equals("turn onto branch right")) {
             delay(1000);
             turn_onto_branch(RIGHT, MENU);
-        } else if (command.equals("follow arc 25")) {
             uint32_t start_time = millis();
-            while (millis() - start_time < 10000) {
-                follow_arc_rho(LEFT, 25, TURN_PWM);
+            while (millis() - start_time < 5000) {
+                follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
             }
+            stop_motors();
+        } else if (command.equals("follow arc 25")) {
+            test_follow_arc(25);
         } else if (command.equals("follow arc 45")) {
-            uint32_t start_time = millis();
-            while (millis() - start_time < 10000) {
-                follow_arc_rho(LEFT, 45, TURN_PWM);
-            }      
+            test_follow_arc(45);     
         } else if (command.equals("follow tape till branch")) {
             follow_tape_till_branch(MENU);
         } else if (command.equals("get_arm_angles")) {
@@ -118,30 +121,7 @@ void debug()
             delay(3000);
             face_reverse_direction(MENU);
         } else if (command.equals("get all tape sensors")) {
-            Serial.println();
-            Serial.print("inside left: ");
-            Serial.println(left_sensor());
-            Serial.println(analogRead(LEFT_SENSOR));
-
-            Serial.print("inside right: ");
-            Serial.println(right_sensor());
-            Serial.println(analogRead(RIGHT_SENSOR));
-
-            Serial.print("outside left: ");
-            Serial.println(outer_left_sensor());
-            Serial.println(analogRead(OUTER_LEFT_SENSOR));
-
-            Serial.print("outside right: ");
-            Serial.println(outer_right_sensor());
-            Serial.println(analogRead(OUTER_RIGHT_SENSOR));
-
-            // Serial.print("wing left: ");
-            // Serial.println(left_wing_sensor());
-            // Serial.println(analogRead(LEFT_WING_SENSOR));
-
-            // Serial.print("wing right: ");
-            // Serial.println(right_wing_sensor());
-            // Serial.println(analogRead(RIGHT_WING_SENSOR));
+            get_all_tape_sensors();
         } else if (command.equals("follow tape")) {
             uint32_t start_time = millis();
             while (millis() - start_time < 30000) {
@@ -149,13 +129,7 @@ void debug()
             }
             stop_motors();
         } else if (command.equals("get last click speed")) {
-            uint32_t avg_velocity_left = (left_wheel_dt[0] + left_wheel_dt[1] + left_wheel_dt[2]) / 3;
-            uint32_t avg_velocity_right = (right_wheel_dt[0] + right_wheel_dt[1] + right_wheel_dt[2]) / 3;
-            Serial.println("ramp_reached method");
-            Serial.print("avg velocity left: ");
-            Serial.println(avg_velocity_left);
-            Serial.print("avg velocity right");
-            Serial.println(avg_velocity_right);
+            get_click_speeds();
         } else if (command.equals("run straight")) {
             while (true) {
                 run_motor(LEFT, FWD, 0.4);
@@ -207,4 +181,52 @@ void test_turn_onto_branch()
     Serial.println("place robot at intersection");
     delay(3000); // 3 seconds
     turn_onto_branch(LEFT, MENU);
+}
+
+void get_click_speeds() 
+{
+    uint32_t avg_velocity_left = (left_wheel_dt[0] + left_wheel_dt[1] + left_wheel_dt[2]) / 3;
+    uint32_t avg_velocity_right = (right_wheel_dt[0] + right_wheel_dt[1] + right_wheel_dt[2]) / 3;
+    Serial.println("ramp_reached method");
+    Serial.print("avg velocity left: ");
+    Serial.println(avg_velocity_left);
+    Serial.print("avg velocity right");
+    Serial.println(avg_velocity_right);
+}
+
+void get_all_tape_sensors()
+{
+    Serial.println();
+    Serial.print("inside left: ");
+    Serial.println(left_sensor());
+    Serial.println(analogRead(LEFT_SENSOR));
+
+    Serial.print("inside right: ");
+    Serial.println(right_sensor());
+    Serial.println(analogRead(RIGHT_SENSOR));
+
+    Serial.print("outside left: ");
+    Serial.println(outer_left_sensor());
+    Serial.println(analogRead(OUTER_LEFT_SENSOR));
+
+    Serial.print("outside right: ");
+    Serial.println(outer_right_sensor());
+    Serial.println(analogRead(OUTER_RIGHT_SENSOR));
+
+    // Serial.print("wing left: ");
+    // Serial.println(left_wing_sensor());
+    // Serial.println(analogRead(LEFT_WING_SENSOR));
+
+    // Serial.print("wing right: ");
+    // Serial.println(right_wing_sensor());
+    // Serial.println(analogRead(RIGHT_WING_SENSOR));
+}
+
+void test_follow_arc(int arc_val)
+{
+    uint32_t start_time = millis();
+    while (millis() - start_time < 10000) {
+        follow_arc_rho(LEFT, arc_val, TURN_PWM);
+    }
+    stop_motors();
 }

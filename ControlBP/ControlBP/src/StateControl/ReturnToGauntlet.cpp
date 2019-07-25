@@ -5,6 +5,9 @@
 
 #define GO_INTO_GAUNTLET_TIME 2000 // 2 seconds
 
+int return_from_lower_post_and_intersect();
+int return_from_upper_post_and_intersect();
+
 void return_to_gauntlet()
 {
 #if TESTING_ORDER_OF_EVENTS
