@@ -98,10 +98,16 @@ int reverse(float pwm)
 /**
  * Stops the robot's motors
  */
-int stop_motors()
+int stop_motors(int current_direction)
 {
-    run_motor(RIGHT_MOTOR, BACK, STOP_PWM);
-    run_motor(LEFT_MOTOR, BACK, STOP_PWM);
+    if (current_direction == BACK) {
+        run_motor(RIGHT_MOTOR, FWD, STOP_PWM);
+        run_motor(LEFT_MOTOR, FWD, STOP_PWM);
+    } else if (current_direction == FWD) {
+        run_motor(RIGHT_MOTOR, BACK, STOP_PWM);
+        run_motor(LEFT_MOTOR, BACK, STOP_PWM);
+    }
+
     uint32_t start_time = millis();
     while (millis() - start_time > STOP_TIME) {
         get_tape_following_error();
@@ -109,6 +115,11 @@ int stop_motors()
     run_motor(RIGHT_MOTOR, FWD, 0);
     run_motor(LEFT_MOTOR, FWD, 0);
     return SUCCESS;
+}
+
+int stop_motors()
+{
+    stop_motors(FWD);
 }
 
 /**

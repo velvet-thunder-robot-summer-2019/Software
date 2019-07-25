@@ -50,7 +50,7 @@ void init_interrupts()
     // attach collision interrupt
     // attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), collision_left, RISING);
     // attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), collision_right, RISING);
-    // attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, RISING);
+    attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, RISING);
     // attachInterrupt(digitalPinToInterrupt(BUMPER_BACK), collision_back, RISING);
 
     // init timer interrupt

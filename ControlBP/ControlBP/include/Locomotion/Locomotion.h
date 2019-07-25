@@ -25,6 +25,12 @@ int reverse(float pwm);
 int stop_motors();
 
 /**
+ * Stops motors too
+ */
+int stop_motors(int current_direction);
+
+
+/**
  * Turns the robot along circle of arc length rho (cm), at speed prop to pwm,
  * to turn in direction given
  */

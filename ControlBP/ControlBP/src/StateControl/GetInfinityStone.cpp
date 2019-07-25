@@ -25,6 +25,7 @@ void get_infinity_stone()
     }
     return;
 #endif
+    
 
     int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
 

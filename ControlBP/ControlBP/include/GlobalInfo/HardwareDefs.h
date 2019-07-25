@@ -21,13 +21,13 @@
 #define TORQUE_OF_MOTION_AVG 10
 
 //sensors
-#define OUTER_LEFT_SENSOR PA5 //PA2
-#define LEFT_SENSOR PA0 // PA3
-#define RIGHT_SENSOR PA2 //PA4
-#define OUTER_RIGHT_SENSOR PA1 // PA5
+#define OUTER_LEFT_SENSOR PA4
+#define LEFT_SENSOR PA5
+#define RIGHT_SENSOR PA3
+#define OUTER_RIGHT_SENSOR PA1 
 
-#define LEFT_WING_SENSOR PA4 // PA1
-#define RIGHT_WING_SENSOR PA3 //PA0
+// #define LEFT_WING_SENSOR PA4 // PA1
+// #define RIGHT_WING_SENSOR PA3 //PA0
 
 //motors
 #define LEFT_MOTOR_PWM_BACK PB_8
@@ -105,10 +105,12 @@
 #define COMM_CORRUPT_COMMAND 0xAF
 
 
-// just for testing w/o bot
+// just for testing
 #define TESTING_ORDER_OF_EVENTS FALSE
 #define NO_ARM_TESTING TRUE
 #define DEBUG_PRINT FALSE
 #define USING_ENCODERS FALSE
+#define LOWER_BRANCH_PATH TRUE
+#define UPPER_BRANCH_PATH FALSE
 
 #endif // HARDWAREDEFS_H_

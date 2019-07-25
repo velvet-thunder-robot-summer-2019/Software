@@ -296,7 +296,9 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
         front_reached_branch = branch_reached_front();
         // back_reached_branch = branch_reached(branch_side);
     }
-    stop_motors();
+    if (stopping_at_branch) {
+        stop_motors();
+    }
 
     // while (!back_reached_branch) {
     //     uint8_t response;

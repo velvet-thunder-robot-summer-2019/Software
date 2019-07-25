@@ -66,16 +66,16 @@ int left_sensor();
  */
 int right_sensor();
 
-/**
- * Returns:     0 if sensor off
- *              1 if sensor on
- */
-int right_wing_sensor();
+// /**
+//  * Returns:     0 if sensor off
+//  *              1 if sensor on
+//  */
+// int right_wing_sensor();
 
-/**
- * Returns:     0 if sensor off
- *              1 if sensor on
- */
-int left_wing_sensor();
+// /**
+//  * Returns:     0 if sensor off
+//  *              1 if sensor on
+//  */
+// int left_wing_sensor();
 
 #endif // TAPE_SENSOR_H_

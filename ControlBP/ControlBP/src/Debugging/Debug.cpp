@@ -135,13 +135,13 @@ void debug()
             Serial.println(outer_right_sensor());
             Serial.println(analogRead(OUTER_RIGHT_SENSOR));
 
-            Serial.print("wing left: ");
-            Serial.println(left_wing_sensor());
-            Serial.println(analogRead(LEFT_WING_SENSOR));
+            // Serial.print("wing left: ");
+            // Serial.println(left_wing_sensor());
+            // Serial.println(analogRead(LEFT_WING_SENSOR));
 
-            Serial.print("wing right: ");
-            Serial.println(right_wing_sensor());
-            Serial.println(analogRead(OUTER_RIGHT_SENSOR));
+            // Serial.print("wing right: ");
+            // Serial.println(right_wing_sensor());
+            // Serial.println(analogRead(RIGHT_WING_SENSOR));
         } else if (command.equals("follow tape")) {
             uint32_t start_time = millis();
             while (millis() - start_time < 30000) {

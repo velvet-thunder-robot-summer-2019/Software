@@ -178,20 +178,20 @@ int right_sensor()
     return analogRead(RIGHT_SENSOR) > tape_sensor_threshold;
 }
 
-/**
- * Returns:     0 if sensor off
- *              1 if sensor on
- */
-int right_wing_sensor()
-{
-    return analogRead(RIGHT_WING_SENSOR) > tape_sensor_threshold;
-}
+// /**
+//  * Returns:     0 if sensor off
+//  *              1 if sensor on
+//  */
+// int right_wing_sensor()
+// {
+//     return analogRead(RIGHT_WING_SENSOR) > tape_sensor_threshold;
+// }
 
-/**
- * Returns:     0 if sensor off
- *              1 if sensor on
- */
-int left_wing_sensor()
-{
-    return analogRead(LEFT_WING_SENSOR) > tape_sensor_threshold;
-}
+// /**
+//  * Returns:     0 if sensor off
+//  *              1 if sensor on
+//  */
+// int left_wing_sensor()
+// {
+//     return analogRead(LEFT_WING_SENSOR) > tape_sensor_threshold;
+// }

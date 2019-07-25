@@ -110,7 +110,7 @@ float getD(int error)
     Serial.println("");
     */
 
-    return (float) (error - past_errors[oldest_error_index]) * kd * 00.05 / MAX_ANALOG;
+    return (float) (error - past_errors[oldest_error_index]) * kd * 0.2 / MAX_ANALOG;
 }
 
 /**
