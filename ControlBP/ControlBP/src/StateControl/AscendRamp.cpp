@@ -21,6 +21,8 @@ void ascend_ramp()
     if (follow_tape_till_branch(ASCEND_RAMP) == STATE_CHANGED) {
         return;
     }
+    stop_motors();
+    delay(500);
     // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
     int inevitable = run_status.bot_identity == THANOS;
     

@@ -22,9 +22,10 @@ void test_ramp_reached();
 void test_reach_location_fwd();
 void test_reach_location_back();
 void test_turn_onto_branch();
-void test_follow_arc(int arc_val);
+void test_follow_arc(int arc_val, int direction);
 void get_click_speeds();
 void get_all_tape_sensors();
+void run_motor_at_pwm(float pwm);
 
 /*
 Example commands: init_tape_follower
@@ -104,14 +105,22 @@ void debug()
             delay(1000);
             turn_onto_branch(RIGHT, MENU);
             uint32_t start_time = millis();
-            while (millis() - start_time < 5000) {
+            while (millis() - start_time < 2000) {
                 follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
             }
             stop_motors();
-        } else if (command.equals("follow arc 25")) {
-            test_follow_arc(25);
-        } else if (command.equals("follow arc 45")) {
-            test_follow_arc(45);     
+        } else if (command.equals("turn onto branch left")) {
+            delay(1000);
+            turn_onto_branch(LEFT, MENU);
+            uint32_t start_time = millis();
+            while (millis() - start_time < 2000) {
+                follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+            }
+            stop_motors();
+        } else if (command.equals("follow arc 10")) {
+            test_follow_arc(10, LEFT);
+        } else if (command.equals("follow arc 20")) {
+            test_follow_arc(20, RIGHT);     
         } else if (command.equals("follow tape till branch")) {
             follow_tape_till_branch(MENU);
         } else if (command.equals("get_arm_angles")) {
@@ -141,11 +150,42 @@ void debug()
             }
         } else if (command.equals("blinky")) {
             digitalWrite(BLINKY, HIGH);
+        } else if (command.equals("who are you?")) {
+            if (run_status.bot_identity == THANOS) {
+                Serial.println("I am inevitable");
+            } else if (run_status.bot_identity == METHANOS) {
+                Serial.println("I am methanos");
+            }
+        } else if (command.equals("motors 0.05")) {
+            run_motor_at_pwm(0.05);
+        } else if (command.equals("motors 0.08")) {
+            run_motor_at_pwm(0.08);
+        } else if (command.equals("motors 0.1")) {
+            run_motor_at_pwm(0.1);
+        } else if (command.equals("motors 0.15")) {
+            run_motor_at_pwm(0.15);
+        } else if (command.equals("motors 0.13")) {
+            run_motor_at_pwm(0.13);
+        } else if (command.equals("motors 0.2")) {
+            run_motor_at_pwm(0.2);
+        } else if (command.equals("stop bot")) {
+            stop_motors();
         }
 
         delay(DELAY_BETWEEN_COMMANDS);
     }
 }
+
+void run_motor_at_pwm(float pwm) {
+    run_motor(LEFT, FWD, pwm);
+    run_motor(RIGHT, FWD, pwm);
+    uint32_t start_time = millis();
+    while (millis() - start_time < 5000) {
+        Serial.println("I'm tired");
+    }
+    stop_motors();
+}
+
 
 //follow_tape wrapped for time period: 1 param time period, 1 param torque
 void test_ramp_reached() 
@@ -222,11 +262,11 @@ void get_all_tape_sensors()
     // Serial.println(analogRead(RIGHT_WING_SENSOR));
 }
 
-void test_follow_arc(int arc_val)
+void test_follow_arc(int arc_val, int direction)
 {
     uint32_t start_time = millis();
     while (millis() - start_time < 10000) {
-        follow_arc_rho(LEFT, arc_val, TURN_PWM);
+        follow_arc_rho(direction, arc_val, TURN_PWM);
     }
     stop_motors();
 }

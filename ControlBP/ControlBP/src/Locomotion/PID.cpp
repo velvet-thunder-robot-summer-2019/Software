@@ -29,8 +29,8 @@ void init_PID()
         past_errors[i] = 0;
     }
     oldest_error_index = 0;
-    kp = 212;
-    kd = 200;
+    kp = 450;
+    kd = 0;
 }
 
 /**
@@ -96,7 +96,7 @@ int get_kd()
  */
 float getP(int error)
 {
-    return (error * 0.2 * kp) / MAX_ANALOG;
+    return (error * kp * 0.5) / MAX_ANALOG;
 }
 
 /**
@@ -110,7 +110,7 @@ float getD(int error)
     Serial.println("");
     */
 
-    return (float) (error - past_errors[oldest_error_index]) * kd * 0.2 / MAX_ANALOG;
+    return (float) (error - past_errors[oldest_error_index]) * kd * 3 / MAX_ANALOG;
 }
 
 /**

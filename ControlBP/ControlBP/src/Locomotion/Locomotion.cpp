@@ -6,8 +6,8 @@
 #include "Locomotion/Motor.h"
 
 #define CLICKS_PER_DEGREE 
-#define STOP_TIME 4
-#define STOP_PWM 0.6
+#define STOP_TIME 100
+#define STOP_PWM 1
 
 float PID_output = 0;
 
@@ -72,10 +72,10 @@ int follow_arc_rho(int direction, int rho, float smaller_pwm)
 {
     float larger_pwm = (rho + 0.5 * 11.5) / (rho - 0.5 * 11.5) * smaller_pwm;
     if (direction == RIGHT) {
-        run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
+        // run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
         run_motor(LEFT_MOTOR, FWD, larger_pwm);
-    } else {
-        run_motor(LEFT_MOTOR, FWD, smaller_pwm);
+    } else if (direction == LEFT) {
+        // run_motor(LEFT_MOTOR, FWD, smaller_pwm);
         run_motor(RIGHT_MOTOR, FWD, larger_pwm);
     }
     get_tape_following_error();
@@ -101,6 +101,7 @@ int reverse(float pwm)
 int stop_motors(int current_direction)
 {
     if (current_direction == BACK) {
+
         run_motor(RIGHT_MOTOR, FWD, STOP_PWM);
         run_motor(LEFT_MOTOR, FWD, STOP_PWM);
     } else if (current_direction == FWD) {
@@ -109,7 +110,7 @@ int stop_motors(int current_direction)
     }
 
     uint32_t start_time = millis();
-    while (millis() - start_time > STOP_TIME) {
+    while (millis() - start_time < STOP_TIME) {
         get_tape_following_error();
     }
     run_motor(RIGHT_MOTOR, FWD, 0);
@@ -119,7 +120,7 @@ int stop_motors(int current_direction)
 
 int stop_motors()
 {
-    stop_motors(FWD);
+    return stop_motors(FWD);
 }
 
 /**
