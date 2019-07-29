@@ -182,7 +182,6 @@ void debug()
             run_motor_at_pwm(0.8);
         } else if (command.equals("motor 0.9")) {
             run_motor_at_pwm(0.9);
-        }
         } else if (command.equals("stop bot")) {
             stop_motors();
         }
