@@ -6,9 +6,14 @@
 /**
  * PID Tuning Variables
  */
+
+#define BASE_ARM_DUTY_CYCLE 0.48
+#define FORE_ARM_DUTY_CYCLE 0.05
+
 #define TURNTABLE_KP 0
-#define BASE_ARM_KP 0
-#define FOREARM_KP 0
+#define BASE_ARM_KP 5
+//#define FOREARM_KP 5 //For 45
+#define FOREARM_KP 8
 
 #define TURNTABLE_KI 0
 #define BASE_ARM_KI 0
@@ -16,7 +21,7 @@
 
 #define TURNTABLE_KD 0
 #define BASE_ARM_KD 0
-#define FOREARM_KD 0
+#define FOREARM_KD 1
 
 #define TURNTABLE_ANTI_WINDUP 0
 #define BASE_ARM_ANTI_WINDUP 0
@@ -24,7 +29,7 @@
 
 #define NUM_PAST_ERRORS 10
 
-#define ANGULAR_ERROR_BOUND 0
+#define ANGULAR_ERROR_BOUND 3
 
 /**
  * Hardware Pinout
@@ -38,24 +43,23 @@
 #define GAUNTLET_SERVO_PIN PA_0
 
 //Potentiometer pins
-#define TURNTABLE_POTENTIOMETER PA_1
+#define TURNTABLE_POTENTIOMETER PA_5
 #define BASE_ARM_POTENTIOMETER PA_2
-#define FORE_ARM_POTENTIOMETER PA_3
+#define FORE_ARM_POTENTIOMETER PA_1
 
-#define CLAW_SERVO_PIN PA_4
+#define CLAW_SERVO_PIN PB_7
+#define WRIST_SERVO_PIN PB_6
 
-#define WRIST_SERVO_PIN PA_5
+#define TURNTABLE_POS_PIN PB_1 //FALSE
+#define TURNTABLE_NEG_PIN PB_2 //FALSE
 
-#define TURNTABLE_POS_PIN PB_1
-#define TURNTABLE_NEG_PIN PB_2
+#define BASE_ARM_CW_PIN PA_7
+#define BASE_ARM_CCW_PIN PA_6
 
-#define BASE_ARM_POS_PIN PB_3
-#define BASE_ARM_NEG_PIN PB_4
+#define FORE_ARM_CW_PIN PB_8
+#define FORE_ARM_CCW_PIN PB_9
 
-#define FORE_ARM_POS_PIN PB_5
-#define FORE_ARM_NEG_PIN PB_6
-
-#define TAPE_SENSOR PB_7
+#define TAPE_SENSOR PB_7 //FALSE
 
 /**
  * Angular and lengthwise positioning
@@ -82,9 +86,9 @@
 #define WRIST_TRAVEL_ANGLE 0
 
 //Arm lengths in mm
-#define L1 20
-#define L2 20
-#define L3 5
+#define L1 200
+#define L2 120
+#define L3 150
 
 //The angles needed to bring the arm to its ascent position in degrees
 #define TURNTABLE_ASCENT_ANGLE 0
@@ -175,14 +179,14 @@
 #define BACKWARD 0
 
 //return this error if arm cannot reach this position
-#define UNREACHABLE_ERROR 0
+#define UNREACHABLE_ERROR -999
 
 /**
  * PWM INIT
  */
 
 //pwm initialization
-#define PWM_CLOCK_FREQ 0
-#define PWM_PERIOD 0
+#define PWM_CLOCK_FREQ 100000
+#define PWM_PERIOD 500
 
 #endif

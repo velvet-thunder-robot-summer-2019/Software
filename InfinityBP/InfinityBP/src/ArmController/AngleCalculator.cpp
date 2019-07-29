@@ -67,6 +67,7 @@ float calculate_arm_angle(float xy, float z)
         {
             theta1 = theta1 + 180;
         }
+        //The base arm can only rotate at an angle of 90 CW or CCW from the z-axis
 
         return theta1 - theta2;
 

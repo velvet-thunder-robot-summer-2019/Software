@@ -66,13 +66,15 @@ byte init_arm(void)
     wrist_angle = WRIST_TRAVEL_ANGLE;
 
     //Open the claw
-    open_claw();
+    //open_claw();
 
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+    //arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+    /*
     if (arm_move_status == MOVE_FAIL)
     {
         return COMM_TASK_FAILED;
     }
+    */
 
     return COMM_SUCCESS;
 }
@@ -439,37 +441,70 @@ byte put_stone_in_gauntlet(void)
 void maintain_current_arm_position(void)
 {
 
+    //Serial.println("Maintaining Pos");
+
+    /*
+    //Current position is CCW
+    if (read_base_arm_angle() > 0)
+    {
+        Serial.println(read_base_arm_angle());
+        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, BASE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);
+        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
+    }
+    else
+    {
+        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, BASE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);         
+    }
+    
+    //Current position is CCW
+    if (read_fore_arm_angle() > 0)
+    {
+        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, FORE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);
+        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0); 
+    }
+    else
+    {
+        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, FORE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);
+        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0); 
+    }
+    */
+
     //Calculate the relative differences between stated and current position
-    float delta_turntable_angle = read_turntable_angle() - turntable_angle;
-    float delta_base_arm_angle = read_base_arm_angle() - base_arm_angle;
-    float delta_forearm_angle = read_base_arm_angle() - forearm_angle;
+    //float delta_turntable_angle = read_turntable_angle() - turntable_angle;
+    float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
+    float delta_forearm_angle = forearm_angle - read_fore_arm_angle();
 
     pwm_response base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
     pwm_response forearm_correction = calculate_forearm_pwm(delta_forearm_angle);
-    pwm_response turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+    //pwm_response turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
 
     if (base_arm_correction.dir == CLOCKWISE)
     {
-        pwm_start(BASE_ARM_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, base_arm_correction.pwm_val * PWM_PERIOD, 0);
-        pwm_start(BASE_ARM_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
+        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
     }
     else
     {
-        pwm_start(BASE_ARM_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        pwm_start(BASE_ARM_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, base_arm_correction.pwm_val * PWM_PERIOD, 0);            
+        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
     }
 
+    
     if (forearm_correction.dir == CLOCKWISE)
     {
-        pwm_start(FORE_ARM_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, forearm_correction.pwm_val * PWM_PERIOD, 0);
-        pwm_start(FORE_ARM_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
+        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (FORE_ARM_DUTY_CYCLE + forearm_correction.pwm_val) * PWM_PERIOD, 0);
+        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
     }
     else
     {
-        pwm_start(FORE_ARM_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        pwm_start(FORE_ARM_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, forearm_correction.pwm_val * PWM_PERIOD, 0);            
+        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (FORE_ARM_DUTY_CYCLE + forearm_correction.pwm_val) * PWM_PERIOD, 0);            
     }
+    
+    
 
+    /*
     if (turntable_correction.dir == CLOCKWISE)
     {
         pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
@@ -482,5 +517,7 @@ void maintain_current_arm_position(void)
     }
 
     wrist_servo.write(wrist_angle);
+
+    */
     
 }
