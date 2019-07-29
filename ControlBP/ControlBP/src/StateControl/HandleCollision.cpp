@@ -14,17 +14,17 @@ void handle_collision()
     Serial.println("This state is not implemented yet. At all");
 #endif
 
-    uint32_t start_time = millis();
-    while (millis() - start_time < BACKUP_TIME) {
-        reverse(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-    }
-    stop_motors(BACK);
+    // uint32_t start_time = millis();
+    // while (millis() - start_time < BACKUP_TIME) {
+    //     reverse(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+    // }
+    // stop_motors(BACK);
 
-    //SET GLOBAL WHICH SIDE WE HIT VAR BACK TO NO_COLLISION
-    if (digitalRead(MASTER_SWITCH) == DEV) {
-        switch_state(HANDLE_COLLISION, MENU);
-    } else {
-        switch_state(HANDLE_COLLISION, REACH_RAMP);
-    }
-    run_status.last_collision = NO_COLLISION;
+    // //SET GLOBAL WHICH SIDE WE HIT VAR BACK TO NO_COLLISION
+    // if (digitalRead(MASTER_SWITCH) == DEV) {
+    //     switch_state(HANDLE_COLLISION, MENU);
+    // } else {
+    //     switch_state(HANDLE_COLLISION, REACH_RAMP);
+    // }
+    // run_status.last_collision = NO_COLLISION;
 }

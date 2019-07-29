@@ -27,7 +27,7 @@ int stop_motors();
 /**
  * Stops motors too
  */
-int stop_motors(int current_direction);
+// int stop_motors(int current_direction);
 
 
 /**

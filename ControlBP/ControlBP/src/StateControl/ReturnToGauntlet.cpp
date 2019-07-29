@@ -73,7 +73,7 @@ int return_from_lower_post_and_intersect()
     update_position(my_first_post, my_intersection);
 
     // move and turn into intersection
-    if (follow_tape_till_branch(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+    if (follow_tape_till_branch(RETURN_TO_GAUNTLET, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
         return STATE_CHANGED;
     }
 
@@ -84,7 +84,7 @@ int return_from_lower_post_and_intersect()
     }
     update_position(my_intersection, my_gauntlet);
 
-    if (follow_tape_till_branch(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+    if (follow_tape_till_branch(RETURN_TO_GAUNTLET, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
         return STATE_CHANGED;
     }
     
@@ -126,7 +126,7 @@ int return_from_upper_post_and_intersect()
     update_position(my_first_post, my_intersection);
 
     // move and turn into intersection
-    if (follow_tape_till_branch(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+    if (follow_tape_till_branch(RETURN_TO_GAUNTLET, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
         return STATE_CHANGED;
     }
 
@@ -137,7 +137,7 @@ int return_from_upper_post_and_intersect()
     }
     update_position(my_intersection, my_gauntlet);
 
-    if (follow_tape_till_branch(RETURN_TO_GAUNTLET) == STATE_CHANGED) {
+    if (follow_tape_till_branch(RETURN_TO_GAUNTLET, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
         return STATE_CHANGED;
     }
     

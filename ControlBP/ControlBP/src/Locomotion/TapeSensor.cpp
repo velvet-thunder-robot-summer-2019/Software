@@ -14,7 +14,7 @@ int right_sensor();
 int right_wing_sensor();
 int left_wing_sensor();
 
-uint32_t tape_sensor_threshold = 440;
+uint32_t tape_sensor_threshold = 650;
 
 /**
  * Initialising pins for tape sensing
@@ -34,9 +34,9 @@ void initTapeSensor()
 int get_tape_following_error()
 {
     int left = left_sensor();
-    int far_left = outer_left_sensor();
+    // int far_left = outer_left_sensor();
     int right = right_sensor();
-    int far_right = outer_right_sensor();
+    // int far_right = outer_right_sensor();
 #if DEBUG_PRINT
     Serial.println("get_tape_following_error");
     Serial.print("left sensor says: ");
@@ -54,23 +54,28 @@ int get_tape_following_error()
     } else if (left) {
         lastSensor = LEFT_SENSOR;
         return RIGHT_OFF_LEFT_ON;
-    } else if (far_left) {
-        lastSensor = OUTER_LEFT_SENSOR;
-        return OUTER_LEFT;
-    } else if (far_right) {
-        lastSensor = OUTER_RIGHT_SENSOR;
-        return OUTER_RIGHT;
-    } else if (lastSensor == RIGHT_SENSOR) {
-        return BOTH_OFF_LAST_RIGHT;
     } else if (lastSensor == LEFT_SENSOR) {
         return BOTH_OFF_LAST_LEFT;
-    } else if (lastSensor == OUTER_LEFT_SENSOR) {
-        return LAST_OUTER_LEFT;
-    } else if (lastSensor == OUTER_RIGHT_SENSOR) {
-        return LAST_OUTER_RIGHT;
+    } else {
+        return BOTH_OFF_LAST_RIGHT;
     }
+    // } else if (far_left) {
+    //     lastSensor = OUTER_LEFT_SENSOR;
+    //     return OUTER_LEFT;
+    // } else if (far_right) {
+    //     lastSensor = OUTER_RIGHT_SENSOR;
+    //     return OUTER_RIGHT;
+    // } else if (lastSensor == RIGHT_SENSOR) {
+    //     return BOTH_OFF_LAST_RIGHT;
+    // } else if (lastSensor == LEFT_SENSOR) {
+    //     return BOTH_OFF_LAST_LEFT;
+    // } else if (lastSensor == OUTER_LEFT_SENSOR) {
+    //     return LAST_OUTER_LEFT;
+    // } else if (lastSensor == OUTER_RIGHT_SENSOR) {
+    //     return LAST_OUTER_RIGHT;
+    // }
     // should never happen
-    return LAST_OUTER_LEFT;
+    // return LAST_OUTER_LEFT;
 }
 
 // int branch_reached()

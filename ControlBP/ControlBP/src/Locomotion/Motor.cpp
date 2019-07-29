@@ -31,9 +31,9 @@ void run_motor(int motor, int direction, float torque)
     PinName back;
 
     float duty_cycle = torque_to_PWM(torque);
-    if (motor == RIGHT) {
-        duty_cycle *= 0.85;
-    }
+    // if (motor == RIGHT) {
+    //     duty_cycle *= 0.85;
+    // }
 
     if (motor == LEFT_MOTOR) {
         fwd = LEFT_MOTOR_PWM_FWD;

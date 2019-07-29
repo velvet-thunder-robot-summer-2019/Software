@@ -122,7 +122,7 @@ void debug()
         } else if (command.equals("follow arc 20")) {
             test_follow_arc(20, RIGHT);     
         } else if (command.equals("follow tape till branch")) {
-            follow_tape_till_branch(MENU);
+            follow_tape_till_branch(MENU, FLAT_GROUND_TAPE_FOLLOWING_PWM);
         } else if (command.equals("get_arm_angles")) {
             uint8_t arm_angles[4];
             get_arm_angles(&arm_angles[0]);
@@ -168,6 +168,21 @@ void debug()
             run_motor_at_pwm(0.13);
         } else if (command.equals("motors 0.2")) {
             run_motor_at_pwm(0.2);
+        } else if (command.equals("motor 0.3")) {
+            run_motor_at_pwm(0.3);
+        } else if (command.equals("motor 0.4")) {
+            run_motor_at_pwm(0.4);
+        } else if (command.equals("motor 0.5")) {
+            run_motor_at_pwm(0.5);
+        } else if (command.equals("motor 0.6")) {
+            run_motor_at_pwm(0.6);
+        } else if (command.equals("motor 0.7")) {
+            run_motor_at_pwm(0.7);
+        } else if (command.equals("motor 0.8")) {
+            run_motor_at_pwm(0.8);
+        } else if (command.equals("motor 0.9")) {
+            run_motor_at_pwm(0.9);
+        }
         } else if (command.equals("stop bot")) {
             stop_motors();
         }

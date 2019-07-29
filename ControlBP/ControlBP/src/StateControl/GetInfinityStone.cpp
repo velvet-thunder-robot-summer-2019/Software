@@ -18,14 +18,10 @@ void get_infinity_stone()
 #endif
 #if NO_ARM_TESTING
     stub_arm_motion();
-    if (digitalRead(MASTER_SWITCH) == COMP) {
-        switch_state(GET_INFINITY_STONE, FIND_POST);
-    } else {
-        switch_state(GET_INFINITY_STONE, FIND_POST);
-    }
+    switch_state(GET_INFINITY_STONE, FIND_POST);
     return;
 #endif
-    
+
 
     int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
 

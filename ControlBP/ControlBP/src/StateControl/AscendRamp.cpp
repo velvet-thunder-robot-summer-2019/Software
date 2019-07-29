@@ -1,8 +1,6 @@
 #include "StateControl/AscendRamp.h"
 #include "AllPurposeInclude.h"
 
-#define ASCEND_RAMP_TORQUE 10
-
 void ascend_ramp()
 {
 #if TESTING_ORDER_OF_EVENTS
@@ -18,7 +16,7 @@ void ascend_ramp()
         return;
     }
     
-    if (follow_tape_till_branch(ASCEND_RAMP) == STATE_CHANGED) {
+    if (follow_tape_till_branch(ASCEND_RAMP, ASCEND_RAMP_PWM) == STATE_CHANGED) {
         return;
     }
     stop_motors();

@@ -15,6 +15,6 @@ int face_reverse_direction(state expected_state);
  */
 int turn_onto_branch(int direction, state expected_state);
 
-int follow_tape_till_branch(state expected_state);
+int follow_tape_till_branch(state expected_state, float pwm);
 
 #endif // POSITIONING_H_

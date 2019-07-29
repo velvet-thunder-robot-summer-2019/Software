@@ -175,7 +175,7 @@ uint8_t request_put_stone_in_gauntlet()
  */
 uint8_t request_arm_position__ascent()
 {
-    delay(1000);
+    // delay(1000);
     Serial.println("request_arm_position__ascent");
     uint8_t send_status = send_command(SET_ASCENT_POSITION);
     if (send_status == COMM_TIMEOUT) {

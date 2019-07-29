@@ -6,10 +6,13 @@
 #include "Locomotion/Motor.h"
 
 #define CLICKS_PER_DEGREE 
-#define STOP_TIME 100
+#define STOP_TIME 20
+#define STOP_MONITOR 200
 #define STOP_PWM 1
 
 float PID_output = 0;
+
+int stop_motors(int current_direction);
 
 /**
  * Performs necessary initialisation for tape following
@@ -38,6 +41,12 @@ int follow_tape(float torque)
     Serial.print("PID_output: ");
     Serial.println(PID_output);
 #endif
+    if (PID_output > 0.9 - torque) {
+        PID_output = 0.9 - torque;
+    } 
+    if (PID_output > torque - 0.1) {
+        PID_output = torque - 0.1;
+    }
     run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
     run_motor(LEFT_MOTOR, FWD, torque - PID_output);
     int error = get_tape_following_error();
@@ -115,6 +124,10 @@ int stop_motors(int current_direction)
     }
     run_motor(RIGHT_MOTOR, FWD, 0);
     run_motor(LEFT_MOTOR, FWD, 0);
+    start_time = millis();
+    while (millis() - start_time < STOP_MONITOR) {
+        get_tape_following_error();
+    }
     return SUCCESS;
 }
 

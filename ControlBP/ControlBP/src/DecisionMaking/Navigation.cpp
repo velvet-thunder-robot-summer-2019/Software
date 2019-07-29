@@ -286,7 +286,7 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     int front_reached_branch = branch_reached_front();
     // int back_reached_branch = branch_reached(branch_side);
     while (!front_reached_branch) {// && !back_reached_branch) {
-        uint8_t response = follow_tape(FLAT_GROUND_APPROACHING_STOP_PWM);
+        uint8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (response == TAPE_NOT_FOUND) {
              backtrack_to_tape();
         }
@@ -383,6 +383,7 @@ return SUCCESS;
 
     while (!outer_sensor_away_from_side()) {
         follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        get_tape_following_error();
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
@@ -398,7 +399,7 @@ return SUCCESS;
    return SUCCESS;
 }
 
-int follow_tape_till_branch(state expected_state) {
+int follow_tape_till_branch(state expected_state, float PWM) {
 #if TESTING_ORDER_OF_EVENTS
 Serial.println("follow_tape_till_branch");
 #endif

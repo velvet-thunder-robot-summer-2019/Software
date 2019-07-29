@@ -354,11 +354,20 @@ void state_menu()
                 } else if (!digitalRead(SET)) {
                     switch_state(MENU, FIND_POST);
                     Serial.println("Entering find post state");
+#if UPPER_BRANCH_PATH
                     if (run_status.bot_identity == THANOS) {
                         update_position(THANOS_INTERSECTION, POST_4);
                     } else {
                         update_position(METHANOS_INTERSECTION, POST_1);
                     }
+#endif
+#if LOWER_BRANCH_PATH
+                   if (run_status.bot_identity == METHANOS) {
+                        update_position(THANOS_INTERSECTION, POST_5);
+                    } else {
+                        update_position(METHANOS_INTERSECTION, POST_6);
+                    }
+#endif
                 }
                 break;
             
