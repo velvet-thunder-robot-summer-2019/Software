@@ -47,27 +47,18 @@ void get_infinity_stone()
     }
 
     // attempt to grab infinity stones
-    int i;
-    int result;
-    for (i = 0; i < MAX_ATTEMPTS_STONE; i++) {
-        result = grab_infinity_stone();
-        if (result == SUCCESS) {
-            break;
-        }
-        if (robot_state() == RETURN_TO_GAUNTLET) {
-            break;
-        }
-    }
+    int result = grab_infinity_stone();
+    int stone_array_index = get_post_index();
 
     if (result == SUCCESS) {
-        // for whichever post we're at, set corresponding stone status to COLLECTED
-#if DEBUG_PRINT
-        Serial.println("getting stone was a success!");
-#endif
+        run_status.stones_status[stone_array_index] = COLLECTED;
     } else {
-        // for whichever post we're at, set corresponding stone status to MISSING
-        Serial.println("Stone was missing");
+        run_status.stones_status[stone_array_index] = UNKNOWN;
     }
+    if (robot_state() == RETURN_TO_GAUNTLET) {
+        return;
+    }
+
     int stone_in_gauntlet = request_put_stone_in_gauntlet();
     int post_index = get_post_index();
     if (stone_in_gauntlet == COMM_SUCCESS) {

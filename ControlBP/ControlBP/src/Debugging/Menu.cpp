@@ -363,9 +363,9 @@ void state_menu()
 #endif
 #if LOWER_BRANCH_PATH
                    if (run_status.bot_identity == METHANOS) {
-                        update_position(THANOS_INTERSECTION, POST_5);
+                        update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
                     } else {
-                        update_position(METHANOS_INTERSECTION, POST_6);
+                        update_position(METHANOS_GAUNTLET, METHANOS_INTERSECTION);
                     }
 #endif
                 }
@@ -526,4 +526,29 @@ void stub_arm_motion()
     delay(5000);
     display.clearDisplay();
     display.display();
+}
+
+void display_turn_at_branch_case(int if_case) 
+{
+    display.clearDisplay();
+    display.setCursor(30, 30);
+    switch(if_case) {
+        case 1:
+            display.println("case 1");
+            break;
+        case 2:
+            display.println("case 2");
+            break;
+        case 3:
+            display.println("case 3");
+            break;
+        case 4:
+            display.println("case 4");
+            break;
+        default:
+            display.println("none of the cases triggered");
+            break;
+    }
+    display.display();
+    delay(3000);
 }

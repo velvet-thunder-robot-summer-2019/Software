@@ -48,8 +48,9 @@ int follow_lower_path()
             // turn the correct direction at the fork
             int turn_direction = thanos ? RIGHT : LEFT;
             if (turn_onto_branch(turn_direction, FIND_POST) == STATE_CHANGED) {
-                // return STATE_CHANGED;
+                return STATE_CHANGED;
             }
+            delay(500);
 
             update_position(my_intersection, my_first_post);
 
@@ -115,6 +116,7 @@ int follow_upper_path()
             if (turn_onto_branch(turn_direction, FIND_POST) == STATE_CHANGED) {
                 // return STATE_CHANGED;
             }
+            delay(500);
 
             update_position(my_intersection, my_first_post);
 

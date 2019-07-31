@@ -15,21 +15,20 @@ void ascend_ramp()
     if (robot_state() != ASCEND_RAMP) {
         return;
     }
+    int inevitable = run_status.bot_identity == THANOS;
+    
+    int turn_direction = inevitable ? LEFT : RIGHT;
     
     if (follow_tape_till_branch(ASCEND_RAMP, ASCEND_RAMP_PWM) == STATE_CHANGED) {
         return;
     }
-    stop_motors();
-    delay(500);
+    // stop_motors();
+    // delay(3000);
     // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
-    int inevitable = run_status.bot_identity == THANOS;
-    
-    int turn_direction = inevitable ? LEFT : RIGHT;
 
     if (turn_onto_branch(turn_direction, ASCEND_RAMP) == STATE_CHANGED) {
         return;
     }
-    stop_motors();
     location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
     location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
     update_position(my_gauntlet, my_intersection);

@@ -168,19 +168,19 @@ void debug()
             run_motor_at_pwm(0.13);
         } else if (command.equals("motors 0.2")) {
             run_motor_at_pwm(0.2);
-        } else if (command.equals("motor 0.3")) {
+        } else if (command.equals("motors 0.3")) {
             run_motor_at_pwm(0.3);
-        } else if (command.equals("motor 0.4")) {
+        } else if (command.equals("motors 0.4")) {
             run_motor_at_pwm(0.4);
-        } else if (command.equals("motor 0.5")) {
+        } else if (command.equals("motors 0.5")) {
             run_motor_at_pwm(0.5);
-        } else if (command.equals("motor 0.6")) {
+        } else if (command.equals("motors 0.6")) {
             run_motor_at_pwm(0.6);
-        } else if (command.equals("motor 0.7")) {
+        } else if (command.equals("motors 0.7")) {
             run_motor_at_pwm(0.7);
-        } else if (command.equals("motor 0.8")) {
+        } else if (command.equals("motors 0.8")) {
             run_motor_at_pwm(0.8);
-        } else if (command.equals("motor 0.9")) {
+        } else if (command.equals("motors 0.9")) {
             run_motor_at_pwm(0.9);
         } else if (command.equals("stop bot")) {
             stop_motors();

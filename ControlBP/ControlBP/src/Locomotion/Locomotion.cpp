@@ -11,9 +11,11 @@
 #define STOP_PWM 1
 
 float PID_output = 0;
+// int historical_errors[1000] = {0};
+// int historical_error_index  = 0;
 
 int stop_motors(int current_direction);
-
+ 
 /**
  * Performs necessary initialisation for tape following
  * Initialises PID and tape-sensing. Must be called before follow_tape
@@ -33,26 +35,26 @@ void init_tape_following()
 int follow_tape(float torque)
 {
 #if DEBUG_PRINT
-    Serial.println("follow_tape");
-    Serial.print("PWM: ");
-    Serial.println(torque);
-    Serial.println("");
-
-    Serial.print("PID_output: ");
-    Serial.println(PID_output);
+    // Serial.println("follow_tape");
+    // Serial.print("PWM: ");
+    // Serial.println(torque);
+    // Serial.println("");
 #endif
-    if (PID_output > 0.9 - torque) {
-        PID_output = 0.9 - torque;
+    if (PID_output > 1 - torque) {
+        PID_output = 1 - torque;
     } 
-    if (PID_output > torque - 0.1) {
-        PID_output = torque - 0.1;
+    if (PID_output > torque) {
+        PID_output = torque;
     }
     run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
     run_motor(LEFT_MOTOR, FWD, torque - PID_output);
     int error = get_tape_following_error();
+
 #if DEBUG_PRINT
     Serial.print("tape following error is: ");
     Serial.println(error);
+    Serial.print("PID_output: ");
+    Serial.println(PID_output);
 #endif
     PID_output = get_PID_output(error);
 
@@ -79,13 +81,13 @@ int rotate_on_spot(float pwm)
  */
 int follow_arc_rho(int direction, int rho, float smaller_pwm)
 {
-    float larger_pwm = (rho + 0.5 * 11.5) / (rho - 0.5 * 11.5) * smaller_pwm;
+    // float larger_pwm = (rho + 0.5 * 11.5) / (rho - 0.5 * 11.5) * smaller_pwm;
     if (direction == RIGHT) {
-        // run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
-        run_motor(LEFT_MOTOR, FWD, larger_pwm);
+        run_motor(RIGHT_MOTOR, FWD, 0);
+        run_motor(LEFT_MOTOR, FWD, smaller_pwm);
     } else if (direction == LEFT) {
-        // run_motor(LEFT_MOTOR, FWD, smaller_pwm);
-        run_motor(RIGHT_MOTOR, FWD, larger_pwm);
+        run_motor(LEFT_MOTOR, FWD, 0);
+        run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
     }
     get_tape_following_error();
     return SUCCESS;
@@ -134,19 +136,6 @@ int stop_motors(int current_direction)
 int stop_motors()
 {
     return stop_motors(FWD);
-}
-
-/**
- * Backtracks to reach tape, using historical information of movement
- * Checks for any change of state during backtracking
- * Returns:     SUCCESS - if tape successfully found 
- *              STATE_CHANGED - if state is changed during backtracking
- */
-int backtrack_to_tape()
-{
-    Serial.println("backtrack_to_tape");
-    digitalWrite(BLINKY, HIGH);
-    return SUCCESS;
 }
 
 /**

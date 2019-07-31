@@ -8,7 +8,7 @@
 
 // Communication details
 #define BUFFER_SIZE 7 // 2 for start/stop, 1 for return code, up to 4 for data
-#define MAX_TIMEOUT 5000 //ms, max time to wait for availability
+#define MAX_TIMEOUT 100001 //ms, max time to wait for availability
 #define MAX_RETRIES_COMM 3 //max retries when a communication fails
 #define WAIT_BETWEEN_COMM_RETRIES 5 
 

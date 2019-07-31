@@ -35,10 +35,10 @@
 
 // #define RIGHT_MOTOR_PWM_BACK PA_8
 // #define RIGHT_MOTOR_PWM_FWD PA_6
-#define LEFT_MOTOR_PWM_FWD PB_1
-#define LEFT_MOTOR_PWM_BACK PB_0
-#define RIGHT_MOTOR_PWM_FWD PA_6
-#define RIGHT_MOTOR_PWM_BACK PA_8
+#define LEFT_MOTOR_PWM_BACK PB_1
+#define LEFT_MOTOR_PWM_FWD PB_0
+#define RIGHT_MOTOR_PWM_BACK PA_6
+#define RIGHT_MOTOR_PWM_FWD PA_8
 
 //encoders
 #define ENCODER_RIGHT_A PB9
@@ -71,7 +71,6 @@
 #define OTHER_STATE_CHANGE_OCCURRED_FIRST 2
 
 // tape sensor and driving
-#define TAPE_NOT_FOUND 2
 #define LEFT 0
 #define RIGHT 1
 #define BOTH_SIDES 2
@@ -92,11 +91,11 @@
 #define RIGHT_MOTOR 1
 
 // drivings vals and PWMs
-#define ASCEND_RAMP_PWM 0.25
+#define ASCEND_RAMP_PWM 0.35
 #define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.2
-#define FLAT_GROUND_APPROACHING_STOP_PWM 0.17
+#define FLAT_GROUND_APPROACHING_STOP_PWM 0.19
 #define ARC_LENGTH_FOR_TURN 8
-#define TURN_PWM 0.17
+#define TURN_PWM 0.22
 
 // communication status
 // when communication fails
@@ -115,8 +114,8 @@
 #define NO_ARM_TESTING TRUE
 #define DEBUG_PRINT FALSE
 #define USING_ENCODERS FALSE
-#define LOWER_BRANCH_PATH FALSE
-#define UPPER_BRANCH_PATH TRUE
+#define LOWER_BRANCH_PATH TRUE
+#define UPPER_BRANCH_PATH FALSE
 
 
 #endif // HARDWAREDEFS_H_

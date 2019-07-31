@@ -14,12 +14,6 @@ void initTapeSensor();
  */
 int get_tape_following_error();
 
-/**
- * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
- * Params:  expected_side - side on which we expect a branch to appear
- */
-int branch_reached(int expected_side);
-
 // /**
 //  * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
 //  */
@@ -31,6 +25,15 @@ int branch_reached(int expected_side);
  * there must be a branch
  */
 int branch_reached_front();
+
+/**
+ * get tape sensor values from last stop
+ */
+int last_stop_outer_left();
+int last_stop_outer_right();
+int last_stop_left();
+int last_stop_right();
+
 
 /**
  * Updates cutoff threshold for tape sensors to potentiometer value
