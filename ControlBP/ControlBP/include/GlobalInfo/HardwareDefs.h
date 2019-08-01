@@ -96,6 +96,7 @@
 #define FLAT_GROUND_APPROACHING_STOP_PWM 0.19
 #define ARC_LENGTH_FOR_TURN 8
 #define TURN_PWM 0.22
+#define TURN_INTO_GAUNTLET_PWM 0.25
 
 // communication status
 // when communication fails

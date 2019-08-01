@@ -45,10 +45,10 @@ void init_communication()
 {
     CommSerial.begin(115200);
     while (!CommSerial) {
+#if DEBUG_PRINT
+#endif
         Serial.println("don't let the compiler optimise me away!!");
     }
-
-    // Serial.println("init_communication");
 }
 
 /**
@@ -58,7 +58,9 @@ void init_communication()
  */
 uint8_t establish_communication()
 {
+#if DEBUG_PRINT
     Serial.println("establish communication");
+#endif
     uint8_t send_status = send_command(GET_ACK);
     if (send_status != COMM_SUCCESS) {
         return send_status;
@@ -68,11 +70,15 @@ uint8_t establish_communication()
     if (response_status == COMM_TIMEOUT) {
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("corrupt response");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
     if (infinity_response[1] == COMM_SUCCESS) {
+#if DEBUG_PRINT
         Serial.println("Initialised communication");
+#endif
         return TRUE;
     }
     return COMM_CORRUPT_RESPONSE;
@@ -91,28 +97,38 @@ uint8_t get_arm_angles(uint8_t *angles)
     uint8_t send_status = send_command(GET_ARM_POSITION);
 
     if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("send timeout");
+#endif
         return COMM_TIMEOUT;
     }
     uint8_t response_status = get_response(4);
     if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("timeout");
+#endif
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("corrupt");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
 
     if (infinity_response[1] != COMM_SUCCESS) {
-        return infinity_response[1];
+#if DEBUG_PRINT
         Serial.print("arm angle obtained");
+#endif
+        return infinity_response[1];
     }
 
     angles[0] = (uint8_t) infinity_response[2];
     angles[1] = (uint8_t) infinity_response[3];
     angles[2] = (uint8_t) infinity_response[4];
     angles[3] = (uint8_t) infinity_response[5];
+#if DEBUG_PRINT
     Serial.println("angle received");
+#endif
     return COMM_SUCCESS;
 }
 
@@ -122,23 +138,33 @@ uint8_t get_arm_angles(uint8_t *angles)
  */
 uint8_t request_arm_position__travel()
 {
+#if DEBUG_PRINT
     Serial.println("request_arm_position__travel");
+#endif
 
     uint8_t send_status = send_command(SET_TRAVEL_POSITION);
     if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("send timeout");
+#endif
         return COMM_TIMEOUT;
     }
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("received timeout");
+#endif
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("corrupt response");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
+#if DEBUG_PRINT
     Serial.print("response from infinity: ");
+#endif
     Serial.println(infinity_response[1]);
     return infinity_response[1];
 }
@@ -149,23 +175,34 @@ uint8_t request_arm_position__travel()
  */
 uint8_t request_put_stone_in_gauntlet() 
 {
+#if DEBUG_PRINT
     Serial.println("request_put_infinity_in_gauntlet: putting stone in gauntlet");
+#endif
     uint8_t send_status = send_command(SET_STONE_IN_GAUNTLET);
     if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("send timeout");
+#endif
         return COMM_TIMEOUT;
     }
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("received timeout");
+#endif
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("corrupt response");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
+#if DEBUG_PRINT
     Serial.print("response from infinity: ");
     Serial.println(infinity_response[1]);
+#endif
+
     return infinity_response[1];
 }
 
@@ -175,24 +212,34 @@ uint8_t request_put_stone_in_gauntlet()
  */
 uint8_t request_arm_position__ascent()
 {
-    // delay(1000);
+#if DEBUG_PRINT
     Serial.println("request_arm_position__ascent");
+#endif
+
     uint8_t send_status = send_command(SET_ASCENT_POSITION);
     if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("send timeout");
+#endif
         return COMM_TIMEOUT;
     }
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("received timeout");
+#endif
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("corrupt response");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
+#if DEBUG_PRINT
     Serial.print("response from infinity: ");
     Serial.println(infinity_response[1]);
+#endif
     return infinity_response[1];
 }
 
@@ -201,10 +248,14 @@ uint8_t request_arm_position__ascent()
  */
 uint8_t request_confirmation_post_presence(uint8_t side)
 {
+#if DEBUG_PRINT
     Serial.print("request_confirmation_post_presence: ");
+#endif
     uint8_t send_status = send_command(CONFIRM_POST_PRESENCE);
     if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("send timeout");
+#endif
         return COMM_TIMEOUT;
     }
 
@@ -212,14 +263,20 @@ uint8_t request_confirmation_post_presence(uint8_t side)
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("received timeout");
+#endif
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("corrupt response");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
+#if DEBUG_PRINT
     Serial.print("response from infinity: ");
     Serial.println(infinity_response[1]);
+#endif
     return infinity_response[1]; 
 }
 
@@ -230,11 +287,15 @@ uint8_t request_confirmation_post_presence(uint8_t side)
  */
 uint8_t request_post_ascent()
 {
+#if DEBUG_PRINT
     Serial.println("Ascending post...");
+#endif
 
     uint8_t send_status = send_command(ASCEND_POST);
     if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("send timeout");
+#endif
         return COMM_TIMEOUT;
     }
 
@@ -242,14 +303,20 @@ uint8_t request_post_ascent()
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("received timeout");
+#endif
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("corrupt response");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
+#if DEBUG_PRINT
     Serial.print("response from infinity: ");
     Serial.println(infinity_response[1]);
+#endif
     return infinity_response[1]; 
 }
 
@@ -259,11 +326,15 @@ uint8_t request_post_ascent()
  */
 uint8_t grab_infinity_stone()
 {
+#if DEBUG_PRINT
     Serial.println("grab_infinity_stone");
+#endif
 
     uint8_t send_status = send_command(GRAB_STONE);
     if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("send timeout");
+#endif
         return COMM_TIMEOUT;
     }
 
@@ -271,14 +342,21 @@ uint8_t grab_infinity_stone()
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
         Serial.println("receive timeout");
+#endif
         return COMM_TIMEOUT;
     } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
         Serial.println("Corrupt response");
+#endif
         return COMM_CORRUPT_RESPONSE;
     }
+#if DEBUG_PRINT
     Serial.print("response from infinity: ");
     Serial.println(infinity_response[1]);
+#endif
+
     return infinity_response[1]; 
 }
 
@@ -292,7 +370,9 @@ uint8_t send_command(byte command)
         if (sent) {
             break;
         }
+#if DEBUG_PRINT
         Serial.println("sending command timed out");
+#endif
         delay(WAIT_BETWEEN_COMM_RETRIES);
     }
     if (sent != COMM_SUCCESS) {
@@ -310,7 +390,9 @@ uint8_t get_response(uint8_t byte_num)
         if (received == COMM_SUCCESS) {
             return COMM_SUCCESS;
         }
+#if DEBUG_PRINT
         Serial.println("receiving command timed out");
+#endif
         delay(WAIT_BETWEEN_COMM_RETRIES);
     }
     if (received != COMM_SUCCESS) {
@@ -330,10 +412,12 @@ uint8_t send_command_no_retries(byte command)
             return COMM_TIMEOUT;
         }
     }
+#if DEBUG_PRINT
     Serial.println("sending buffer contents: ");
     Serial.println(command_buff[0]);
     Serial.println(command_buff[1]);
     Serial.println(command_buff[2]);
+#endif
     CommSerial.write(command_buff, 3);
     CommSerial.flush();
     return COMM_SUCCESS;
@@ -354,74 +438,3 @@ uint8_t get_response_no_retries(uint8_t byte_num)
 
     return COMM_SUCCESS;
 }
-
-// lower level commands, might not be needed ever _________________________________
-/**
- * Request angle of lazy susan, ccw from standard axis
- * Params:      angle - in degrees
- * Returns:     SUCCESS - if successful
- *              STATE_CHANGED - if state changed
- */
-// int request_susan_angle(int angle)
-// {
-//     Serial.print("request_susan_angle");
-//     Serial.println(angle);
-//     return 0;
-// }
-
-
-// /**
-//  * Request angle of shoulder, from horizontal axis
-//  * Params:      angle - in degrees
-//  * Returns:     SUCCESS - if successful
-//  *              STATE_CHANGED - if state changed
-//  * */
-// int request_shoulder_angle(int angle)
-// {
-//     Serial.print("request_shoulder_angle");
-//     Serial.println(angle);
-//     return 0;
-// }
-
-// /**
-//  * Request angle of elbow 
-//  * -90 is collinear to  base arm, +90 is extended opposite to base arm
-//  * Params:      angle - in degrees
-//  * Returns:     SUCCESS - if successful
-//  *              STATE_CHANGED - if state changed
-//  **/
-// int request_elbow_angle(int angle)
-// {
-//     Serial.print("request_elbow_angle");
-//     Serial.println(angle);
-//     return 0;
-// }
-
-// /**
-//  * Request angle of wrist 
-//  * -90 is collinear to mid-arm, +90 is extended opposite to mid-arm
-//  * Params:      angle - in degrees
-//  * Returns:     angle set
-//  */
-// int request_wrist_angle(int angle)
-// {
-//     Serial.print("request_wrist_angle");
-//     Serial.println(angle);
-//     return 0;
-// }
-
-// /**
-//  * Opens or closes claw
-//  * Params:      position - OPEN or CLOSED
-//  * Returns:     claw angle
-//  */
-// int request_claw_position(int position)
-// {
-//     Serial.print("request_claw_position");
-//     if (position == OPEN) {
-//         Serial.println("OPEN");
-//     } else {
-//         Serial.println("CLOSED");
-//     }
-//     return 0;
-// }
