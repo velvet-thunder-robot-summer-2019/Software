@@ -17,4 +17,10 @@ int turn_onto_branch(int direction, state expected_state);
 
 int follow_tape_till_branch(state expected_state, float pwm);
 
+/**
+ * Turns onto the LEFT or RIGHT path of a fork, into the gauntlet
+ * Params:      direction - LEFT or RIGHT, this is the gauntlet direction
+ */
+int turn_into_gauntlet(int direction, state expected_state)
+
 #endif // POSITIONING_H_

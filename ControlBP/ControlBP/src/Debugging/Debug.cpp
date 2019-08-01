@@ -129,6 +129,13 @@ void debug()
         } else if (command.equals("face reverse direction")) {
             delay(3000);
             face_reverse_direction(MENU);
+        } else if (command.equals("test reverse")) {
+            reverse(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+            uint32_t start_time = millis();
+            while (millis() - start_time < 800) {
+                delay(1);
+            }
+            stop_motors(BACK);
         } else if (command.equals("get all tape sensors")) {
             get_all_tape_sensors();
         } else if (command.equals("follow tape")) {

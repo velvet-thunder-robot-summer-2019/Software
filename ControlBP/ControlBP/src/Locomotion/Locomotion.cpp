@@ -106,7 +106,6 @@ int reverse(float pwm)
 {
     run_motor(RIGHT_MOTOR, BACK, pwm);
     run_motor(LEFT_MOTOR, BACK, pwm);
-    get_tape_following_error();
     return SUCCESS;
 }
 
