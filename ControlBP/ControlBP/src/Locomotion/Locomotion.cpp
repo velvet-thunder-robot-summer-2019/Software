@@ -7,6 +7,7 @@
 
 #define CLICKS_PER_DEGREE 
 #define STOP_TIME 20
+#define STOP_CORRECT_TIME 2000
 #define STOP_MONITOR 200
 #define STOP_PWM 1
 
@@ -120,16 +121,14 @@ int stop_motors(int current_direction)
         run_motor(LEFT_MOTOR, BACK, STOP_PWM);
     }
 
+    
     uint32_t start_time = millis();
     while (millis() - start_time < STOP_TIME) {
         get_tape_following_error();
     }
-    run_motor(RIGHT_MOTOR, FWD, 0);
     run_motor(LEFT_MOTOR, FWD, 0);
-    start_time = millis();
-    while (millis() - start_time < STOP_MONITOR) {
-        get_tape_following_error();
-    }
+    run_motor(RIGHT_MOTOR, BACK, 0);
+
     return SUCCESS;
 }
 

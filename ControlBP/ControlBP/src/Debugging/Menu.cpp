@@ -352,22 +352,25 @@ void state_menu()
                 if (!digitalRead(NAVIGATE)) {
                     displayed_state = GET_INFINITY_STONE_MENU;
                 } else if (!digitalRead(SET)) {
-                    switch_state(MENU, FIND_POST);
                     Serial.println("Entering find post state");
 #if UPPER_BRANCH_PATH
                     if (run_status.bot_identity == THANOS) {
-                        update_position(THANOS_INTERSECTION, POST_4);
-                    } else {
-                        update_position(METHANOS_INTERSECTION, POST_1);
-                    }
-#endif
-#if LOWER_BRANCH_PATH
-                   if (run_status.bot_identity == METHANOS) {
                         update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
                     } else {
                         update_position(METHANOS_GAUNTLET, METHANOS_INTERSECTION);
                     }
 #endif
+#if LOWER_BRANCH_PATH
+                   if (run_status.bot_identity == THANOS) {
+                        update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
+                        // update_position(THANOS_INTERSECTION, POST_4);
+                    } else {
+                        update_position(METHANOS_GAUNTLET, METHANOS_INTERSECTION);
+                        // update_position(METHANOS_INTERSECTION, POST_1);
+                    }
+#endif
+                    switch_state(MENU, FIND_POST);
+
                 }
                 break;
             
@@ -528,27 +531,13 @@ void stub_arm_motion()
     display.display();
 }
 
-void display_turn_at_branch_case(int if_case) 
+void display_string(String str) 
 {
     display.clearDisplay();
     display.setCursor(30, 30);
-    switch(if_case) {
-        case 1:
-            display.println("case 1");
-            break;
-        case 2:
-            display.println("case 2");
-            break;
-        case 3:
-            display.println("case 3");
-            break;
-        case 4:
-            display.println("case 4");
-            break;
-        default:
-            display.println("none of the cases triggered");
-            break;
-    }
+    display.println(str);
     display.display();
     delay(3000);
+    display.clearDisplay();
+    display.display();
 }

@@ -5,6 +5,6 @@ void init_menu();
 
 void menu();
 void stub_arm_motion();
-void display_turn_at_branch_case(int if_case);
+void display_string(String str);
 
 #endif //MENU_H_

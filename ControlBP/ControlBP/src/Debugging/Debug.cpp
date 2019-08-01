@@ -144,7 +144,13 @@ void debug()
                 run_motor(LEFT, FWD, 0.4);
                 run_motor(RIGHT, FWD, 0.4);
             }
-        } else if (command.equals("run left")) {
+        } else if (command.equals("run back")) {
+            while(true) {
+                run_motor(LEFT, BACK, 0.4);
+                run_motor(RIGHT, BACK, 0.4);
+            }
+        }
+         else if (command.equals("run left")) {
             while (true) {
                 run_motor(LEFT, FWD, 0.4);
             }
