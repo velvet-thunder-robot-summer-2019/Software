@@ -64,7 +64,7 @@ int align_to_gauntlet();
 /**
  * Rotates bot on the spot (clockwise bc I felt like it)
  */
-int rotate_on_spot(float pwm);
+int rotate_on_spot(float pwm, int direction);
 
 
 

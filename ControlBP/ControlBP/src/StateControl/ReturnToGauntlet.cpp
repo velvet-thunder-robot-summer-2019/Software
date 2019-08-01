@@ -16,6 +16,16 @@ void return_to_gauntlet()
     Serial.println("starting state: ");
     Serial.println(robot_state());
 #endif
+    bool inevitable = run_status.bot_identity == THANOS;
+
+    location my_fourth_post_lower = inevitable ? POST_1 : POST_4;
+    location my_second_post_upper = inevitable ? POST_6 : POST_5;
+    if (run_status.bot_position.last_location == my_fourth_post_lower) {
+        return_from_lower_post_and_intersect();
+    } 
+    if (run_status.bot_position.last_location == my_second_post_upper) {
+        return_from_upper_post_and_intersect();
+    }
 
 
     // hardcode in way in

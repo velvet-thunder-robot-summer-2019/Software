@@ -67,12 +67,16 @@ int follow_tape(float torque)
 /**
  * Rotates bot on the spot (clockwise bc I felt like it)
  */
-int rotate_on_spot(float pwm)
+int rotate_on_spot(float pwm, int direction)
 {
-    run_motor(RIGHT_MOTOR, FWD, pwm);
-    run_motor(LEFT_MOTOR, BACK, pwm);
-    get_tape_following_error();
-    
+    if (direction == LEFT) {
+        run_motor(RIGHT_MOTOR, FWD, pwm);
+        run_motor(LEFT_MOTOR, BACK, pwm);
+    } else if (direction == RIGHT) {
+        run_motor(RIGHT_MOTOR, BACK, pwm);
+        run_motor(LEFT_MOTOR, FWD, pwm);
+    }
+
     return SUCCESS;
 }
 
@@ -90,7 +94,6 @@ int follow_arc_rho(int direction, int rho, float smaller_pwm)
         run_motor(LEFT_MOTOR, FWD, 0);
         run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
     }
-    get_tape_following_error();
     return SUCCESS;
 }
 
@@ -128,6 +131,7 @@ int stop_motors(int current_direction)
     }
     run_motor(LEFT_MOTOR, FWD, 0);
     run_motor(RIGHT_MOTOR, BACK, 0);
+    get_tape_following_error();
 
     return SUCCESS;
 }

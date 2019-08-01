@@ -7,6 +7,7 @@
 #define ENCODER_DT_DELTA 4 // ms
 #define TURN_TIME 500 //ms
 #define RESTART_TIME 700 // ms
+#define STOP_TIME 20 // ms
 
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
@@ -278,27 +279,18 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     // turn around if need be  
     if (run_status.bot_position.last_location == next_location) {
         int reversal_success = face_reverse_direction(expected_state);
-#if DEBUG_SCREEN_DELAYS
-        display_string("reach adj loc start");
-#endif
         if (reversal_success == STATE_CHANGED) {
             return STATE_CHANGED;
         }
     }
 
-#if DEBUG_SCREEN_DELAYS
-    display_string("start tape foll");
-#endif
     uint32_t start_time = millis();
     while (millis() - start_time < RESTART_TIME) {
         follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
     }
 
     int front_reached_branch = branch_reached_front();
-    // int back_reached_branch = branch_reached(branch_side);
-#if DEBUG_SCREEN_DELAYS
-    display_string("follow till front");
-#endif
+
     while (!front_reached_branch) {// && !back_reached_branch) {
         follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (robot_state() != expected_state) {
@@ -369,50 +361,56 @@ return SUCCESS;
     // stop_motors();
     if (outer_turn_side && (inner_turn_side || inner_away_side)) {
         if_case = "1";
+        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
         while (inner_sensor_on_turn_side() || inner_sensor_away_from_side()) {
-            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
             if (robot_state() != expected_state) {
                 return STATE_CHANGED;
             }
+        get_tape_following_error();
         }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
         uint32_t start_time = millis();
         while (millis() - start_time < TURN_TIME) {
-            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
             if (robot_state() != expected_state) {
                 return STATE_CHANGED;
             }
+            get_tape_following_error();
         }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
         while (!inner_sensor_on_turn_side() || !inner_sensor_away_from_side()) {
-            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
             if (robot_state() != expected_state) {
                 return STATE_CHANGED;
             }
+            get_tape_following_error();
         }
     } else if (outer_away_side && (inner_turn_side || inner_away_side)) {
         if_case = "2";
         // much rejoicing
     } else if (outer_turn_side) {
         if_case = "3";
+        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
         uint32_t start_time = millis();
         while (millis() - start_time < TURN_TIME) {
-            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
             if (robot_state() != expected_state) {
                 return STATE_CHANGED;
             }
+            get_tape_following_error();
         }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
         while (!inner_sensor_on_turn_side() && !inner_sensor_away_from_side()) {
-            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
             if (robot_state() != expected_state) {
                 return STATE_CHANGED;
             }
+            get_tape_following_error();
         }
     } else if (outer_away_side) {
         if_case = "4";
+        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
         while (!inner_sensor_on_turn_side() && !inner_sensor_away_from_side()) {
-            follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
             if (robot_state() != expected_state) {
                 return STATE_CHANGED;
             }
+            get_tape_following_error();
         }
     }
     stop_motors();
@@ -456,32 +454,31 @@ int face_reverse_direction(state expected_state)
 delay(1000);
 return SUCCESS;
 #endif
+    rotate_on_spot(TURN_PWM, LEFT);
     while (!outer_left_sensor()) {
         // turn fairly fast until then
-        rotate_on_spot(TURN_PWM);
         get_tape_following_error();
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
-    while (!left_sensor()) {
-        // turn slower around
-        rotate_on_spot(TURN_PWM * 0.5);
-        get_tape_following_error();
-        if (robot_state() != expected_state) {
-            return STATE_CHANGED;
-        }
-    }
+    rotate_on_spot(TURN_PWM * 0.8, LEFT);
     while (!(left_sensor() && right_sensor())) {
-        // slow down to not overshoot!
-        rotate_on_spot(0);
+        // turn slower around
         get_tape_following_error();
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
     // stop motion once on line
-    rotate_on_spot(0);
+
+    uint32_t start_time = millis();
+    rotate_on_spot(1, RIGHT);
+    while (millis() - start_time < STOP_TIME) {
+        get_tape_following_error();
+    }
+    rotate_on_spot(0, LEFT);
+
     if (robot_state() != expected_state) {
         return STATE_CHANGED;
     }

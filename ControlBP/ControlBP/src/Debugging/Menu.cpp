@@ -421,6 +421,19 @@ void state_menu()
                     displayed_state = FIT_TO_GAUNTLET_MENU;
                 } else if (!digitalRead(SET)) {
                     switch_state(MENU, RETURN_TO_GAUNTLET);
+#if LOWER_BRANCH_PATH
+                    if (digitalRead(THANOS_v_METHANOS_SWITCH) == THANOS) {
+                        update_position(POST_1, METHANOS_INTERSECTION);
+                    } else {
+                        update_position(POST_4, THANOS_INTERSECTION);
+                    }
+#elif UPPER_BRANCH_PATH
+                    if (digitalRead(THANOS_v_METHANOS_SWITCH) == THANOS) {
+                        update_location(POST_6, METHANOS_INTERSECTION);
+                    } else {
+                        update_location(POST_5, THANOS_INTERSECTION);
+                    }
+#endif
                     Serial.println("Entering return to gauntlet state");
                 }
                 break;
