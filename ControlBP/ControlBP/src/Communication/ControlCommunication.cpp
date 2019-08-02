@@ -5,6 +5,7 @@
 #include "GlobalInfo/GlobalVars.h"
 #include "GlobalInfo/HardwareDefs.h"
 #include "Communication/ControlCommunication.h"
+#include "GlobalInfo/RobotState.h"
 
 // Communication details
 #define BUFFER_SIZE 7 // 2 for start/stop, 1 for return code, up to 4 for data
@@ -46,8 +47,8 @@ void init_communication()
     CommSerial.begin(115200);
     while (!CommSerial) {
 #if DEBUG_PRINT
-#endif
         Serial.println("don't let the compiler optimise me away!!");
+#endif
     }
 }
 
@@ -246,7 +247,7 @@ uint8_t request_arm_position__ascent()
 /**
  * Returns:     COMM_SUCCESS, COMM_TASK_FAILED, COMM_BUSY, COMM_CORRUPT_COMMAND
  */
-uint8_t request_confirmation_post_presence(uint8_t side)
+uint8_t request_confirmation_post_presence(uint8_t side, state expected_state)
 {
 #if DEBUG_PRINT
     Serial.print("request_confirmation_post_presence: ");
@@ -259,7 +260,11 @@ uint8_t request_confirmation_post_presence(uint8_t side)
         return COMM_TIMEOUT;
     }
 
-    while (!CommSerial.available()); // wait for response
+    while (!CommSerial.available()) {
+        if (robot_state() != expected_state) {
+            return STATE_CHANGED;
+        }
+    } // wait for response
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {
@@ -299,7 +304,8 @@ uint8_t request_post_ascent()
         return COMM_TIMEOUT;
     }
 
-    while (!CommSerial.available()); // wait for response
+    while (!CommSerial.available()) { // wait for response
+    }
 
     uint8_t response_status = get_response(1);
     if (response_status == COMM_TIMEOUT) {

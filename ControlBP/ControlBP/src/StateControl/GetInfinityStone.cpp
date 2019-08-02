@@ -25,7 +25,7 @@ void get_infinity_stone()
 
     int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
 
-    int confirm_post = request_confirmation_post_presence(side);
+    int confirm_post = request_confirmation_post_presence(side, GET_INFINITY_STONE);
     if (confirm_post == STATE_CHANGED) {
         return;
     } else if (confirm_post == COMM_TASK_FAILED) {

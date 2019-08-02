@@ -120,7 +120,7 @@ int return_from_lower_post_and_intersect()
         return STATE_CHANGED;
     }
     update_position(my_intersection, my_gauntlet);
--
+
 #if DEBUG_SCREEN_DELAYS
     display_string("inter-gaunt");
 #endif

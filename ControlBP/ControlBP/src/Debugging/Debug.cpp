@@ -88,9 +88,9 @@ void debug()
         } else if (command.equals("request arm position ascent")) {
             request_arm_position__ascent();
         } else if (command.equals("request confirmation post presence left")) {
-            request_confirmation_post_presence(LEFT);
+            request_confirmation_post_presence(LEFT, MENU);
         } else if (command.equals("request confirmation post presence right")) {
-            request_confirmation_post_presence(RIGHT);
+            request_confirmation_post_presence(RIGHT, MENU);
         } else if (command.equals("request post ascent")) {
             request_post_ascent();
         } else if (command.equals("grab infinity stone")) {

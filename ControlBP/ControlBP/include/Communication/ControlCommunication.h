@@ -29,7 +29,7 @@ uint8_t request_arm_position__ascent();
 /**
  * 
  */
-uint8_t request_confirmation_post_presence(uint8_t side);
+uint8_t request_confirmation_post_presence(uint8_t side, state expected_state);
 
 
 /**
