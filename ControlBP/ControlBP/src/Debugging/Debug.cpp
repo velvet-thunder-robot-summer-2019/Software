@@ -265,12 +265,12 @@ void get_all_tape_sensors()
 {
     Serial.println();
     Serial.print("inside left: ");
-    Serial.println(left_sensor());
-    Serial.println(analogRead(LEFT_SENSOR));
+    Serial.println(inner_left_sensor());
+    Serial.println(analogRead(INNER_LEFT_SENSOR));
 
     Serial.print("inside right: ");
-    Serial.println(right_sensor());
-    Serial.println(analogRead(RIGHT_SENSOR));
+    Serial.println(inner_right_sensor());
+    Serial.println(analogRead(INNER_RIGHT_SENSOR));
 
     Serial.print("outside left: ");
     Serial.println(outer_left_sensor());

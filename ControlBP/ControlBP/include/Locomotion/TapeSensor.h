@@ -57,28 +57,9 @@ int outer_left_sensor();
  */
 int outer_right_sensor();
 
-/**
- * Returns: 0 if left sensor is over threshold (over white)
- *          1 if left sensor is below threshold (over tape)
- */
-int left_sensor();
-
-/**
- * Returns: 0 if right sensor is over threshold (over white)
- *          1 if right sensor is below threshold (over tape)
- */
-int right_sensor();
-
-// /**
-//  * Returns:     0 if sensor off
-//  *              1 if sensor on
-//  */
-// int right_wing_sensor();
-
-// /**
-//  * Returns:     0 if sensor off
-//  *              1 if sensor on
-//  */
-// int left_wing_sensor();
+int inner_left_sensor();
+int inner_right_sensor();
+int mid_left_sensor();
+int mid_right_sensor();
 
 #endif // TAPE_SENSOR_H_

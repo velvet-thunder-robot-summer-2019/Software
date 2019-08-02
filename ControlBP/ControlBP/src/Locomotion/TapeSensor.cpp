@@ -9,10 +9,6 @@
 #define DEBUG_BRANCH_REACH_EXPECTED 20
 
 int lastSensor = RIGHT; // arbitrarily set, we just need one
-int left_sensor();
-int right_sensor();
-int right_wing_sensor();
-int left_wing_sensor();
 
 int last_stop_vals[4] = {0};
 
@@ -23,8 +19,12 @@ uint32_t tape_sensor_threshold = 650;
  */
 void initTapeSensor()
 {
-    pinMode(LEFT_SENSOR, INPUT);
-    pinMode(RIGHT_SENSOR, INPUT);
+    pinMode(INNER_LEFT_SENSOR, INPUT);
+    pinMode(INNER_RIGHT_SENSOR, INPUT);
+    pinMode(MID_RIGHT_SENSOR, INPUT);
+    pinMode(MID_LEFT_SENSOR, INPUT);
+    pinMode(OUTER_LEFT_SENSOR, INPUT);
+    pinMode(OUTER_RIGHT_SENSOR, INPUT);
 }
 
 /**
@@ -35,9 +35,9 @@ void initTapeSensor()
  */
 int get_tape_following_error()
 {
-    int left = left_sensor();
+    int left = inner_left_sensor();
     // int far_left = outer_left_sensor();
-    int right = right_sensor();
+    int right = inner_right_sensor();
     // int far_right = outer_right_sensor();
 #if DEBUG_PRINT
     Serial.println("get_tape_following_error");
@@ -72,8 +72,8 @@ int branch_reached_front()
 Serial.println("branch reached front of robot");
 return TRUE;
 #endif
-    int left = left_sensor();
-    int right = right_sensor();
+    int left = inner_left_sensor();
+    int right = inner_right_sensor();
     int outer_left = outer_left_sensor();
     int outer_right = outer_right_sensor();
 
@@ -112,25 +112,6 @@ int last_stop_right() {
 }
 
 /**
- * Returns true if branch has been reached, false otherwise (as detected by wing sensors)
- * Params:  expected_side - side on which we expect a branch to appear
- */
-int branch_reached(int expected_side)
-{
-#if TESTING_ORDER_OF_EVENTS
-    Serial.print("branch_reached, expected side: ");
-    Serial.println(expected_side);
-#endif
-
-    if ((expected_side == LEFT && left_wing_sensor()) ||
-        (expected_side == RIGHT && right_wing_sensor()) ||
-        (expected_side == BOTH_SIDES && (left_wing_sensor() || right_wing_sensor()))) {
-        return TRUE;
-    }
-    return FALSE;
-}
-
-/**
  * Updates cutoff threshold for tape sensors to potentiometer value
  */
 void update_threshold_tape_sensor()
@@ -151,11 +132,11 @@ int get_tape_sensor_threshold()
  * Returns: 0 if left sensor is over threshold (over white)
  *          1 if left sensor is below threshold (over tape)
  */
-int left_sensor()
+int inner_left_sensor()
 {
     // Serial.print("left sensor");
     // Serial.println(analogRead(LEFT_SENSOR));
-    return analogRead(LEFT_SENSOR) > tape_sensor_threshold;
+    return analogRead(INNER_LEFT_SENSOR) > tape_sensor_threshold;
 }
 
 /**
@@ -181,27 +162,19 @@ int outer_right_sensor()
  * Returns: 0 if right sensor is over threshold (over white)
  *          1 if right sensor is below threshold (over tape)
  */
-int right_sensor()
+int inner_right_sensor()
 {
-    // Serial.print("right sensor");
-    // Serial.println(analogRead(RIGHT_SENSOR));
-    return analogRead(RIGHT_SENSOR) > tape_sensor_threshold;
+    return analogRead(INNER_RIGHT_SENSOR) > tape_sensor_threshold;
 }
 
-// /**
-//  * Returns:     0 if sensor off
-//  *              1 if sensor on
-//  */
-// int right_wing_sensor()
-// {
-//     return analogRead(RIGHT_WING_SENSOR) > tape_sensor_threshold;
-// }
-
-// /**
-//  * Returns:     0 if sensor off
-//  *              1 if sensor on
-//  */
-// int left_wing_sensor()
-// {
-//     return analogRead(LEFT_WING_SENSOR) > tape_sensor_threshold;
-// }
+/**
+ * mid sensors, same deal
+ */
+int mid_right_sensor()
+{
+    return analogRead(MID_RIGHT_SENSOR) > tape_sensor_threshold;
+}
+int mid_left_sensor()
+{
+    return analogRead(MID_LEFT_SENSOR) > tape_sensor_threshold;
+}

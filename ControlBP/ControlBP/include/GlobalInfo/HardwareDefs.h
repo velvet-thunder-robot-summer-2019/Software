@@ -22,8 +22,10 @@
 
 //sensors
 #define OUTER_LEFT_SENSOR PA4
-#define LEFT_SENSOR PA5
-#define RIGHT_SENSOR PA3
+#define MID_LEFT_SENSOR PA0
+#define INNER_LEFT_SENSOR PA5
+#define INNER_RIGHT_SENSOR PA3
+#define MID_RIGHT_SENSOR PA2
 #define OUTER_RIGHT_SENSOR PA1 
 
 // #define LEFT_WING_SENSOR PA4 // PA1
@@ -91,12 +93,13 @@
 #define RIGHT_MOTOR 1
 
 // drivings vals and PWMs
-#define ASCEND_RAMP_PWM 0.35
-#define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.2
-#define FLAT_GROUND_APPROACHING_STOP_PWM 0.19
+#define REACH_RAMP_PWM 0.35
+#define ASCEND_RAMP_PWM 0.35 // 0.38
+#define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.25
+#define FLAT_GROUND_APPROACHING_STOP_PWM 0.22
 #define ARC_LENGTH_FOR_TURN 8
-#define TURN_PWM 0.22
-#define TURN_INTO_GAUNTLET_PWM 0.25
+#define TURN_PWM 0.25
+#define TURN_INTO_GAUNTLET_PWM 0.3
 
 // communication status
 // when communication fails

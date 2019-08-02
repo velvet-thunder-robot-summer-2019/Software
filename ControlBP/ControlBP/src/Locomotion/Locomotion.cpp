@@ -6,7 +6,7 @@
 #include "Locomotion/Motor.h"
 
 #define CLICKS_PER_DEGREE 
-#define STOP_TIME 20
+#define STOP_TIME 100
 #define STOP_CORRECT_TIME 2000
 #define STOP_MONITOR 200
 #define STOP_PWM 1

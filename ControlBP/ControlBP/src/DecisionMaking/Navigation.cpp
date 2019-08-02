@@ -341,12 +341,11 @@ int turn_onto_branch(int direction, state expected_state)
 Serial.println("following tape till branch, remove this if later!!");
 return SUCCESS;
 #endif
-    // bool outer_left = outer_left_sensor();
-    // bool outer_right = outer_right_sensor();
+
     bool go_left = (direction == LEFT);
 
-    int (*const inner_sensor_on_turn_side)() = go_left ? left_sensor : right_sensor;
-    int (*const inner_sensor_away_from_side)() = go_left ? right_sensor : left_sensor;
+    int (*const inner_sensor_on_turn_side)() = go_left ? inner_left_sensor : inner_right_sensor;
+    int (*const inner_sensor_away_from_side)() = go_left ? inner_right_sensor : inner_left_sensor;
     // int (*const outer_sensor_away_from_side)() = go_left ? outer_right_sensor : outer_left_sensor;
     // int (*const outer_sensor_on_turn_side)() = go_left ? outer_left_sensor : outer_right_sensor;
 
@@ -431,12 +430,10 @@ int turn_into_gauntlet(int direction, state expected_state)
 Serial.println("following tape till branch, remove this if later!!");
 return SUCCESS;
 #endif
-    // bool outer_left = outer_left_sensor();
-    // bool outer_right = outer_right_sensor();
     bool go_left = (direction == LEFT);
 
-    int (*const inner_sensor_on_turn_side)() = go_left ? left_sensor : right_sensor;
-    int (*const inner_sensor_away_from_side)() = go_left ? right_sensor : left_sensor;
+    int (*const inner_sensor_on_turn_side)() = go_left ? inner_left_sensor : inner_right_sensor;
+    int (*const inner_sensor_away_from_side)() = go_left ? inner_right_sensor : inner_left_sensor;
 
 
     int inner_turn_side = go_left ? last_stop_left() : last_stop_right(); 
@@ -523,18 +520,6 @@ Serial.println("follow_tape_till_branch");
     return SUCCESS;
 }
 
-
-int reach_adjacent_branch_cross_country(location location_1, location location_2, state expected_state)
-{
-    // start by turning to face correct area
-    // go forward till we hit other tape with ANY of the front sensors
-    while (!right_sensor() && !left_sensor() && !outer_left_sensor() && ! outer_right_sensor()) {
-        // run_cross_country();
-    }
-    return 0;
-}
-
-
 /**
  * Works exclusively on tape. Turns the bot around 180 degrees to return from when it cames, then stops it
  */
@@ -553,7 +538,7 @@ return SUCCESS;
         }
     }
     rotate_on_spot(TURN_PWM * 0.8, LEFT);
-    while (!(left_sensor() && right_sensor())) {
+    while (!(inner_left_sensor() && inner_right_sensor())) {
         // turn slower around
         get_tape_following_error();
         if (robot_state() != expected_state) {
