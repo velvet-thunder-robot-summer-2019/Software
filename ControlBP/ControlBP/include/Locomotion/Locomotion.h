@@ -15,6 +15,28 @@ void init_tape_following();
 int follow_tape(float torque);
 
 /**
+ * move backwards in straight line
+ */
+int reverse(float pwm);
+
+/**
+ * Stops motors
+ */
+int stop_motors();
+
+/**
+ * Stops motors too
+ */
+int stop_motors(int current_direction);
+
+
+/**
+ * Turns the robot along circle of arc length rho (cm), at speed prop to pwm,
+ * to turn in direction given
+ */
+int follow_arc_rho(int direction, int rho, float smaller_pwm);
+
+/**
  * Backtracks to reach tape, using historical information of movement
  * Checks for any change of state during backtracking
  * Returns:     SUCCESS - if tape successfully found 
@@ -47,6 +69,11 @@ int align_direction_to_return();
  *                 STATE_CHANGED - if state changed during task
  */
 int align_to_gauntlet();
+
+/**
+ * Rotates bot on the spot (clockwise bc I felt like it)
+ */
+int rotate_on_spot(float pwm);
 
 
 

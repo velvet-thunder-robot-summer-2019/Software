@@ -5,37 +5,38 @@
 
 void ascend_ramp()
 {
+#if TESTING_ORDER_OF_EVENTS
     Serial.println("");
     Serial.println("");
-    Serial.println("ASCEND_RAMP state entered!");
+    Serial.println("ASCEND_RAMP state entered!");    
     Serial.println("______________________");
+#endif
 
     request_arm_position__ascent();
 
     if (robot_state() != ASCEND_RAMP) {
         return;
     }
-
-    //determine which side top of ramp tape would be at
-    uint8_t tape_side;
-    if (run_status.bot_identity == METHANOS) {
-        tape_side = RIGHT;
-    } else {
-        tape_side = LEFT;
+    
+    if (follow_tape_till_branch(ASCEND_RAMP) == STATE_CHANGED) {
+        return;
     }
+    // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
+    int inevitable = run_status.bot_identity == THANOS;
+    
+    int turn_direction = inevitable ? LEFT : RIGHT;
 
-    while (!branch_reached(tape_side)) {
-        uint8_t response = follow_tape(ASCEND_RAMP_TORQUE);
-        if (response == TAPE_NOT_FOUND) {
-            backtrack_to_tape();
-        }
-        if (robot_state() != ASCEND_RAMP) {
-            return;
-        }
+    if (turn_onto_branch(turn_direction, ASCEND_RAMP) == STATE_CHANGED) {
+        return;
     }
+    stop_motors();
+    location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
+    location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
+    update_position(my_gauntlet, my_intersection);
 
+    // ok so we should've turned onto the right branch, let's go into next state
     if (digitalRead(MASTER_SWITCH) == COMP) {
-        switch_state(ASCEND_RAMP, CALIBRATE);
+        switch_state(ASCEND_RAMP, FIND_POST);
     } else {
         switch_state(ASCEND_RAMP, MENU);
     }

@@ -14,8 +14,7 @@ int right_sensor();
 int right_wing_sensor();
 int left_wing_sensor();
 
-int branch_reach_calls = 0;
-uint32_t tape_sensor_threshold = 400;
+uint32_t tape_sensor_threshold = 615;
 
 /**
  * Initialising pins for tape sensing
@@ -34,16 +33,17 @@ void initTapeSensor()
  */
 int get_tape_following_error()
 {
-    // Serial.println("get_tape_following_error");
-
     int left = left_sensor();
+    int far_left = outer_left_sensor();
     int right = right_sensor();
-    /*
+    int far_right = outer_right_sensor();
+#if DEBUG_PRINT
+    Serial.println("get_tape_following_error");
     Serial.print("left sensor says: ");
     Serial.println(left);
     Serial.print("right sensor says: ");
     Serial.println(right);
-    */
+#endif
     // delay(1000);
 
     if (left && right) {
@@ -54,11 +54,51 @@ int get_tape_following_error()
     } else if (left) {
         lastSensor = LEFT_SENSOR;
         return RIGHT_OFF_LEFT_ON;
+    } else if (far_left) {
+        lastSensor = OUTER_LEFT_SENSOR;
+        return OUTER_LEFT;
+    } else if (far_right) {
+        lastSensor = OUTER_RIGHT_SENSOR;
+        return OUTER_RIGHT;
     } else if (lastSensor == RIGHT_SENSOR) {
         return BOTH_OFF_LAST_RIGHT;
-    } else {
+    } else if (lastSensor == LEFT_SENSOR) {
         return BOTH_OFF_LAST_LEFT;
+    } else if (lastSensor == OUTER_LEFT_SENSOR) {
+        return LAST_OUTER_LEFT;
+    } else if (lastSensor == OUTER_RIGHT_SENSOR) {
+        return LAST_OUTER_RIGHT;
     }
+    // should never happen
+    return LAST_OUTER_LEFT;
+}
+
+// int branch_reached()
+// {
+//     return left_wing_sensor() || right_wing_sensor();
+// }
+
+/**
+ * Returns TRUE if the front sensors reach a branch, FALSE otherwise
+ * Essentially, if a side sensor and ANY other sensor are on tape, we can deduce that 
+ * there must be a branch
+ */
+int branch_reached_front()
+{
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("branch reached front of robot");
+return TRUE;
+#endif
+    bool branch_reached =  ((left_sensor() || right_sensor() || outer_right_sensor()) && outer_left_sensor()) ||
+            ((left_sensor() || right_sensor() || outer_left_sensor()) && outer_right_sensor());
+    // Serial.println(left_sensor());
+    // Serial.println(right_sensor());
+    // Serial.println(outer_left_sensor());
+    // Serial.println(outer_right_sensor());
+
+    // Serial.println((left_sensor() || right_sensor() || right_wing_sensor());
+    // Serial.print(branch_reached);
+    return branch_reached;
 }
 
 /**
@@ -67,19 +107,17 @@ int get_tape_following_error()
  */
 int branch_reached(int expected_side)
 {
+#if TESTING_ORDER_OF_EVENTS
     Serial.print("branch_reached, expected side: ");
     Serial.println(expected_side);
+#endif
 
     if ((expected_side == LEFT && left_wing_sensor()) ||
-        (expected_side == RIGHT && right_wing_sensor())) {
+        (expected_side == RIGHT && right_wing_sensor()) ||
+        (expected_side == BOTH_SIDES && (left_wing_sensor() || right_wing_sensor()))) {
         return TRUE;
     }
     return FALSE;
-    // if (branch_reach_calls < DEBUG_BRANCH_REACH_EXPECTED) {
-    //     branch_reach_calls++;
-    //     return 0;
-    // }
-    // return 1;
 }
 
 /**
@@ -111,6 +149,25 @@ int left_sensor()
 }
 
 /**
+ * Returns: 0 if outer left sensor is over threshold (over white)
+ *          1 if outer left sensor is below threshold (over tape)
+ */
+int outer_left_sensor()
+{
+    return analogRead(OUTER_LEFT_SENSOR) > tape_sensor_threshold;
+}
+
+/**
+ * Returns: 0 if outer left sensor is over threshold (over white)
+ *          1 if outer left sensor is below threshold (over tape)
+ */
+int outer_right_sensor()
+{
+    return analogRead(OUTER_RIGHT_SENSOR) > tape_sensor_threshold;
+}
+
+
+/**
  * Returns: 0 if right sensor is over threshold (over white)
  *          1 if right sensor is below threshold (over tape)
  */
@@ -121,22 +178,20 @@ int right_sensor()
     return analogRead(RIGHT_SENSOR) > tape_sensor_threshold;
 }
 
-/**
- * Returns:     0 if sensor off
- *              1 if sensor on
- */
-int right_wing_sensor()
-{
-    return analogRead(RIGHT_WING_SENSOR) > tape_sensor_threshold;
-}
+// /**
+//  * Returns:     0 if sensor off
+//  *              1 if sensor on
+//  */
+// int right_wing_sensor()
+// {
+//     return analogRead(RIGHT_WING_SENSOR) > tape_sensor_threshold;
+// }
 
-/**
- * Returns:     0 if neither sensors on
- *              1 if outer sensor but not the inner is on tape
- *              -1 if inner sensor but not the outer is on tape
- *              2 if both sensors are on it
- */
-int left_wing_sensor()
-{
-    return analogRead(LEFT_WING_SENSOR) > tape_sensor_threshold;
-}
+// /**
+//  * Returns:     0 if sensor off
+//  *              1 if sensor on
+//  */
+// int left_wing_sensor()
+// {
+//     return analogRead(LEFT_WING_SENSOR) > tape_sensor_threshold;
+// }

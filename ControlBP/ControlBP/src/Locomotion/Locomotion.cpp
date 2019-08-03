@@ -2,10 +2,12 @@
 
 #include "AllPurposeInclude.h"
 
-#include "Locomotion/Locomotion.h"
 #include "Locomotion/PID.h"
-#include "Locomotion/TapeSensor.h"
 #include "Locomotion/Motor.h"
+
+#define CLICKS_PER_DEGREE 
+#define STOP_TIME 4
+#define STOP_PWM 0.6
 
 float PID_output = 0;
 
@@ -15,7 +17,7 @@ float PID_output = 0;
  */
 void init_tape_following()
 {
-    Serial.println("init_tape_following");
+    // Serial.println("init_tape_following");
     init_PID();
 }
 
@@ -27,7 +29,7 @@ void init_tape_following()
  */
 int follow_tape(float torque)
 {
-    /*
+#if DEBUG_PRINT
     Serial.println("follow_tape");
     Serial.print("PWM: ");
     Serial.println(torque);
@@ -35,17 +37,89 @@ int follow_tape(float torque)
 
     Serial.print("PID_output: ");
     Serial.println(PID_output);
-    */
+#endif
     run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
-    run_motor(LEFT_MOTOR, BACK, torque - PID_output);
+    run_motor(LEFT_MOTOR, FWD, torque - PID_output);
     int error = get_tape_following_error();
-    // Serial.print("tape following error is: ");
-    // Serial.println(error);
+#if DEBUG_PRINT
+    Serial.print("tape following error is: ");
+    Serial.println(error);
+#endif
     PID_output = get_PID_output(error);
 
     // delay(500);
 
     return SUCCESS;
+}
+
+/**
+ * Rotates bot on the spot (clockwise bc I felt like it)
+ */
+int rotate_on_spot(float pwm)
+{
+    run_motor(RIGHT_MOTOR, FWD, pwm);
+    run_motor(LEFT_MOTOR, BACK, pwm);
+    get_tape_following_error();
+    
+    return SUCCESS;
+}
+
+/**
+ * Turns the robot along circle of arc length rho (cm), at speed prop to pwm,
+ * to turn in direction given
+ */
+int follow_arc_rho(int direction, int rho, float smaller_pwm)
+{
+    float larger_pwm = (rho + 0.5 * 11.5) / (rho - 0.5 * 11.5) * smaller_pwm;
+    if (direction == RIGHT) {
+        run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
+        run_motor(LEFT_MOTOR, FWD, larger_pwm);
+    } else {
+        run_motor(LEFT_MOTOR, FWD, smaller_pwm);
+        run_motor(RIGHT_MOTOR, FWD, larger_pwm);
+    }
+    get_tape_following_error();
+    return SUCCESS;
+}
+
+
+
+/**
+ * backs up the robot
+ */
+int reverse(float pwm)
+{
+    run_motor(RIGHT_MOTOR, BACK, pwm);
+    run_motor(LEFT_MOTOR, BACK, pwm);
+    get_tape_following_error();
+    return SUCCESS;
+}
+
+/**
+ * Stops the robot's motors
+ */
+int stop_motors(int current_direction)
+{
+    if (current_direction == BACK) {
+        run_motor(RIGHT_MOTOR, FWD, STOP_PWM);
+        run_motor(LEFT_MOTOR, FWD, STOP_PWM);
+    } else if (current_direction == FWD) {
+        run_motor(RIGHT_MOTOR, BACK, STOP_PWM);
+        run_motor(LEFT_MOTOR, BACK, STOP_PWM);
+    }
+
+    uint32_t start_time = millis();
+    while (millis() - start_time > STOP_TIME) {
+        get_tape_following_error();
+    }
+    run_motor(RIGHT_MOTOR, FWD, 0);
+    run_motor(LEFT_MOTOR, FWD, 0);
+    return SUCCESS;
+}
+
+int stop_motors()
+{
+    stop_motors(FWD);
 }
 
 /**
@@ -57,6 +131,7 @@ int follow_tape(float torque)
 int backtrack_to_tape()
 {
     Serial.println("backtrack_to_tape");
+    digitalWrite(BLINKY, HIGH);
     return SUCCESS;
 }
 
