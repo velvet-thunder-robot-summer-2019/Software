@@ -24,7 +24,7 @@ void handle_collision()
     if (digitalRead(MASTER_SWITCH) == DEV) {
         switch_state(HANDLE_COLLISION, MENU);
     } else {
-        switch_state(HANDLE_COLLISION, REACH_RAMP);
+        switch_state(HANDLE_COLLISION, previous_robot_state());
     }
     run_status.last_collision = NO_COLLISION;
 }

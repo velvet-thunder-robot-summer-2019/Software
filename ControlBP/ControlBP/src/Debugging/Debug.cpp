@@ -71,6 +71,8 @@ void debug()
         // can't use a switch statement bc that doesn't accept String types
         if (command.equals("exit")) {
             return;
+        } else if (command.equals("establish comm A")) {
+            send_command_no_retries(0x00);
         } else if (command.equals("init tape follower")) {
             init_tape_following();
         } else if (command.equals("align to branch")) {
@@ -80,20 +82,12 @@ void debug()
         } else if (command.equals("get arm angles")) {
             uint8_t angles[4];
             get_arm_angles(&angles[0]);
-        } else if (command.equals("request arm position travel")) {
-            request_arm_position__travel();
         } else if (command.equals("place stone in gauntlet")) {
             request_put_stone_in_gauntlet();
-        } else if (command.equals("request arm position ascent")) {
-            request_arm_position__ascent();
-        } else if (command.equals("request confirmation post presence left")) {
-            request_confirmation_post_presence(LEFT);
-        } else if (command.equals("request confirmation post presence right")) {
-            request_confirmation_post_presence(RIGHT);
-        } else if (command.equals("request post ascent")) {
-            request_post_ascent();
-        } else if (command.equals("grab infinity stone")) {
-            grab_infinity_stone();
+        } else if (command.equals("grab infinity stone left, 1")) {
+            grab_infinity_stone(LEFT, 1);
+        } else if (command.equals("grab infinity stone right, 5")) {
+            grab_infinity_stone(RIGHT, 5);
         } else if (command.equals("test ramp_reached")) {
             test_ramp_reached();
         } else if (command.equals("reach location forwards")) {
@@ -212,14 +206,6 @@ void get_all_tape_sensors()
     Serial.print("outside right: ");
     Serial.println(outer_right_sensor());
     Serial.println(analogRead(OUTER_RIGHT_SENSOR));
-
-    // Serial.print("wing left: ");
-    // Serial.println(left_wing_sensor());
-    // Serial.println(analogRead(LEFT_WING_SENSOR));
-
-    // Serial.print("wing right: ");
-    // Serial.println(right_wing_sensor());
-    // Serial.println(analogRead(RIGHT_WING_SENSOR));
 }
 
 void test_follow_arc(int arc_val)

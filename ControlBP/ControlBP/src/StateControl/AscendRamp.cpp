@@ -12,8 +12,6 @@ void ascend_ramp()
     Serial.println("______________________");
 #endif
 
-    request_arm_position__ascent();
-
     if (robot_state() != ASCEND_RAMP) {
         return;
     }

@@ -28,7 +28,6 @@ void reset();
 void setup() {
   // put your setup code here, to run once:
   // Initialisation of everything here
-  delay(3000);
   Serial.begin(9600);
 #if TESTING_ORDER_OF_EVENTS
   Serial.println("begin setup");
