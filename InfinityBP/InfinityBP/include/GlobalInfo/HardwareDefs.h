@@ -3,16 +3,17 @@
 
 #include <Arduino.h>
 
-/**
- * PID Tuning Variables
+/** 
+ * ###########################################
+ * ########### PID Tuning Variables ##########
+ * ###########################################
  */
 
-#define BASE_ARM_DUTY_CYCLE 0.48
-#define FORE_ARM_DUTY_CYCLE 0.05
+#define BASE_ARM_DUTY_CYCLE 0.2
+#define FORE_ARM_DUTY_CYCLE 0.2
 
 #define TURNTABLE_KP 0
 #define BASE_ARM_KP 5
-//#define FOREARM_KP 5 //For 45
 #define FOREARM_KP 8
 
 #define TURNTABLE_KI 0
@@ -31,8 +32,10 @@
 
 #define ANGULAR_ERROR_BOUND 3
 
-/**
- * Hardware Pinout
+/** 
+ *  ######################################
+ *  ########## Hardware Pinout ###########
+ *  ######################################
  */
 
 //Communication Pins
@@ -49,20 +52,20 @@
 
 #define CLAW_SERVO_PIN PB_7
 #define WRIST_SERVO_PIN PB_6
+#define FOREARM_SERVO_PIN PA_8
 
 #define TURNTABLE_POS_PIN PB_1 //FALSE
 #define TURNTABLE_NEG_PIN PB_2 //FALSE
 
-#define BASE_ARM_CW_PIN PA_7
-#define BASE_ARM_CCW_PIN PA_6
-
-#define FORE_ARM_CW_PIN PB_8
-#define FORE_ARM_CCW_PIN PB_9
+#define BASE_ARM_CW_PIN PB_8
+#define BASE_ARM_CCW_PIN PB_9
 
 #define TAPE_SENSOR PB_7 //FALSE
 
 /**
- * Angular and lengthwise positioning
+ * ################################################################
+ * ############## Angular and lengthwise positioning ##############
+ * ################################################################
  */
 
 //Gauntlet positions
@@ -157,7 +160,9 @@
 #define WRIST_SERVO_MID 0
 
 /**
- * Definitions
+ * #############################################
+ * ############## Definitions ##################
+ * #############################################
  */
 
 //Angle conversions
@@ -167,6 +172,9 @@
 //Chirality
 #define LEFT_SIDE  0
 #define RIGHT_SIDE 1
+
+#define TRUE 1
+#define FALSE 0
 
 //Tape sensor HIGH/LOW threshold
 #define TAPE_SENSOR_THRESHOLD 0
@@ -182,11 +190,28 @@
 #define UNREACHABLE_ERROR -999
 
 /**
- * PWM INIT
+ * ##########################
+ * ###### PWM INIT ##########
+ * ##########################
  */
 
 //pwm initialization
 #define PWM_CLOCK_FREQ 100000
 #define PWM_PERIOD 500
+
+/**
+ * ###########################################
+ * ############# Meta Config #################
+ * ###########################################
+ */
+
+#define TESTING_MODE TRUE
+#define DEBUG_ALL TRUE
+
+#define ACTIVATE_WRIST TRUE
+#define ACTIVATE_FOREARM TRUE
+#define ACTIVATE_BASE_ARM TRUE
+#define ACTIVATE_TURNTABLE TRUE
+
 
 #endif

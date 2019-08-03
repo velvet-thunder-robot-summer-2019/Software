@@ -8,73 +8,92 @@
 #include "ArmController/ArmSensors.h"
 #include "ArmController/ArmDriver.h"
 
-uint16_t delayTime, baseTime;
-
-int16_t xyTemp, zTemp;
-int16_t baseAngle, foreAngle, wristAngle;
-
-Servo testServo;
-
 void setup() {
 
-    //Initiialize ALL the peripherals
+    
     Serial.begin(9600);
     //init_communication();
-    init_arm();
+    //init_arm();
     //init_gauntlet();
 
-    //Test move the arm
+    //CURRENT SETUP: TEST ANGLE CALCULATOR
+    //base angle: test between -180 and +180, actual between -90 and +90
+    //forearm angle: between -180 and +180, actual between -120 and +50
+    //wrist angle: between -180 and +180, actual between -90 and +90
+    //assume that turntable is working properly
 
-    delay(10000);
+    float currentXY;
+    float currentZ;
 
+    float baseAngle;
+    float foreAngle;
+    float wristAngle;
 
-    /*
+    float startingBaseAngle;
+    float startingForeAngle;
+
     delay(5000);
 
-    Serial.println("Init Successful");
+    //The base arm can go between -60 and +30 degrees
+    for (startingBaseAngle = -60; startingBaseAngle <= 30; startingBaseAngle = startingBaseAngle + 10)
+    {
+        //The forearm should be able to go between -120 and 0 degrees
+        for (startingForeAngle = -120; startingForeAngle <= 0; startingForeAngle = startingForeAngle + 10)
+        {
+            
+            currentXY = calculate_xpos(0, startingBaseAngle, startingForeAngle);
+            currentZ = calculate_zpos(startingBaseAngle, startingForeAngle);
 
-    base_arm_angle = 30.0;
-    forearm_angle = 30.0;
+            Serial.print("ROOT Base Angle: ");
+            Serial.println(startingBaseAngle);
+            Serial.print("ROOT Fore Angle: ");
+            Serial.println(startingForeAngle);
 
-    move_whole_arm_position(base_arm_angle, forearm_angle, 0, 0);
+            Serial.print("XY: ");
+            Serial.println(currentXY);
+            Serial.print("Z: ");
+            Serial.println(currentZ);
 
-    Serial.println(" -------> MAINTAIN POS <-------- ");
-    */
+            if (currentZ < 0)
+            {
+                Serial.println("                               Invalid Domain");
+                continue;
+            }
 
-    //pwm_start(CLAW_SERVO_PIN, 10000, 200, 22, 1);
+            if ( (startingBaseAngle + startingForeAngle) < -180 || (startingBaseAngle + startingForeAngle > 0) )
+            {
+                Serial.println("                               WRIST UNREACHABLE");
+                continue;
+            }
 
-    //open_claw();
-    //pwm_start(WRIST_SERVO_PIN, 10000, 200, 22 - ( (float) 45 / 11.25), 1);
+            baseAngle = calculate_arm_angle(currentXY, currentZ);
+            foreAngle = calculate_forearm_angle(currentXY, currentZ);
+            wristAngle = calculate_wrist_angle(baseAngle, foreAngle);
 
-    //calibration: 11.25 degrees per unit
+            if ( (baseAngle == UNREACHABLE_ERROR) || (foreAngle == UNREACHABLE_ERROR) || (wrist_angle == UNREACHABLE_ERROR))
+            {
+                Serial.println("                                UNREACHABLE");
+            }
+           
+            Serial.print("Base Angle: ");
+            Serial.println(baseAngle);
 
-    // (22 - x) * 11.25
+            Serial.print("Fore Angle: ");
+            Serial.println(foreAngle);
 
-    //open_claw();
+            Serial.print("Wrist Angle: ");
+            Serial.println(wristAngle);
 
+            Serial.println();
+            Serial.println();
+            
+        }
+    }
+    
 
 }
 
-void loop() {
-
-    pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, PWM_PERIOD * 0.50, 0);
-    
-    // base_arm_angle = 60.0;
-    // forearm_angle = 60.0;
-    // wrist_angle = 45.0;
-
-    // Serial.println("Reaching Position...");
-
-    // move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, 0);
-    
-    // delay(200);
-
-    // Serial.println("MAINTAIN");
-
-    // while(1)
-    // {
-    //     maintain_current_arm_position();
-    // }
-    
+void loop() 
+{
 
 }

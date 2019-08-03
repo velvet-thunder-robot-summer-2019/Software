@@ -45,12 +45,6 @@ pwm_response calculate_turntable_pwm(float delta_turntable_angle);
  */
 pwm_response calculate_base_arm_pwm(float delta_base_arm_angle);
 
-/** Calculate a PID pwm response to the angular difference of the forearm
- *  @param delta_forearm_angle: difference between expected forearm angle and actual potentiometer value
- *  Returns: pwm_response_struct
- */
-pwm_response calculate_forearm_pwm(float delta_forearm_angle);
-
 /** Updates the register of past errors for the turntable angle
  *  @param error: the most recent error
  */
@@ -60,11 +54,6 @@ void turntable_update_error(float error);
  *  @param error: the most recent error
  */
 void base_arm_update_error(float error);
-
-/** Updates the register of past errors for the forearm agnle
- *  @param error: the most recent error
- */
-void forearm_update_error(float error);
 
 
 #endif

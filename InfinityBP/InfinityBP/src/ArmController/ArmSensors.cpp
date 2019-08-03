@@ -11,7 +11,6 @@ void init_arm_sensors(void)
     //Initialize the arm potentiometers
     pinMode(TURNTABLE_POTENTIOMETER, INPUT);
     pinMode(BASE_ARM_POTENTIOMETER, INPUT);
-    pinMode(FORE_ARM_POTENTIOMETER, INPUT);
 }
 
 /** Get an analog value for the tape sensor reading
@@ -44,17 +43,4 @@ float read_turntable_angle(void)
 float read_base_arm_angle(void)
 {
     return (float) ( (int32_t) analogRead(BASE_ARM_POTENTIOMETER) - 349) / 4.34;
-    //return analogRead(BASE_ARM_POTENTIOMETER) * BASE_ARM_SCALE_FACTOR - BASE_ARM_ANGLE_OFFSET;
 }
-
-/** Read the base arm angle in degrees
- *  Returns: The fore arm angle in degrees, between 180 CCW from z-axis to 180 CW from z-axis
- */
-float read_fore_arm_angle(void)
-{
-
-    //Serial.println(analogRead(FORE_ARM_POTENTIOMETER));
-    return (float) (648 - (int32_t) analogRead(FORE_ARM_POTENTIOMETER)) / 4.75;
-    //return analogRead(FORE_ARM_POTENTIOMETER) * FORE_ARM_SCALE_FACTOR - FORE_ARM_ANGLE_OFFSET;
-}
-

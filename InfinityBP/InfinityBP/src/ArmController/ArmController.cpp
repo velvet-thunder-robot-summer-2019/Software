@@ -172,24 +172,15 @@ byte find_post(byte side)
     //slowly move the arm across a small arc to determine the exact center of the post
     starting_turntable_angle = turntable_angle;
 
-    while (starting_turntable_angle - turntable_angle < TURNTABLE_SEARCH_ARC)
+    while ( abs(starting_turntable_angle - turntable_angle) < TURNTABLE_SEARCH_ARC)
     {
 
-        //TODO: Read a tape sensor for a proximity value;
         current_proximity_value = read_tape_sensor_analog();
 
         if (current_proximity_value > minimum_proximity_value)
         {
             minimum_proximity_value = current_proximity_value;
-
-            if (turntable_angle < 0)
-            {
-                minimum_proximity_angle = turntable_angle + 360;
-            }
-            else
-            {
-                minimum_proximity_angle = turntable_angle;
-            }
+            minimum_proximity_angle = turntable_angle;
         }
 
         turntable_angle = turntable_angle - TURNTABLE_STEP_RESOLUTION;
@@ -473,10 +464,10 @@ void maintain_current_arm_position(void)
     //Calculate the relative differences between stated and current position
     //float delta_turntable_angle = read_turntable_angle() - turntable_angle;
     float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
-    float delta_forearm_angle = forearm_angle - read_fore_arm_angle();
+    //float delta_forearm_angle = forearm_angle - read_fore_arm_angle();
 
     pwm_response base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
-    pwm_response forearm_correction = calculate_forearm_pwm(delta_forearm_angle);
+    //pwm_response forearm_correction = calculate_forearm_pwm(delta_forearm_angle);
     //pwm_response turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
 
     if (base_arm_correction.dir == CLOCKWISE)
@@ -489,20 +480,6 @@ void maintain_current_arm_position(void)
         pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
         pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
     }
-
-    
-    if (forearm_correction.dir == CLOCKWISE)
-    {
-        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (FORE_ARM_DUTY_CYCLE + forearm_correction.pwm_val) * PWM_PERIOD, 0);
-        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
-    }
-    else
-    {
-        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (FORE_ARM_DUTY_CYCLE + forearm_correction.pwm_val) * PWM_PERIOD, 0);            
-    }
-    
-    
 
     /*
     if (turntable_correction.dir == CLOCKWISE)

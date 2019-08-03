@@ -27,9 +27,4 @@ float read_turntable_angle(void);
  */
 float read_base_arm_angle(void);
 
-/** Read the base arm angle in degrees
- *  Returns: The fore arm angle in degrees, between -180 and +180
- */
-float read_fore_arm_angle(void);
-
 #endif

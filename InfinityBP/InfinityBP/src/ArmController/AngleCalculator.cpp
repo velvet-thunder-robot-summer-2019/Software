@@ -34,11 +34,11 @@ float calculate_turntable_angle(float x, float y)
     
     if (x < 0)
     {
-        theta = theta + 180;
+        theta = theta + 180.0;
     }
     else if (x > 0 && y < 0)
     {
-        theta = theta + 360;
+        theta = theta + 360.0;
     }
 
     return theta;
@@ -54,50 +54,121 @@ float calculate_turntable_angle(float x, float y)
  */
 float calculate_arm_angle(float xy, float z)
 {
+    float theta;
     float theta1;
     float theta2;
-    float fraction2 = (pow(L1, 2) + pow(xy - L3, 2) + pow(z,2) - pow(L2, 2))/(2*L1*sqrt(pow(xy - L3, 2) + pow(z,2)));
-
-    if (fraction2 < 1 && fraction2 > -1)
+    float fraction2;
+    
+    if (xy < 0.00)
     {
-        theta1 = atan((xy - L3)/z) * RAD_DEG;
-        theta2 = acos(fraction2) * RAD_DEG;
+        fraction2 = (pow(L1, 2) + pow(abs(xy) + L3, 2) + pow(z,2) - pow(L2, 2))/(2*L1*sqrt(pow(abs(xy) + L3, 2) + pow(z,2)));
+    }
+    else
+    {
+        fraction2 = (pow(L1, 2) + pow(abs(xy) - L3, 2) + pow(z,2) - pow(L2, 2))/(2*L1*sqrt(pow(abs(xy) - L3, 2) + pow(z,2)));
+    }
 
+    if (abs(fraction2) > 1 && abs(fraction2) < 1.01)
+    {
+        fraction2 = round(fraction2);
+    }
+
+    if (fraction2 <= 1 && fraction2 >= -1)
+    {
+        
+        if (xy < 0.00)
+        {
+            theta1 = atan(z/(abs(xy) + L3)) * RAD_TO_DEG;
+        }
+        else
+        {
+            theta1 = atan(z/(abs(xy) - L3)) * RAD_TO_DEG;           
+        }
+
+        theta2 = acos(fraction2) * RAD_TO_DEG;
+
+        Serial.print("    Theta1: ");
+        Serial.println(theta1);
+        Serial.print("    Theta2: ");
+        Serial.println(theta2);
+
+        /*
         if (z < 0)
         {
             theta1 = theta1 + 180;
         }
-        //The base arm can only rotate at an angle of 90 CW or CCW from the z-axis
+        */
+        if (xy < 0 || theta1 > 0)
+        {
+            theta = round(-1.0 * (90.0 - theta1 - theta2));
+        }
+        else
+        {
+            theta = round(-1.0 * (90.0 + theta1 - theta2));
+        }
 
-        return theta1 - theta2;
+        //The base arm should only rotate between -60 and +30 of the z-axis
+        if (theta >= -60 && theta <= 30)
+        {
+            return theta;
+        }
 
-    }
-    else
-    {
+        Serial.print("Bad Base Angle: ");
+        Serial.println(theta);
+
         return UNREACHABLE_ERROR;
     }
+
+    Serial.print("Invalid Base Fraction");
+    Serial.println(fraction2);
+
+    return UNREACHABLE_ERROR;
 
 }
 
 /** Calculates the necessary rotational angle of the second lowest joint of the forearm, relative to the current direction of
- *      the lower arm, in a clockwise direction
+ *      the lower arm, in a clockwise direction. 
  * @param xy: The xy projection of the arm in mm
  * @param z: The z-coordinate of the tip of the arm in mm
- * Returns: If the specified position is reachable, return the necessary angle clockwise from the z-axis
+ * Returns: If the specified position is reachable, return the necessary angle clockwise from the z-axis.
+ *              The angle range is between -120 and 50
  *          If the specified position is unreachable, return an error code.
  */
 float calculate_forearm_angle(float xy, float z)
 {
 
     float theta;
-    float fraction = (pow(L1,2) + pow(L2,2) - pow(xy - L3, 2) - pow(z,2))/(2*L1*L2);
+    float fraction;
 
-    if (fraction < 1 && fraction > -1)
+    if (xy < 0.00)
     {
-        theta = 180 - acos(fraction) * RAD_DEG;
+        fraction = (pow(L1,2) + pow(L2,2) - pow(abs(xy) + L3, 2) - pow(z,2))/(2*L1*L2);
     }
     else
     {
+        fraction = (pow(L1,2) + pow(L2,2) - pow(abs(xy) - L3, 2) - pow(z,2))/(2*L1*L2);
+    }
+
+
+    if (fraction <= 1 && fraction >= -1)
+    {
+        theta = round( -1.0 * (180.0 - acos(fraction) * RAD_TO_DEG));
+
+        Serial.print("   Forearm Theta: ");
+        Serial.println(acos(fraction) * RAD_TO_DEG);
+    }
+    else
+    {
+        Serial.print("Invalid Forearm Fraction: ");
+        Serial.println(fraction);
+        return UNREACHABLE_ERROR;
+    }
+
+    if (theta < -120 || theta > 0)
+    {
+        Serial.print("Bad Forearm Angle: ");
+        Serial.println(theta);
+
         return UNREACHABLE_ERROR;
     }
     
@@ -116,9 +187,9 @@ float calculate_forearm_angle(float xy, float z)
  */
 float calculate_wrist_angle(float armAngle, float foreArmAngle)
 {   
-    float theta = 180 - armAngle - foreArmAngle;
+    float theta = round(-90.0 - armAngle - foreArmAngle);
 
-    if (theta <= 180 && theta >= 0)
+    if (theta <= 90 && theta >= -90 )
     {
         return theta;
     }
@@ -141,7 +212,9 @@ float calculate_xpos(float turntableAngle, float armAngle, float foreArmAngle)
     
     float xyPos;
 
-    xyPos = L1*sin(armAngle * DEG_RAD) + L2*cos((90 - armAngle - foreArmAngle) * DEG_RAD) + L3;
+    xyPos = L1*sin(armAngle * DEG_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_RAD) + L3;
+
+    //xyPos = L1*sin(armAngle * DEG_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_RAD) - L3;
 
     return xyPos * cos(turntableAngle * DEG_RAD);
     
@@ -161,7 +234,7 @@ float calculate_ypos(float turntableAngle, float armAngle, float foreArmAngle)
 
     float xyPos;
 
-    xyPos = L1*sin(armAngle * DEG_RAD) + L2*cos((90 - armAngle - foreArmAngle) * DEG_RAD) + L3;
+    xyPos = L1*sin(armAngle * DEG_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_RAD) + L3;
 
     return xyPos * sin(turntableAngle * DEG_RAD);
     
