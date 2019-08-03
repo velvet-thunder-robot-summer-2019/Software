@@ -1,6 +1,8 @@
 #include "StateControl/AscendRamp.h"
 #include "AllPurposeInclude.h"
 
+#define FLAT_GROUND_TIME 5000
+
 void ascend_ramp()
 {
 #if TESTING_ORDER_OF_EVENTS
@@ -18,6 +20,14 @@ void ascend_ramp()
     int inevitable = run_status.bot_identity == THANOS;
     
     int turn_direction = inevitable ? LEFT : RIGHT;
+
+    uint32_t start_time = millis();
+    while (millis() - start_time < FLAT_GROUND_TIME) {
+        follow_tape(REACH_RAMP_PWM);
+        if (robot_state() != ASCEND_RAMP) {
+            return;
+        }
+    }
     
     if (follow_tape_till_branch(ASCEND_RAMP, ASCEND_RAMP_PWM) == STATE_CHANGED) {
         return;

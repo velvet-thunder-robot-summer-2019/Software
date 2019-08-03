@@ -5,7 +5,7 @@
 
 #define UP_RAMP_ENCODER_DT 10 // ms, dummy val rn
 #define ENCODER_DT_DELTA 4 // ms
-#define TURN_TIME 500 //ms
+#define TURN_TIME 200 //ms
 #define RESTART_TIME 700 // ms
 #define STOP_TIME 20 // ms
 
@@ -346,8 +346,7 @@ return SUCCESS;
 
     int (*const inner_sensor_on_turn_side)() = go_left ? inner_left_sensor : inner_right_sensor;
     int (*const inner_sensor_away_from_side)() = go_left ? inner_right_sensor : inner_left_sensor;
-    // int (*const outer_sensor_away_from_side)() = go_left ? outer_right_sensor : outer_left_sensor;
-    // int (*const outer_sensor_on_turn_side)() = go_left ? outer_left_sensor : outer_right_sensor;
+
 
     int inner_turn_side = go_left ? last_stop_left() : last_stop_right(); 
     int inner_away_side = go_left ? last_stop_right() : last_stop_left();

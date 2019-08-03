@@ -79,27 +79,17 @@
 #define FWD 1
 #define BACK 0
 
-#define ON_TAPE 0
-#define LEFT_OFF_RIGHT_ON -1
-#define RIGHT_OFF_LEFT_ON 1
-#define BOTH_OFF_LAST_RIGHT -4
-#define BOTH_OFF_LAST_LEFT 4
-// #define OUTER_LEFT 5
-// #define OUTER_RIGHT -5
-// #define LAST_OUTER_LEFT 6
-// #define LAST_OUTER_RIGHT -6
-
 #define LEFT_MOTOR 0
 #define RIGHT_MOTOR 1
 
 // drivings vals and PWMs
-#define REACH_RAMP_PWM 0.35
-#define ASCEND_RAMP_PWM 0.35 // 0.38
+#define REACH_RAMP_PWM 0.3
+#define ASCEND_RAMP_PWM 0.45 // 0.38
 #define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.25
-#define FLAT_GROUND_APPROACHING_STOP_PWM 0.22
+#define FLAT_GROUND_APPROACHING_STOP_PWM 0.18
 #define ARC_LENGTH_FOR_TURN 8
-#define TURN_PWM 0.25
-#define TURN_INTO_GAUNTLET_PWM 0.3
+#define TURN_PWM 0.2
+#define TURN_INTO_GAUNTLET_PWM 0.2
 
 // communication status
 // when communication fails
@@ -118,8 +108,8 @@
 #define NO_ARM_TESTING TRUE
 #define DEBUG_PRINT FALSE
 #define USING_ENCODERS FALSE
-#define LOWER_BRANCH_PATH TRUE
-#define UPPER_BRANCH_PATH FALSE
+#define LOWER_BRANCH_PATH FALSE
+#define UPPER_BRANCH_PATH TRUE
 #define DEBUG_SCREEN_DELAYS TRUE
 
 
