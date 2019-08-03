@@ -429,9 +429,9 @@ void state_menu()
                     }
 #elif UPPER_BRANCH_PATH
                     if (digitalRead(THANOS_v_METHANOS_SWITCH) == THANOS) {
-                        update_location(POST_6, METHANOS_INTERSECTION);
+                        update_position(POST_6, METHANOS_INTERSECTION);
                     } else {
-                        update_location(POST_5, THANOS_INTERSECTION);
+                        update_position(POST_5, THANOS_INTERSECTION);
                     }
 #endif
                     Serial.println("Entering return to gauntlet state");

@@ -6,7 +6,7 @@
 #include "Locomotion/Motor.h"
 
 #define CLICKS_PER_DEGREE 
-#define STOP_TIME 100
+#define STOP_TIME 20
 #define STOP_CORRECT_TIME 2000
 #define STOP_MONITOR 200
 #define STOP_PWM 1
@@ -41,15 +41,23 @@ int follow_tape(float torque)
     // Serial.println(torque);
     // Serial.println("");
 #endif
+    int error = get_tape_following_error();
+    PID_output = get_PID_output(error);
+    float scaling_factor = 1;
+    if (abs(error) == 2) {
+        scaling_factor = 0.9;
+    } else if (abs(error) == 3) {
+        scaling_factor = 0.8;
+    }
+
     if (PID_output > 1 - torque) {
         PID_output = 1 - torque;
     } 
     if (PID_output > torque) {
         PID_output = torque;
     }
-    run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
-    run_motor(LEFT_MOTOR, FWD, torque - PID_output);
-    int error = get_tape_following_error();
+    run_motor(RIGHT_MOTOR, FWD, (torque + PID_output) * scaling_factor);
+    run_motor(LEFT_MOTOR, FWD, (torque - PID_output) * scaling_factor);
 
 #if DEBUG_PRINT
     Serial.print("tape following error is: ");
@@ -57,7 +65,6 @@ int follow_tape(float torque)
     Serial.print("PID_output: ");
     Serial.println(PID_output);
 #endif
-    PID_output = get_PID_output(error);
 
     // delay(500);
 

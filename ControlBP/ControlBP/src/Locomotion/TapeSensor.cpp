@@ -11,7 +11,7 @@ int last_sensor = RIGHT; // arbitrarily set, we just need one
 
 int last_stop_vals[4] = {0};
 
-uint32_t tape_sensor_threshold = 650;
+uint32_t tape_sensor_threshold = 660;
 
 /**
  * Initialising pins for tape sensing
@@ -37,7 +37,7 @@ int get_tape_following_error()
 
 #if DEBUG_PRINT
     Serial.println("get_tape_following_error");
-    Serial.print("left sensor says: ");
+    Serial.print("left sensor says: "); 
     Serial.println(left);
     Serial.print("right sensor says: ");
     Serial.println(right);
@@ -62,7 +62,7 @@ int get_tape_following_error()
         return 1;
     } else if (mid_right) {
         last_sensor = RIGHT;
-        return -2
+        return -2;
     } else if (last_sensor == LEFT) {
         return 3;
     } else {
@@ -89,10 +89,11 @@ return TRUE;
     int outer_left = outer_left_sensor();
     int outer_right = outer_right_sensor();
 
+
     bool branch_reached =  ((left || right || outer_right) && outer_left) ||
             ((left || right || outer_left) && outer_right) ||
-            ((lastSensor == LEFT) && outer_right) ||
-            ((lastSensor == RIGHT) && outer_left);
+            ((last_sensor == LEFT) && outer_right) ||
+            ((last_sensor == RIGHT) && outer_left);
     if (branch_reached) {
         last_stop_vals[0] = outer_left;
         last_stop_vals[1] = left;
