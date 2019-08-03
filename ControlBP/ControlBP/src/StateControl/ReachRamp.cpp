@@ -14,8 +14,10 @@ void reach_ramp()
     Serial.println("______________________");
 #endif
     
-
+#if !NO_ARM_TESTING
     request_arm_position__travel();
+
+#endif
 #if USING_ENCODERS
     //check collision
     if (robot_state() != REACH_RAMP) {

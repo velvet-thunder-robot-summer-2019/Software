@@ -1,10 +1,13 @@
 #include "DecisionMaking/Navigation.h"
 #include "AllPurposeInclude.h"
 #include "GlobalInfo/Interrupts.h"
+#include "Debugging/Menu.h"
 
 #define UP_RAMP_ENCODER_DT 10 // ms, dummy val rn
 #define ENCODER_DT_DELTA 4 // ms
-#define TURN_TIME 1000 //ms
+#define TURN_TIME 500 //ms
+#define RESTART_TIME 700 // ms
+#define STOP_TIME 20 // ms
 
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
@@ -280,21 +283,20 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
             return STATE_CHANGED;
         }
     }
-    // move till the point, be aware that we may overshoot
-    int branch_side = get_branch_side(next_location);
+
+    uint32_t start_time = millis();
+    while (millis() - start_time < RESTART_TIME) {
+        follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+    }
 
     int front_reached_branch = branch_reached_front();
-    // int back_reached_branch = branch_reached(branch_side);
+
     while (!front_reached_branch) {// && !back_reached_branch) {
-        uint8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-        if (response == TAPE_NOT_FOUND) {
-             backtrack_to_tape();
-        }
+        follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
         front_reached_branch = branch_reached_front();
-        // back_reached_branch = branch_reached(branch_side);
     }
     if (stopping_at_branch) {
         stop_motors();
@@ -339,78 +341,184 @@ int turn_onto_branch(int direction, state expected_state)
 Serial.println("following tape till branch, remove this if later!!");
 return SUCCESS;
 #endif
-    bool outer_left = outer_left_sensor();
-    bool outer_right = outer_right_sensor();
 
-    int (*const inner_sensor_on_turn_side)() = (direction == LEFT) ? left_sensor : right_sensor;
-    int outer_turn_side_on_tape = (direction == LEFT) ? outer_left : outer_right;
+    bool go_left = (direction == LEFT);
 
+    int (*const inner_sensor_on_turn_side)() = go_left ? inner_left_sensor : inner_right_sensor;
+    int (*const inner_sensor_away_from_side)() = go_left ? inner_right_sensor : inner_left_sensor;
+    // int (*const outer_sensor_away_from_side)() = go_left ? outer_right_sensor : outer_left_sensor;
+    // int (*const outer_sensor_on_turn_side)() = go_left ? outer_left_sensor : outer_right_sensor;
+
+    int inner_turn_side = go_left ? last_stop_left() : last_stop_right(); 
+    int inner_away_side = go_left ? last_stop_right() : last_stop_left();
+    int outer_turn_side = go_left ? last_stop_outer_left() : last_stop_outer_right();
+    int outer_away_side =  go_left ? last_stop_outer_right() : last_stop_outer_left();
     if (robot_state() != expected_state) {
         return STATE_CHANGED;
     }
-
-    if (!outer_turn_side_on_tape) {
-        // we should already be on the good path, don't fuss
-        return SUCCESS;
+    String if_case = "0";
+    // stop_motors();
+    if (outer_turn_side && (inner_turn_side || inner_away_side)) {
+        if_case = "1";
+        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        while (inner_sensor_on_turn_side() || inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+        get_tape_following_error();
+        }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        uint32_t start_time = millis();
+        while (millis() - start_time < TURN_TIME) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        while (!inner_sensor_on_turn_side() || !inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+    } else if (outer_away_side && (inner_turn_side || inner_away_side)) {
+        if_case = "2";
+        // much rejoicing
+    } else if (outer_turn_side) {
+        if_case = "3";
+        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        uint32_t start_time = millis();
+        while (millis() - start_time < TURN_TIME) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        while (!inner_sensor_on_turn_side() && !inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+    } else if (outer_away_side) {
+        if_case = "4";
+        follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        while (!inner_sensor_on_turn_side() && !inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
     }
-    
-    // if (left_sensor() || right_sensor()) {
-    //     // if not BOTH are on, this means that one or both of the middle ones are one
-    //     // get the middle one on the side we care about off
-    //     while (inner_sensor_on_turn_side()) {
-    //         follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
-    //         if (robot_state() != expected_state) {
-    //             return STATE_CHANGED;
-    //         }
-    //     }
-    // }
-    // // when the middle sensor on the side we care about comes back onto the tape, we should be back on the correct path (wanted path)~
-    // while (!inner_sensor_on_turn_side()) {
-    //     follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
-    //     if (robot_state() != expected_state) {
-    //         return STATE_CHANGED;
-    //     }
-    // }
-    
-   uint32_t start_time = millis();
-   while (millis() - start_time < TURN_TIME) {
-       follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
-       if (robot_state() != expected_state) {
-           return STATE_CHANGED;
-       }
-   }
+    stop_motors();
+#if DEBUG_SCREEN_DELAYS
+    display_string(if_case);
+#endif
    return SUCCESS;
 }
 
-int follow_tape_till_branch(state expected_state) {
+
+/**
+ * Turns onto the LEFT or RIGHT path of a fork, into the gauntlet
+ * Params:      direction - LEFT or RIGHT, this is the gauntlet direction
+ */
+int turn_into_gauntlet(int direction, state expected_state)
+{
+#if TESTING_ORDER_OF_EVENTS
+Serial.println("following tape till branch, remove this if later!!");
+return SUCCESS;
+#endif
+    bool go_left = (direction == LEFT);
+
+    int (*const inner_sensor_on_turn_side)() = go_left ? inner_left_sensor : inner_right_sensor;
+    int (*const inner_sensor_away_from_side)() = go_left ? inner_right_sensor : inner_left_sensor;
+
+
+    int inner_turn_side = go_left ? last_stop_left() : last_stop_right(); 
+    int inner_away_side = go_left ? last_stop_right() : last_stop_left();
+    int outer_turn_side = go_left ? last_stop_outer_left() : last_stop_outer_right();
+    int outer_away_side =  go_left ? last_stop_outer_right() : last_stop_outer_left();
+    if (robot_state() != expected_state) {
+        return STATE_CHANGED;
+    }
+    String if_case = "0";
+    // stop_motors();
+    if (outer_turn_side && (inner_turn_side || inner_away_side)) {
+        if_case = "1";
+        rotate_on_spot(TURN_PWM, direction);
+        while (inner_sensor_on_turn_side() || inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+        get_tape_following_error();
+        }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        uint32_t start_time = millis();
+        while (millis() - start_time < TURN_TIME) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        while (!inner_sensor_on_turn_side() || !inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+    } else if (outer_away_side && (inner_turn_side || inner_away_side)) {
+        if_case = "2";
+        // much rejoicing
+    } else if (outer_turn_side) {
+        if_case = "3";
+        rotate_on_spot(TURN_PWM, direction);
+        uint32_t start_time = millis();
+        while (millis() - start_time < TURN_TIME) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+        // follow_arc_rho(direction, ARC_LENGTH_FOR_TURN, TURN_PWM);
+        while (!inner_sensor_on_turn_side() && !inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+    } else if (outer_away_side) {
+        if_case = "4";
+        rotate_on_spot(TURN_PWM, direction);
+        while (!inner_sensor_on_turn_side() && !inner_sensor_away_from_side()) {
+            if (robot_state() != expected_state) {
+                return STATE_CHANGED;
+            }
+            get_tape_following_error();
+        }
+    }
+    stop_motors();
+#if DEBUG_SCREEN_DELAYS
+    display_string(if_case);
+#endif
+   return SUCCESS;
+}
+
+
+int follow_tape_till_branch(state expected_state, float PWM) {
 #if TESTING_ORDER_OF_EVENTS
 Serial.println("follow_tape_till_branch");
 #endif
-    digitalWrite(BLINKY, LOW);
     while (!branch_reached_front()) {
-        uint8_t response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-        if (response == TAPE_NOT_FOUND) {
-             backtrack_to_tape();
-        }
+        follow_tape(PWM);
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
-    digitalWrite(BLINKY, HIGH); 
     return SUCCESS;
 }
-
-
-int reach_adjacent_branch_cross_country(location location_1, location location_2, state expected_state)
-{
-    // start by turning to face correct area
-    // go forward till we hit other tape with ANY of the front sensors
-    while (!right_sensor() && !left_sensor() && !outer_left_sensor() && ! outer_right_sensor()) {
-        // run_cross_country();
-    }
-    return 0;
-}
-
 
 /**
  * Works exclusively on tape. Turns the bot around 180 degrees to return from when it cames, then stops it
@@ -421,29 +529,31 @@ int face_reverse_direction(state expected_state)
 delay(1000);
 return SUCCESS;
 #endif
+    rotate_on_spot(TURN_PWM, LEFT);
     while (!outer_left_sensor()) {
         // turn fairly fast until then
-        rotate_on_spot(TURN_PWM);
+        get_tape_following_error();
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
-    while (!left_sensor()) {
+    rotate_on_spot(TURN_PWM * 0.8, LEFT);
+    while (!(inner_left_sensor() && inner_right_sensor())) {
         // turn slower around
-        rotate_on_spot(TURN_PWM * 0.5);
-        if (robot_state() != expected_state) {
-            return STATE_CHANGED;
-        }
-    }
-    while (!(left_sensor() && right_sensor())) {
-        // slow down to not overshoot!
-        rotate_on_spot(0);
+        get_tape_following_error();
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
     // stop motion once on line
-    rotate_on_spot(0);
+
+    uint32_t start_time = millis();
+    rotate_on_spot(1, RIGHT);
+    while (millis() - start_time < STOP_TIME) {
+        get_tape_following_error();
+    }
+    rotate_on_spot(0, LEFT);
+
     if (robot_state() != expected_state) {
         return STATE_CHANGED;
     }

@@ -29,8 +29,8 @@ void init_PID()
         past_errors[i] = 0;
     }
     oldest_error_index = 0;
-    kp = 212;
-    kd = 200;
+    kp = 555;
+    kd = 0;
 }
 
 /**
@@ -45,9 +45,6 @@ float get_PID_output(int error)
 
     updateError(error);
 
-    if (out > 0.5) {
-        out = 0.5;
-    }
     return out;
 }
 
@@ -96,7 +93,7 @@ int get_kd()
  */
 float getP(int error)
 {
-    return (error * 0.2 * kp) / MAX_ANALOG;
+    return (error * kp * 0.2) / MAX_ANALOG;
 }
 
 /**

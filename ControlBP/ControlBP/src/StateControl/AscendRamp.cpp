@@ -1,8 +1,6 @@
 #include "StateControl/AscendRamp.h"
 #include "AllPurposeInclude.h"
 
-#define ASCEND_RAMP_TORQUE 10
-
 void ascend_ramp()
 {
 #if TESTING_ORDER_OF_EVENTS
@@ -17,19 +15,20 @@ void ascend_ramp()
     if (robot_state() != ASCEND_RAMP) {
         return;
     }
-    
-    if (follow_tape_till_branch(ASCEND_RAMP) == STATE_CHANGED) {
-        return;
-    }
-    // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
     int inevitable = run_status.bot_identity == THANOS;
     
     int turn_direction = inevitable ? LEFT : RIGHT;
+    
+    if (follow_tape_till_branch(ASCEND_RAMP, ASCEND_RAMP_PWM) == STATE_CHANGED) {
+        return;
+    }
+    // stop_motors();
+    // delay(3000);
+    // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
 
     if (turn_onto_branch(turn_direction, ASCEND_RAMP) == STATE_CHANGED) {
         return;
     }
-    stop_motors();
     location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
     location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
     update_position(my_gauntlet, my_intersection);

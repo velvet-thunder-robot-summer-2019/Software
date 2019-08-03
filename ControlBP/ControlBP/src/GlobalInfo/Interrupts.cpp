@@ -42,15 +42,15 @@ void init_interrupts()
     Serial.println("init_interrupts");
 
     //set up pins for collision interrupt
-    pinMode(BUMPER_LEFT, INPUT);
-    pinMode(BUMPER_RIGHT, INPUT);
-    pinMode(BUMPER_FRONT, INPUT);
-    pinMode(BUMPER_BACK, INPUT);
+    // pinMode(BUMPER_LEFT, INPUT);
+    // pinMode(BUMPER_RIGHT, INPUT);
+    // pinMode(BUMPER_FRONT, INPUT);
+    // pinMode(BUMPER_BACK, INPUT);
 
     // attach collision interrupt
     // attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), collision_left, RISING);
     // attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), collision_right, RISING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, RISING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_FRONT), collision_front, RISING);
     // attachInterrupt(digitalPinToInterrupt(BUMPER_BACK), collision_back, RISING);
 
     // init timer interrupt

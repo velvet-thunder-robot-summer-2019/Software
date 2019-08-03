@@ -18,18 +18,14 @@ void get_infinity_stone()
 #endif
 #if NO_ARM_TESTING
     stub_arm_motion();
-    if (digitalRead(MASTER_SWITCH) == COMP) {
-        switch_state(GET_INFINITY_STONE, FIND_POST);
-    } else {
-        switch_state(GET_INFINITY_STONE, FIND_POST);
-    }
+    switch_state(GET_INFINITY_STONE, FIND_POST);
     return;
 #endif
-    
+
 
     int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
 
-    int confirm_post = request_confirmation_post_presence(side);
+    int confirm_post = request_confirmation_post_presence(side, GET_INFINITY_STONE);
     if (confirm_post == STATE_CHANGED) {
         return;
     } else if (confirm_post == COMM_TASK_FAILED) {
@@ -51,27 +47,18 @@ void get_infinity_stone()
     }
 
     // attempt to grab infinity stones
-    int i;
-    int result;
-    for (i = 0; i < MAX_ATTEMPTS_STONE; i++) {
-        result = grab_infinity_stone();
-        if (result == SUCCESS) {
-            break;
-        }
-        if (robot_state() == RETURN_TO_GAUNTLET) {
-            break;
-        }
-    }
+    int result = grab_infinity_stone();
+    int stone_array_index = get_post_index();
 
     if (result == SUCCESS) {
-        // for whichever post we're at, set corresponding stone status to COLLECTED
-#if DEBUG_PRINT
-        Serial.println("getting stone was a success!");
-#endif
+        run_status.stones_status[stone_array_index] = COLLECTED;
     } else {
-        // for whichever post we're at, set corresponding stone status to MISSING
-        Serial.println("Stone was missing");
+        run_status.stones_status[stone_array_index] = UNKNOWN;
     }
+    if (robot_state() == RETURN_TO_GAUNTLET) {
+        return;
+    }
+
     int stone_in_gauntlet = request_put_stone_in_gauntlet();
     int post_index = get_post_index();
     if (stone_in_gauntlet == COMM_SUCCESS) {
