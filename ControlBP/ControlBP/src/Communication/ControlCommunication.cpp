@@ -18,11 +18,8 @@
 #define GET_ARM_POSITION 0x03
 
 #define SET_TRAVEL_POSITION 0x04
-#define SET_ASCENT_POSITION 0x05
-#define SET_STONE_IN_GAUNTLET 0x06
-#define CONFIRM_POST_PRESENCE 0x07
-#define ASCEND_POST 0x08
 #define GRAB_STONE 0x09
+#define SET_STONE_IN_GAUNTLET 0x06
 
 // start, stop, return code
 #define START 0xAA
