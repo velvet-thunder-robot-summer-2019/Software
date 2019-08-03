@@ -15,6 +15,27 @@ void init_communication();
 uint8_t establish_communication();
 
 /**
+<<<<<<< HEAD
+=======
+ * Doesn't wait for response bc we can prob just GO without return 
+ * Requests for Infinity BP to position arm for travel
+ */
+uint8_t request_arm_position__travel();
+
+/**
+ * Requests for Infinity BP to position arm for ascent
+ * Returns: Error code returned by Infinity BP, code TBD
+ */
+uint8_t request_arm_position__ascent();
+
+/**
+ * 
+ */
+uint8_t request_confirmation_post_presence(uint8_t side, state expected_state);
+
+
+/**
+>>>>>>> ee6590875df00a0e2a3b1ec15e38ceaa455f683b
  * Gives the angle of all joints in the following order:
  * 1. lazy susan (360, but must manually scale)
  * 2. Shoulder (0 to 180)

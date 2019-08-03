@@ -98,10 +98,11 @@ void reset()
 
   if (digitalRead(MASTER_SWITCH) == COMP) {
     Serial.println("COMP MODE");
-  initialise_competition_data();
+    initialise_competition_data();
     init_robot_state(REACH_RAMP);
   } else if (digitalRead(MASTER_SWITCH) == DEV) {
     Serial.println("DEV MODE");
+    initialise_competition_data();
     init_robot_state(MENU);
   }
 }

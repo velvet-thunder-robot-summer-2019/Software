@@ -352,13 +352,25 @@ void state_menu()
                 if (!digitalRead(NAVIGATE)) {
                     displayed_state = GET_INFINITY_STONE_MENU;
                 } else if (!digitalRead(SET)) {
-                    switch_state(MENU, FIND_POST);
                     Serial.println("Entering find post state");
+#if UPPER_BRANCH_PATH
                     if (run_status.bot_identity == THANOS) {
-                        update_position(THANOS_INTERSECTION, POST_4);
+                        update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
                     } else {
-                        update_position(METHANOS_INTERSECTION, POST_1);
+                        update_position(METHANOS_GAUNTLET, METHANOS_INTERSECTION);
                     }
+#endif
+#if LOWER_BRANCH_PATH
+                   if (run_status.bot_identity == THANOS) {
+                        update_position(THANOS_GAUNTLET, THANOS_INTERSECTION);
+                        // update_position(THANOS_INTERSECTION, POST_4);
+                    } else {
+                        update_position(METHANOS_GAUNTLET, METHANOS_INTERSECTION);
+                        // update_position(METHANOS_INTERSECTION, POST_1);
+                    }
+#endif
+                    switch_state(MENU, FIND_POST);
+
                 }
                 break;
             
@@ -409,6 +421,19 @@ void state_menu()
                     displayed_state = FIT_TO_GAUNTLET_MENU;
                 } else if (!digitalRead(SET)) {
                     switch_state(MENU, RETURN_TO_GAUNTLET);
+#if LOWER_BRANCH_PATH
+                    if (digitalRead(THANOS_v_METHANOS_SWITCH) == THANOS) {
+                        update_position(POST_1, METHANOS_INTERSECTION);
+                    } else {
+                        update_position(POST_4, THANOS_INTERSECTION);
+                    }
+#elif UPPER_BRANCH_PATH
+                    if (digitalRead(THANOS_v_METHANOS_SWITCH) == THANOS) {
+                        update_position(POST_6, METHANOS_INTERSECTION);
+                    } else {
+                        update_position(POST_5, THANOS_INTERSECTION);
+                    }
+#endif
                     Serial.println("Entering return to gauntlet state");
                 }
                 break;
@@ -515,6 +540,17 @@ void stub_arm_motion()
     display.println("Arm");
     display.display();
     delay(5000);
+    display.clearDisplay();
+    display.display();
+}
+
+void display_string(String str) 
+{
+    display.clearDisplay();
+    display.setCursor(30, 30);
+    display.println(str);
+    display.display();
+    delay(3000);
     display.clearDisplay();
     display.display();
 }

@@ -18,39 +18,24 @@ void get_infinity_stone()
 #endif
 #if NO_ARM_TESTING
     stub_arm_motion();
-    if (digitalRead(MASTER_SWITCH) == COMP) {
-        switch_state(GET_INFINITY_STONE, FIND_POST);
-    } else {
-        switch_state(GET_INFINITY_STONE, FIND_POST);
-    }
+    switch_state(GET_INFINITY_STONE, FIND_POST);
     return;
 #endif
-    
+
 
     int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
 
     // attempt to grab infinity stone
     int post_index = get_post_index();
     int result = grab_infinity_stone(side, post_index + 1);
-
-    if (result == SUCCESS) {
-        // for whichever post we're at, set corresponding stone status to COLLECTED
-#if DEBUG_PRINT
-        Serial.println("getting stone was a success!");
-#endif
-    } else {
-        // for whichever post we're at, set corresponding stone status to MISSING
-#if DEBUG_PRINT
-        Serial.println("Stone was missing");
-#endif
-    }
-    
-    int stone_in_gauntlet = request_put_stone_in_gauntlet();
-    if (stone_in_gauntlet == COMM_SUCCESS) {
+    if (result == COMM_SUCCESS) {
         run_status.stones_status[post_index] = COLLECTED;
-    } else if (stone_in_gauntlet == COMM_TASK_FAILED) {
+    } else if (result == COMM_TASK_FAILED) {
         run_status.stones_status[post_index] = MISSING;
     }
+
+    
+    request_put_stone_in_gauntlet();
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(GET_INFINITY_STONE, FIND_POST);

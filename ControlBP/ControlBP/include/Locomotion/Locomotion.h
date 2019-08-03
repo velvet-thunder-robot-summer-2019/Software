@@ -37,15 +37,6 @@ int stop_motors(int current_direction);
 int follow_arc_rho(int direction, int rho, float smaller_pwm);
 
 /**
- * Backtracks to reach tape, using historical information of movement
- * Checks for any change of state during backtracking
- * Returns:     SUCCESS - if tape successfully found 
- *              STATE_CHANGED - if state is changed during backtracking
- * NOTE: might eliminate this if we don't use encoders
- */
-int backtrack_to_tape();
-
-/**
  * Aligns robot to "branch" in the road, i.e. to tape leading to post
  * Makes sure both wing sensors on the expected side are on the tape
  * Params:      side - side on which branch / post is expected
@@ -73,7 +64,7 @@ int align_to_gauntlet();
 /**
  * Rotates bot on the spot (clockwise bc I felt like it)
  */
-int rotate_on_spot(float pwm);
+int rotate_on_spot(float pwm, int direction);
 
 
 
