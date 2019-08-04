@@ -8,13 +8,18 @@
 #define PIN_DERIV PB1
 
 // declare values necessary for calculations
-int past_errors[NUM_PAST_ERRORS];
-int last_error_index;
+// int past_errors[NUM_PAST_ERRORS];
+int past_error = 0;
+// int oldest_error_index;
 int kp, kd;
 
 float getP(int error);
 float getD(int error);
 void updateError(int error);
+
+// for driving around at the top: kp = 295, kd = 250
+
+
 
 /**
  * Initialises PID module
@@ -24,12 +29,12 @@ void updateError(int error);
 void init_PID()
 {
     // Serial.println("init_PID");
-    int i = 0;
-    for (i = 0; i < NUM_PAST_ERRORS; i++) {
-        past_errors[i] = 0;
-    }
-    last_error_index = 0;
-    kp = 250;
+    // int i = 0;
+    // for (i = 0; i < NUM_PAST_ERRORS; i++) {
+    //     past_errors[i] = 0;
+    // }
+    // oldest_error_index = 0;
+    kp = 350;
     kd = 0;
 }
 
@@ -43,11 +48,10 @@ float get_PID_output(int error)
     // Serial.println("get_PID_output");
     float out = getP(error) + getD(error);
 
-    updateError(error);
+    past_error = error;
 
-    if (out > 0.5) {
-        out = 0.5;
-    }
+    // updateError(error);
+
     return out;
 }
 
@@ -59,7 +63,7 @@ int update_kp()
 {
     // Serial.print("kp being updated ALERT");
 
-    // kp = analogRead(CALIBRATION_POTENTIOMETER);
+    kp = analogRead(CALIBRATION_POTENTIOMETER);
     return kp;
 }
 
@@ -70,7 +74,7 @@ int update_kp()
 int update_kd()
 {
     // Serial.print("kd being updated ALERT");
-    // kd = analogRead(CALIBRATION_POTENTIOMETER);
+    kd = analogRead(CALIBRATION_POTENTIOMETER);
     return kd;
 }
 
@@ -96,16 +100,7 @@ int get_kd()
  */
 float getP(int error)
 {
-    /*
-     Serial.print("Error is: ");
-    Serial.println(error);
-    Serial.print("P value is: ");
-    Serial.print("kp: ");
-    Serial.println(kp);
-
-    Serial.println((error * 0.2 * kp) / MAX_ANALOG);
-    */
-    return (error * 0.2 * kp) / MAX_ANALOG;
+    return (error * kp * 0.2) / MAX_ANALOG;
 }
 
 /**
@@ -119,19 +114,20 @@ float getD(int error)
     Serial.println("");
     */
 
-    return (float) (error - past_errors[last_error_index]) * kd * 00.05 / MAX_ANALOG;
+    // return (float) (error - past_errors[oldest_error_index]) * kd * 0.5 / MAX_ANALOG;
+    return (float) (error - past_error) * kd * 0.2  / MAX_ANALOG;
 }
 
-/**
- * Updates record of 10 previous errors
- * This is so that we can get better derivative estimates for D
- * Deals with threshold
- */
-void updateError(int error)
-{
-    past_errors[last_error_index] = error;
-    last_error_index++;
-    if (last_error_index == NUM_PAST_ERRORS) {
-        last_error_index = 0;
-    }
-}
+// /**
+//  * Updates record of 10 previous errors 
+//  * This is so that we can get better derivative estimates for D
+//  * Deals with threshold
+//  */
+// void updateError(int error)
+// {
+//     past_errors[oldest_error_index] = error;
+//     oldest_error_index++;
+//     if (oldest_error_index == NUM_PAST_ERRORS) {
+//         oldest_error_index = 0;
+//     }
+// }

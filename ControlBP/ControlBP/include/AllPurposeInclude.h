@@ -13,6 +13,6 @@
 #include "Locomotion/TapeSensor.h"
 #include "Communication/ControlCommunication.h"
 
-#include "DecisionMaking/Positioning.h"
+#include "DecisionMaking/Navigation.h"
 
 #endif // ALL_PURPOSE_INCLUDE_H_

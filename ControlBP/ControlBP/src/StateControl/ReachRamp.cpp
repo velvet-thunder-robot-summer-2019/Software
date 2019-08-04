@@ -7,25 +7,20 @@
 
 void reach_ramp()
 {
-    //int dev_or_comp = digitalRead(MASTER_SWITCH);
-    /*
-    Serial.print("IF this says 1, I was dev: ");
-    Serial.println(dev_or_comp);
-
+#if TESTING_ORDER_OF_EVENTS
     Serial.println("");
     Serial.println("");
     Serial.println("REACH_RAMP state entered!");
     Serial.println("______________________");
-    */
-
-    request_arm_position__travel();
-
+#endif
+    
+#if USING_ENCODERS
     //check collision
     if (robot_state() != REACH_RAMP) {
         return;
     }
 
-    while (!U_turn_status()) {
+    while (!ramp_reached()) {
         uint8_t response = follow_tape(REACH_RAMP_TORQUE);
         if (response == TAPE_NOT_FOUND) {
             backtrack_to_tape();
@@ -33,16 +28,14 @@ void reach_ramp()
         if (robot_state() != REACH_RAMP) {
             return;
         }
-        /*
-        Serial.print("IF this says 1, currently in dev: ");
-        Serial.println(digitalRead(MASTER_SWITCH));
-        */
-        if (digitalRead(MASTER_SWITCH) == DEV) {
-            // Serial.println("Breaking out of this rubbish loop");
-            break;
-        }
+#if TESTING_ORDER_OF_EVENTS
+        Serial.println("going towards ramp"); // remove later
+#endif
     }
-
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("ramp reached");
+#endif
+#endif // USING_ENCODERS
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(REACH_RAMP, ASCEND_RAMP);
     } else {

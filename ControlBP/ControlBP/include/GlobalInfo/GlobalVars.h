@@ -9,17 +9,10 @@
 
 typedef enum
 {
-    FACING_NEXT,
-    FACING_PREV
-} facing_direction;
-
-typedef enum
-{
     MENU,
     DEBUG,
     REACH_RAMP,
     ASCEND_RAMP,
-    CALIBRATE,
     FIND_POST,
     GET_INFINITY_STONE,
     RETURN_TO_GAUNTLET,
@@ -39,12 +32,14 @@ typedef enum
 {
     METHANOS_START,
     METHANOS_GAUNTLET,
+    METHANOS_INTERSECTION,
     POST_1,
     POST_2,
     POST_3,
     POST_4,
     POST_5,
     POST_6,
+    THANOS_INTERSECTION,
     THANOS_GAUNTLET,
     THANOS_START
 }location;
@@ -69,7 +64,10 @@ typedef struct
     /* data */
     location last_location;
     location next_location;
-    facing_direction currently_facing; // either last_location or next_location
+    float left_wheel_ticks; // x dist in cm from last location
+    float right_wheel_ticks; // y dist
+
+     // either last_location or next_location
     // int fraction_to_next;  //fraction of the dist made to the next location
     // int wheel_rot_since_last_left;
     // int wheel_rot_since_last_right;
@@ -78,8 +76,6 @@ typedef struct
 typedef struct
 {
     /* data */
-    state bot_state;
-    state bot_previous_state;
     stone_status stones_status[TOTAL_NUM_STONE];
     position bot_position;
     identity bot_identity;

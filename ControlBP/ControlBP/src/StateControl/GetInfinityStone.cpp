@@ -1,45 +1,64 @@
 #include "AllPurposeInclude.h"
 #include "StateControl/GetInfinityStone.h"
+#include "Debugging/Menu.h"
 
 #define MAX_ATTEMPTS_STONE 3
 
 //TODO: create array for different gauntlet slots so we know WHERE WE"VE PUT STONES ALREADY
 //Place gauntlet
+int get_post_index();
 
 void get_infinity_stone()
 {
+#if TESTING_ORDER_OF_EVENTS || DEBUG_PRINT
     Serial.println("");
     Serial.println("");
     Serial.println("GET_INFINITY_STONE state entered!");
     Serial.println("______________________");
+#endif
+#if NO_ARM_TESTING
+    stub_arm_motion();
+    switch_state(GET_INFINITY_STONE, FIND_POST);
+    return;
+#endif
 
-    request_post_ascent();
 
-    // attempt to grab infinity stones
-    int i;
-    int result;
-    for (i = 0; i < MAX_ATTEMPTS_STONE; i++) {
-        result = grab_infinity_stone();
-        if (result == SUCCESS) {
-            break;
-        }
-        if (robot_state() == RETURN_TO_GAUNTLET) {
-            break;
-        }
+    int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
+
+    // attempt to grab infinity stone
+    int post_index = get_post_index();
+    int result = grab_infinity_stone(side, post_index + 1);
+    if (result == COMM_SUCCESS) {
+        run_status.stones_status[post_index] = COLLECTED;
+    } else if (result == COMM_TASK_FAILED) {
+        run_status.stones_status[post_index] = MISSING;
     }
 
-    if (result == SUCCESS) {
-        // for whichever post we're at, set corresponding stone status to COLLECTED
-        Serial.println("getting stone was a success!");
-    } else {
-        // for whichever post we're at, set corresponding stone status to MISSING
-        Serial.println("Stone was missing");
-    }
+    
     request_put_stone_in_gauntlet();
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(GET_INFINITY_STONE, FIND_POST);
     } else {
         switch_state(GET_INFINITY_STONE, MENU);
+    }
+}
+
+int get_post_index() {
+    switch(run_status.bot_position.last_location) {
+        case POST_1:
+            return 0;
+        case POST_2:
+            return 1;
+        case POST_3:
+            return 2;
+        case POST_4:
+            return 3;
+        case POST_5:
+            return 4;
+        case POST_6:
+            return 5;
+        default:
+            return -1;
     }
 }

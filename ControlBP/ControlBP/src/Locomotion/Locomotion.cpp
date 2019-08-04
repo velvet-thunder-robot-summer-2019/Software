@@ -2,20 +2,28 @@
 
 #include "AllPurposeInclude.h"
 
-#include "Locomotion/Locomotion.h"
 #include "Locomotion/PID.h"
-#include "Locomotion/TapeSensor.h"
 #include "Locomotion/Motor.h"
 
-float PID_output = 0;
+#define CLICKS_PER_DEGREE 
+#define STOP_TIME 20
+#define STOP_CORRECT_TIME 2000
+#define STOP_MONITOR 200
+#define STOP_PWM 1
 
+float PID_output = 0;
+// int historical_errors[1000] = {0};
+// int historical_error_index  = 0;
+
+int stop_motors(int current_direction);
+ 
 /**
  * Performs necessary initialisation for tape following
  * Initialises PID and tape-sensing. Must be called before follow_tape
  */
 void init_tape_following()
 {
-    Serial.println("init_tape_following");
+    // Serial.println("init_tape_following");
     init_PID();
 }
 
@@ -27,21 +35,36 @@ void init_tape_following()
  */
 int follow_tape(float torque)
 {
-    /*
-    Serial.println("follow_tape");
-    Serial.print("PWM: ");
-    Serial.println(torque);
-    Serial.println("");
+#if DEBUG_PRINT
+    // Serial.println("follow_tape");
+    // Serial.print("PWM: ");
+    // Serial.println(torque);
+    // Serial.println("");
+#endif
+    int error = get_tape_following_error();
+    PID_output = get_PID_output(error);
+    float scaling_factor = 1;
+    if (abs(error) == 2) {
+        scaling_factor = 0.9;
+    } else if (abs(error) == 3) {
+        scaling_factor = 0.8;
+    }
 
+    if (PID_output > 1 - torque) {
+        PID_output = 1 - torque;
+    } 
+    if (PID_output > torque) {
+        PID_output = torque;
+    }
+    run_motor(RIGHT_MOTOR, FWD, (torque + PID_output) * scaling_factor);
+    run_motor(LEFT_MOTOR, FWD, (torque - PID_output) * scaling_factor);
+
+#if DEBUG_PRINT
+    Serial.print("tape following error is: ");
+    Serial.println(error);
     Serial.print("PID_output: ");
     Serial.println(PID_output);
-    */
-    run_motor(RIGHT_MOTOR, FWD, torque + PID_output);
-    run_motor(LEFT_MOTOR, BACK, torque - PID_output);
-    int error = get_tape_following_error();
-    // Serial.print("tape following error is: ");
-    // Serial.println(error);
-    PID_output = get_PID_output(error);
+#endif
 
     // delay(500);
 
@@ -49,15 +72,79 @@ int follow_tape(float torque)
 }
 
 /**
- * Backtracks to reach tape, using historical information of movement
- * Checks for any change of state during backtracking
- * Returns:     SUCCESS - if tape successfully found 
- *              STATE_CHANGED - if state is changed during backtracking
+ * Rotates bot on the spot (clockwise bc I felt like it)
  */
-int backtrack_to_tape()
+int rotate_on_spot(float pwm, int direction)
 {
-    Serial.println("backtrack_to_tape");
+    if (direction == LEFT) {
+        run_motor(RIGHT_MOTOR, FWD, pwm);
+        run_motor(LEFT_MOTOR, BACK, pwm);
+    } else if (direction == RIGHT) {
+        run_motor(RIGHT_MOTOR, BACK, pwm);
+        run_motor(LEFT_MOTOR, FWD, pwm);
+    }
+
     return SUCCESS;
+}
+
+/**
+ * Turns the robot along circle of arc length rho (cm), at speed prop to pwm,
+ * to turn in direction given
+ */
+int follow_arc_rho(int direction, int rho, float smaller_pwm)
+{
+    // float larger_pwm = (rho + 0.5 * 11.5) / (rho - 0.5 * 11.5) * smaller_pwm;
+    if (direction == RIGHT) {
+        run_motor(RIGHT_MOTOR, FWD, 0);
+        run_motor(LEFT_MOTOR, FWD, smaller_pwm);
+    } else if (direction == LEFT) {
+        run_motor(LEFT_MOTOR, FWD, 0);
+        run_motor(RIGHT_MOTOR, FWD, smaller_pwm);
+    }
+    return SUCCESS;
+}
+
+
+
+/**
+ * backs up the robot
+ */
+int reverse(float pwm)
+{
+    run_motor(RIGHT_MOTOR, BACK, pwm);
+    run_motor(LEFT_MOTOR, BACK, pwm);
+    return SUCCESS;
+}
+
+/**
+ * Stops the robot's motors
+ */
+int stop_motors(int current_direction)
+{
+    if (current_direction == BACK) {
+
+        run_motor(RIGHT_MOTOR, FWD, STOP_PWM);
+        run_motor(LEFT_MOTOR, FWD, STOP_PWM);
+    } else if (current_direction == FWD) {
+        run_motor(RIGHT_MOTOR, BACK, STOP_PWM);
+        run_motor(LEFT_MOTOR, BACK, STOP_PWM);
+    }
+
+    
+    uint32_t start_time = millis();
+    while (millis() - start_time < STOP_TIME) {
+        get_tape_following_error();
+    }
+    run_motor(LEFT_MOTOR, FWD, 0);
+    run_motor(RIGHT_MOTOR, BACK, 0);
+    get_tape_following_error();
+
+    return SUCCESS;
+}
+
+int stop_motors()
+{
+    return stop_motors(FWD);
 }
 
 /**
