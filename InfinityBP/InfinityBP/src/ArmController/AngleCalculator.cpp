@@ -87,17 +87,14 @@ float calculate_arm_angle(float xy, float z)
 
         theta2 = acos(fraction2) * RAD_TO_DEG;
 
-        Serial.print("    Theta1: ");
-        Serial.println(theta1);
-        Serial.print("    Theta2: ");
-        Serial.println(theta2);
 
-        /*
-        if (z < 0)
-        {
-            theta1 = theta1 + 180;
-        }
-        */
+        #if DEBUG_ALL
+            Serial.print("base arm theta 1: ");
+            Serial.println(theta1);
+            Serial.print("base arm theta 2: ");
+            Serial.println(theta2);
+        #endif
+        
         if (xy < 0 || theta1 > 0)
         {
             theta = round(-1.0 * (90.0 - theta1 - theta2));
@@ -113,14 +110,18 @@ float calculate_arm_angle(float xy, float z)
             return theta;
         }
 
-        Serial.print("Bad Base Angle: ");
-        Serial.println(theta);
+        #if DEBUG_ALL
+            Serial.print("base angle is unreachable: ");
+            Serial.println(theta);
+        #endif
 
         return UNREACHABLE_ERROR;
     }
 
-    Serial.print("Invalid Base Fraction");
-    Serial.println(fraction2);
+    #if DEBUG_ALL
+        Serial.print("base angle fraction is unreachable: ");
+        Serial.println(fraction2);
+    #endif
 
     return UNREACHABLE_ERROR;
 
@@ -149,25 +150,36 @@ float calculate_forearm_angle(float xy, float z)
         fraction = (pow(L1,2) + pow(L2,2) - pow(abs(xy) - L3, 2) - pow(z,2))/(2*L1*L2);
     }
 
+    if (abs(fraction) > 1 && abs(fraction) < 1.01)
+    {
+        fraction = round(fraction);
+    }
 
     if (fraction <= 1 && fraction >= -1)
     {
         theta = round( -1.0 * (180.0 - acos(fraction) * RAD_TO_DEG));
 
-        Serial.print("   Forearm Theta: ");
-        Serial.println(acos(fraction) * RAD_TO_DEG);
+        #if DEBUG_ALL
+            Serial.print("forearm theta: ");
+            Serial.println(acos(fraction) * RAD_TO_DEG);
+        #endif
     }
     else
     {
-        Serial.print("Invalid Forearm Fraction: ");
-        Serial.println(fraction);
+        #if DEBUG_ALL
+            Serial.print("forearm theta fraction is unreachable: ");
+            Serial.println(fraction);
+        #endif
+
         return UNREACHABLE_ERROR;
     }
 
     if (theta < -120 || theta > 0)
     {
-        Serial.print("Bad Forearm Angle: ");
-        Serial.println(theta);
+        #if DEBUG_ALL
+            Serial.print("forearm angle is unreachable: ");
+            Serial.println(theta);
+        #endif
 
         return UNREACHABLE_ERROR;
     }
@@ -191,6 +203,11 @@ float calculate_wrist_angle(float armAngle, float foreArmAngle)
 
     if (theta <= 90 && theta >= -90 )
     {
+        #if DEBUG_ALL
+            Serial.print("wrist angle is unreachable: ");
+            Serial.println(theta);
+        #endif
+        
         return theta;
     }
     
@@ -213,8 +230,6 @@ float calculate_xpos(float turntableAngle, float armAngle, float foreArmAngle)
     float xyPos;
 
     xyPos = L1*sin(armAngle * DEG_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_RAD) + L3;
-
-    //xyPos = L1*sin(armAngle * DEG_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_RAD) - L3;
 
     return xyPos * cos(turntableAngle * DEG_RAD);
     

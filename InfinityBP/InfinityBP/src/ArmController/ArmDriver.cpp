@@ -9,85 +9,88 @@
 #include "ArmController/ArmSensors.h"
 #include "GlobalInfo/HardwareDefs.h"
 #include "GlobalInfo/GlobalVars.h"
-#include "Servo.h"
 
 pwm_response response;
 
 float turntable_kp; 
 float base_arm_kp;
-float forearm_kp;
 
 float turntable_ki; 
 float base_arm_ki;
-float forearm_ki;
 
 float turntable_kd; 
 float base_arm_kd;
-float forearm_kd;
 
 float turntable_p_response, turntable_i_response, turntable_d_response;
 float base_arm_p_response, base_arm_i_response, base_arm_d_response;
-float forearm_p_response, forearm_i_response, forearm_d_response;
 
 float turntable_past_errors[NUM_PAST_ERRORS];
 float base_arm_past_errors[NUM_PAST_ERRORS];
-float forearm_past_errors[NUM_PAST_ERRORS];
 
 float turntable_anti_windup;
 float base_arm_anti_windup;
-float forearm_anti_windup;
 
 uint8_t turntable_last_error_pos;
 uint8_t base_arm_last_error_pos;
-uint8_t forearm_last_error_pos;
+
+pwm_response base_arm_correction; 
+pwm_response forearm_correction;
+pwm_response turntable_correction; 
 
 /** Initializes the arm driver
  */
 void init_arm_driver(void)
 {
-    uint8_t i;
 
-    turntable_anti_windup = TURNTABLE_ANTI_WINDUP;
-    base_arm_anti_windup = BASE_ARM_ANTI_WINDUP;
-    forearm_anti_windup = FOREARM_ANTI_WINDUP;
+    #if !MOCK_HARDWARE
+        
+        //Initialize all the PID constants
+        uint8_t i;
 
-    turntable_kp = TURNTABLE_KP; 
-    base_arm_kp = BASE_ARM_KP;
+        turntable_anti_windup = TURNTABLE_ANTI_WINDUP;
+        base_arm_anti_windup = BASE_ARM_ANTI_WINDUP;
 
-    turntable_ki = TURNTABLE_KI; 
-    base_arm_ki = BASE_ARM_KI;
+        turntable_kp = TURNTABLE_KP; 
+        base_arm_kp = BASE_ARM_KP;
 
-    turntable_kd = TURNTABLE_KD; 
-    base_arm_kd = BASE_ARM_KD;
+        turntable_ki = TURNTABLE_KI; 
+        base_arm_ki = BASE_ARM_KI;
 
-    turntable_last_error_pos = 0;
-    base_arm_last_error_pos = 0;
-    /*
-    pinMode(TURNTABLE_POS_PIN, OUTPUT);
-    pinMode(TURNTABLE_NEG_PIN, OUTPUT);
-    */
+        turntable_kd = TURNTABLE_KD; 
+        base_arm_kd = BASE_ARM_KD;
 
-    // pinMode(BASE_ARM_CW_PIN, OUTPUT);
-    // pinMode(BASE_ARM_CCW_PIN, OUTPUT);
+        turntable_last_error_pos = 0;
+        base_arm_last_error_pos = 0;
 
-    // pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
-    // pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+        for (i = 0; i < NUM_PAST_ERRORS; i++)
+        {
+            turntable_past_errors[i] = 0;
+            base_arm_past_errors[i] = 0;
+        }
 
-    pwm_start(WRIST_SERVO_PIN, 10000, 200, 7, 1);
-    pwm_start(CLAW_SERVO_PIN, 10000, 200, 10, 1);
-    pwm_start(FOREARM_SERVO_PIN, 10000, 200, 7, 1);
-    
-    /*
-    pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
-    pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
-    */
+        //Initialize all GPIO pins
+        
+        pinMode(TURNTABLE_POS_PIN, OUTPUT);
+        pinMode(TURNTABLE_NEG_PIN, OUTPUT);
 
-    for (i = 0; i < NUM_PAST_ERRORS; i++)
-    {
-        turntable_past_errors[i] = 0;
-        base_arm_past_errors[i] = 0;
-        forearm_past_errors[i] = 0;
-    }
+        pinMode(BASE_ARM_CW_PIN, OUTPUT);
+        pinMode(BASE_ARM_CCW_PIN, OUTPUT);
+
+        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+
+        pwm_start(WRIST_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (wrist_angle + 157.5) / 11.25, 1);
+        pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_OPEN, 1);
+        pwm_start(FOREARM_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (forearm_angle + 191.25) / 11.25, 1);
+        
+        pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+        pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+
+    #endif
+
+    #if DEBUG_ALL
+        Serial.println("Arm Driver Initialized");
+    #endif
 
 }
 
@@ -102,84 +105,98 @@ void init_arm_driver(void)
 byte move_whole_arm_position(float base_arm_angle, float forearm_angle, float wrist_angle, float turntable_angle)
 {
 
-    //Get angle discrepency
-    float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
-    //float delta_turntable_angle = turntable_angle - read_turntable_angle();
+    #if DEBUG_ALL
+        Serial.println("move arm to position: ");
 
-    pwm_response base_arm_correction; 
-    pwm_response forearm_correction;
-    //pwm_response turntable_correction; 
+        Serial.print("   base Arm Angle: ");
+        Serial.println(base_arm_angle);
 
-    
-    while ( (abs(delta_base_arm_angle) > ANGULAR_ERROR_BOUND ))
-    {
-    
-        base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
-        //turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+        Serial.print("   fore Arm Angle: ");
+        Serial.println(forearm_angle);
 
-        #if DEBUG_ALL
-            Serial.print("Base Duty: ");
-            Serial.print((BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD);
-        #endif
+        Serial.print("   wrist Angle: ");
+        Serial.println(wrist_angle);
 
-        #if DEBUG_ALL
-            Serial.print("Turntable Duty: ");
-            //Serial.print(TURNTABLE_DUTY);
-        #endif
+        Serial.print("   turntable Angle: ");
+        Serial.println(turntable_angle);
+
+        delay(5000);
+
+    #endif
+
+    #if !MOCK_HARDWARE
+
+        //Get angle discrepency
+        float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
+        float delta_turntable_angle = turntable_angle - read_turntable_angle();
+
+        while ( (abs(delta_turntable_angle) > ANGULAR_ERROR_BOUND) || (abs(delta_base_arm_angle) > ANGULAR_ERROR_BOUND) )
+        {
         
-        if (base_arm_correction.dir == CLOCKWISE)
-        {
+            base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
+            turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+
             #if DEBUG_ALL
-                Serial.println("  CW");
+                Serial.print("base duty: ");
+                Serial.print((BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD);
             #endif
-            pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
-            pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        }
-        else
-        {
-            #if DEBUG_ALL
-                Serial.println("  CW");
+            
+            if (base_arm_correction.dir == CLOCKWISE)
+            {
+                #if DEBUG_ALL
+                    Serial.println("  CW");
+                #endif
+                pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
+                pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+            }
+            else
+            {
+                #if DEBUG_ALL
+                    Serial.println("  CW");
+                #endif
+                pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
+            }
+
+                #if DEBUG_ALL
+                Serial.print("turntable duty: ");
+                Serial.print( (TURNTABLE_DUTY_CYCLE + turntable_correction.pwm_val) * PWM_PERIOD) ;
             #endif
-            pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-            pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
+                
+            if (turntable_correction.dir == CLOCKWISE)
+            {
+                #if DEBUG_ALL
+                    Serial.println("  CW");
+                #endif
+                pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
+                pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
+            }
+            else
+            {
+                #if DEBUG_ALL
+                    Serial.println("  CCW");
+                #endif
+                pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
+            }
+
+            delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
+            delta_turntable_angle = turntable_angle - read_turntable_angle();
         }
         
+        //Forearm can move between -120 and +50
+        pwm_start(FOREARM_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (forearm_angle + 191.25) / 11.25, 0);
 
-        /*
-        if (turntable_correction.dir == CLOCKWISE)
-        {
-            #if DEBUG_ALL
-                Serial.println("  CW");
-            #endif
-            pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
-            pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
-        }
-        else
-        {
-            #if DEBUG_ALL
-                Serial.println("  CCW");
-            #endif
-            pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-            pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
-        }
-        */
+        //Wrist can move between -90 and +90
+        pwm_start(WRIST_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (wrist_angle + 157.5) / 11.25, 0);
 
-        delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
-        //delta_turntable_angle = turntable_angle - read_turntable_angle();
-    }
-    
+    #endif
 
-    /*
-    //Forearm can move between -120 and +50
-    pwm_start(FOREARM_SERVO_PIN, 10000, 200, (float) (forearm_angle + 191.25) / 11.25, 0);
+    #if DEBUG_ALL
 
-    //Wrist can move between -90 and +90
-    pwm_start(WRIST_SERVO_PIN, 10000, 200, (float) (wrist_angle + 157.5) / 11.25, 0);
+        Serial.println("arm moved to position");
 
-    Serial.println("POSITION REACHED");
-    */
-
-    //wrist_servo.write(wrist_angle);
+    #endif
 
     return MOVE_SUCCESS;
 }
@@ -188,7 +205,18 @@ byte move_whole_arm_position(float base_arm_angle, float forearm_angle, float wr
  */
 void open_claw(void)
 {
-    pwm_start(CLAW_SERVO_PIN, 10000, 200, 15, 0);
+
+    #if !MOCK_HARDWARE
+
+        pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_OPEN, 0);
+
+    #endif
+
+    #if DEBUG_ALL
+
+        Serial.println("opening claw");
+
+    #endif
     
 }
 
@@ -196,7 +224,18 @@ void open_claw(void)
  */
 void close_claw(void)
 {
-    pwm_start(CLAW_SERVO_PIN, 10000, 200, 10, 0);
+    #if !MOCK_HARDWARE
+        
+        pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_CLOSE, 0);
+    
+    #endif
+
+    #if DEBUG_ALL
+
+        Serial.println("closing claw");
+
+    #endif
+
 }
 
 /** Calculate a PID pwm response to the angular difference of the turntable
@@ -221,6 +260,7 @@ pwm_response calculate_turntable_pwm(float delta_turntable_angle)
         turntable_i_response = turntable_anti_windup * -1.0;
     }
     */
+    turntable_i_response = 0;
 
     //calculate the derivative response
     turntable_d_response = turntable_kd * (delta_turntable_angle - turntable_past_errors[turntable_last_error_pos]);
@@ -235,8 +275,12 @@ pwm_response calculate_turntable_pwm(float delta_turntable_angle)
     {
         response.dir = ANTI_CLOCKWISE;
     }
-    
 
+    if (response.pwm_val + TURNTABLE_DUTY_CYCLE > 1.0)
+    {
+        response.pwm_val = 1.0 - TURNTABLE_DUTY_CYCLE;
+    }
+    
     return response;
 }
 
@@ -261,6 +305,7 @@ pwm_response calculate_base_arm_pwm(float delta_base_arm_angle)
         base_arm_i_response = base_arm_anti_windup * 1.0;
     }
     */
+    base_arm_i_response = 0;
 
     //calculate the derivative response
     base_arm_d_response = base_arm_kd * ((delta_base_arm_angle - base_arm_past_errors[base_arm_last_error_pos]) / 360.0);
@@ -310,4 +355,3 @@ void base_arm_update_error(float error)
         base_arm_last_error_pos = 0;
     }
 }
-

@@ -16,13 +16,20 @@ float x, y, z, xy;
 
 uint8_t current_slot;
 uint8_t arm_move_status;
-uint16_t post_heights[6];
+uint8_t gauntlet_move_status;
 
 float turntable_angle;
 float base_arm_angle;
 float forearm_angle;
 float wrist_angle;
 
+float temp_angle_1;
+float temp_angle_2;
+float temp_angle_3;
+float temp_angle_4;
+
+coordinate post_positions_left[6];   //location of the stone, relative to the arm base on the stop position
+coordinate post_positions_right[6];
 coordinate gauntlet_positions[4];
 
 /** Set up the initial position of the arm, the value of the gauntlet positions, and the post heights
@@ -51,30 +58,71 @@ byte init_arm(void)
     gauntlet_positions[3].y = GAUNTLET_POS_4_Y;
     gauntlet_positions[3].z = GAUNTLET_POS_4_Z;
 
-    //Initialize the post heights
-    post_heights[0] = POST_1_HEIGHT;
-    post_heights[1] = POST_2_HEIGHT;
-    post_heights[2] = POST_3_HEIGHT;
-    post_heights[3] = POST_4_HEIGHT;
-    post_heights[4] = POST_5_HEIGHT;
-    post_heights[5] = POST_6_HEIGHT;
+    //initialize the position of the posts relative to the arm base,
+    //  if approached from the left, in mm
+    post_positions_left[0].x = POST_LEFT_1_X;
+    post_positions_left[0].y = POST_LEFT_1_Y;
+    post_positions_left[0].z = POST_LEFT_1_Z;
 
-    //Initialize the starting position of the arm
-    turntable_angle = TURNTABLE_TRAVEL_ANGLE;
-    base_arm_angle = BASE_ARM_TRAVEL_ANGLE;
-    forearm_angle = FORE_ARM_TRAVEL_ANGLE;
-    wrist_angle = WRIST_TRAVEL_ANGLE;
+    post_positions_left[1].x = POST_LEFT_2_X;
+    post_positions_left[1].y = POST_LEFT_2_Y;
+    post_positions_left[1].z = POST_LEFT_2_Z;
 
-    //Open the claw
-    //open_claw();
+    post_positions_left[2].x = POST_LEFT_3_X;
+    post_positions_left[2].y = POST_LEFT_3_Y;
+    post_positions_left[2].z = POST_LEFT_3_Z;
 
-    //arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    /*
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
-    */
+    post_positions_left[3].x = POST_LEFT_4_X;
+    post_positions_left[3].y = POST_LEFT_4_Y;
+    post_positions_left[3].z = POST_LEFT_4_Z;
+
+    post_positions_left[4].x = POST_LEFT_5_X;
+    post_positions_left[4].y = POST_LEFT_5_Y;
+    post_positions_left[4].z = POST_LEFT_5_Z;
+
+    post_positions_left[5].x = POST_LEFT_6_X;
+    post_positions_left[5].y = POST_LEFT_6_Y;
+    post_positions_left[5].z = POST_LEFT_6_Z;
+
+    //Initialize the position of the posts relative to the arm base,
+    // if approached from the right, in mm
+    post_positions_right[0].x = POST_RIGHT_1_X;
+    post_positions_right[0].y = POST_RIGHT_1_Y;
+    post_positions_right[0].z = POST_RIGHT_1_Z;
+
+    post_positions_right[1].x = POST_RIGHT_2_X;
+    post_positions_right[1].y = POST_RIGHT_2_Y;
+    post_positions_right[1].z = POST_RIGHT_2_Z;
+
+    post_positions_right[2].x = POST_RIGHT_3_X;
+    post_positions_right[2].y = POST_RIGHT_3_Y;
+    post_positions_right[2].z = POST_RIGHT_3_Z;
+
+    post_positions_right[3].x = POST_RIGHT_4_X;
+    post_positions_right[3].y = POST_RIGHT_4_Y;
+    post_positions_right[3].z = POST_RIGHT_4_Z;
+
+    post_positions_right[4].x = POST_RIGHT_5_X;
+    post_positions_right[4].y = POST_RIGHT_5_Y;
+    post_positions_right[4].z = POST_RIGHT_5_Z;
+
+    post_positions_right[5].x = POST_RIGHT_6_X;
+    post_positions_right[5].y = POST_RIGHT_6_Y;
+    post_positions_right[5].z = POST_RIGHT_6_Z;
+
+    #if !MOCK_HARDWARE
+        //Open the claw
+        open_claw();
+
+        //initialize the starting position of the arm
+        position_arm_for_travel();
+    #endif
+
+    #if DEBUG_ALL
+
+        Serial.println("Arm Controller initialized");
+    
+    #endif
 
     return COMM_SUCCESS;
 }
@@ -86,31 +134,10 @@ byte init_arm(void)
  */
 byte get_arm_position(byte response[])
 {
-    response[1] = turntable_angle;
-    response[2] = base_arm_angle;
-    response[3] = forearm_angle;
-    response[4] = wrist_angle;
-
-    return COMM_SUCCESS;
-}
-
-/** Fold the arm into an ascent position
- *  Returns: COMM_SUCCESS if the operation is successful
- *           COMM_TASK_FAILED if the operation encounters a problem
- */
-byte position_arm_for_ascent(void)
-{
-
-    turntable_angle = TURNTABLE_ASCENT_ANGLE;
-    base_arm_angle = BASE_ARM_ASCENT_ANGLE;
-    forearm_angle = FORE_ARM_ASCENT_ANGLE;
-    wrist_angle = WRIST_ASCENT_ANGLE;
-
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
+    response[0] = turntable_angle;
+    response[1] = base_arm_angle;
+    response[2] = forearm_angle;
+    response[3] = wrist_angle;
 
     return COMM_SUCCESS;
 }
@@ -121,96 +148,291 @@ byte position_arm_for_ascent(void)
  */
 byte position_arm_for_travel(void)
 {
-    turntable_angle = TURNTABLE_TRAVEL_ANGLE;
-    base_arm_angle = BASE_ARM_TRAVEL_ANGLE;
-    forearm_angle = FORE_ARM_TRAVEL_ANGLE;
-    wrist_angle = WRIST_ASCENT_ANGLE;
 
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
+    #if !MOCK_HARDWARE
+        
+        turntable_angle = TURNTABLE_TRAVEL_ANGLE;
+        base_arm_angle = BASE_ARM_TRAVEL_ANGLE;
+        forearm_angle = FORE_ARM_TRAVEL_ANGLE;
+        wrist_angle = WRIST_TRAVEL_ANGLE;
 
-    return COMM_SUCCESS;
-}
-
-/** Unfolds and swings the arm along one side of the robot, until a post is detected.
- *  Postcondition: The arm is centred on the post
- *  Returns: COMM_SUCCESS if the operation is successful
- *           COMM_TASK_FAILED if the operation encounters a problem
- */
-byte find_post(byte side)
-{
-
-    uint16_t starting_turntable_angle;
-
-    uint16_t current_proximity_value;
-    uint16_t minimum_proximity_value = 1023;
-    int16_t minimum_proximity_angle = 0;
-
-    //Move the arm to a starting position, depending on the side
-    base_arm_angle = BASE_ARM_SEARCH_ANGLE;
-    forearm_angle = FORE_ARM_SEARCH_ANGLE;
-    wrist_angle = WRIST_SEARCH_ANGLE;
-
-    if (side == LEFT_SIDE)
-    {
-        turntable_angle = TURNTABLE_SEARCH_LEFT;
-    }
-    else
-    {
-        turntable_angle = TURNTABLE_SEARCH_RIGHT;
-    }
-
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
-
-    //slowly move the arm across a small arc to determine the exact center of the post
-    starting_turntable_angle = turntable_angle;
-
-    while ( abs(starting_turntable_angle - turntable_angle) < TURNTABLE_SEARCH_ARC)
-    {
-
-        current_proximity_value = read_tape_sensor_analog();
-
-        if (current_proximity_value > minimum_proximity_value)
-        {
-            minimum_proximity_value = current_proximity_value;
-            minimum_proximity_angle = turntable_angle;
-        }
-
-        turntable_angle = turntable_angle - TURNTABLE_STEP_RESOLUTION;
-
-        if (turntable_angle < 0)
-        {
-            arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle + 360);
-        }
-        else
-        {
-            arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-        }
-
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
         if (arm_move_status == MOVE_FAIL)
         {
             return COMM_TASK_FAILED;
         }
-    }
 
-    //Go to the position with the minimum proximity value; this is the arm position perpendicular to the post
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, minimum_proximity_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
+    #endif
+
+    #if DEBUG_ALL
+        Serial.println("arm positioned for travel");
+    #endif
 
     return COMM_SUCCESS;
 }
 
-/** Climbs the post until the top is reached. 
+/** Grab a stone from a pillar
+ *  Returns: COMM_SUCCESS if the operation is successful
+ *           COMM_TASK_FAILED if the operation encounters a problem
+ */
+byte obtain_infinity_stone(byte side, byte post_number)
+{
+
+    #if !MOCK_HARDWARE
+    
+        //lower the gauntlet to an open position to derestrict movement
+        #if DEBUG_ALL
+            Serial.println("lowering gauntlet");
+        #endif
+
+        gauntlet_move_status = gauntlet_open_position();
+        if (gauntlet_move_status != COMM_SUCCESS)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //move turntable and arm to a start position on the correct side
+
+        #if DEBUG_ALL
+            Serial.println("moving turntable and arm to search position: ");
+        #endif
+
+        base_arm_angle = BASE_ARM_SEARCH_ANGLE;
+        forearm_angle = FORE_ARM_SEARCH_ANGLE;
+        wrist_angle = WRIST_SEARCH_ANGLE;
+
+        if (side == LEFT_SIDE)
+        {
+            turntable_angle = TURNTABLE_SEARCH_LEFT;
+        }
+        else
+        {
+            turntable_angle = TURNTABLE_SEARCH_RIGHT;
+        }
+
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //move turntable to the position of the pillar
+        #if DEBUG_ALL
+            Serial.println("moving turntable to face pillar");
+        #endif
+
+        if (side == LEFT_SIDE)
+        {
+            temp_angle_1 = calculate_turntable_angle(post_positions_left[post_number - 1].x, post_positions_left[post_number - 1].y);
+        }
+        else
+        {
+            temp_angle_1 = calculate_turntable_angle(post_positions_right[post_number - 1].x, post_positions_right[post_number - 1].y);   
+        }
+
+        if (temp_angle_1 == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        turntable_angle = temp_angle_1;
+
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //lower the arm to meet the pillar and enclose the stone
+        #if DEBUG_ALL
+            Serial.println("lowering arm to top of pillar");
+        #endif
+
+        if (side == LEFT_SIDE)
+        {
+            xy = calculate_xy_projection(post_positions_left[post_number - 1].x, post_positions_left[post_number - 1].y);
+
+            temp_angle_1 = calculate_arm_angle(xy, post_positions_left[post_number - 1].z);
+            if (temp_angle_1 == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            base_arm_angle = temp_angle_1;
+
+            temp_angle_1 = calculate_forearm_angle(xy, post_positions_left[post_number - 1].z);
+            if (temp_angle_1 == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            forearm_angle = temp_angle_1;
+
+            temp_angle_1 = calculate_wrist_angle(base_arm_angle, forearm_angle);
+            if (temp_angle_1 == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            wrist_angle = temp_angle_1;
+        }
+        else
+        {
+            xy = calculate_xy_projection(post_positions_right[post_number - 1].x, post_positions_right[post_number - 1].y);
+
+            temp_angle_1 = calculate_arm_angle(xy, post_positions_right[post_number - 1].z);
+            if (temp_angle_1 == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            base_arm_angle = temp_angle_1;
+
+            temp_angle_1 = calculate_forearm_angle(xy, post_positions_right[post_number - 1].z);
+            if (temp_angle_1 == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            forearm_angle = temp_angle_1;
+
+            temp_angle_1 = calculate_wrist_angle(base_arm_angle, forearm_angle);
+            if (temp_angle_1 == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            wrist_angle = temp_angle_1;
+        }
+
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //grab the stone.
+        #if DEBUG_ALL
+            Serial.println("closing claw");
+        #endif
+        close_claw();
+
+        //lift the stone above the pillar again
+        #if DEBUG_ALL
+            Serial.println("lift stone above pillar");
+        #endif
+
+        base_arm_angle = BASE_ARM_SEARCH_ANGLE;
+        forearm_angle = FORE_ARM_SEARCH_ANGLE;
+        wrist_angle = WRIST_SEARCH_ANGLE;
+
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //TODO: Adaptive response if robot can pick up 2 stones at once
+
+        //return to travel position
+        #if DEBUG_ALL
+            Serial.println("returning to travel position");
+        #endif
+        turntable_angle = TURNTABLE_TRAVEL_ANGLE;
+        base_arm_angle = BASE_ARM_TRAVEL_ANGLE;
+        forearm_angle = FORE_ARM_TRAVEL_ANGLE;
+        wrist_angle = WRIST_TRAVEL_ANGLE;
+
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+    #endif
+
+    return COMM_SUCCESS;
+}
+
+/** [DEPRECATED] 
+ * Unfolds and swings the arm along one side of the robot, until a post is detected.
+ *  Postcondition: The arm is centred on the post
+ *  Returns: COMM_SUCCESS if the operation is successful
+ *           COMM_TASK_FAILED if the operation encounters a problem
+ */
+byte find_post(byte side, byte post_number)
+{   
+
+    #if !MOCK_HARDWARE
+        
+        uint16_t starting_turntable_angle;
+
+        uint16_t current_proximity_value;
+        uint16_t minimum_proximity_value = 1023;
+        int16_t minimum_proximity_angle = 0;
+
+        //Move the arm to a starting position, depending on the side
+        base_arm_angle = BASE_ARM_SEARCH_ANGLE;
+        forearm_angle = FORE_ARM_SEARCH_ANGLE;
+        wrist_angle = WRIST_SEARCH_ANGLE;
+
+        if (side == LEFT_SIDE)
+        {
+            turntable_angle = TURNTABLE_SEARCH_LEFT;
+        }
+        else
+        {
+            turntable_angle = TURNTABLE_SEARCH_RIGHT;
+        }
+
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //slowly move the arm across a small arc to determine the exact center of the post
+        starting_turntable_angle = turntable_angle;
+
+        while ( abs(starting_turntable_angle - turntable_angle) < TURNTABLE_SEARCH_ARC)
+        {
+
+            current_proximity_value = read_tape_sensor_analog();
+
+            if (current_proximity_value > minimum_proximity_value)
+            {
+                minimum_proximity_value = current_proximity_value;
+                minimum_proximity_angle = turntable_angle;
+            }
+
+            turntable_angle = turntable_angle - TURNTABLE_STEP_RESOLUTION;
+
+            if (turntable_angle < 0)
+            {
+                arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle + 360);
+            }
+            else
+            {
+                arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+            }
+
+            if (arm_move_status == MOVE_FAIL)
+            {
+                return COMM_TASK_FAILED;
+            }
+        }
+
+        //Go to the position with the minimum proximity value; this is the arm position perpendicular to the post
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, minimum_proximity_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+    #endif
+
+    #if DEBUG_ALL
+        Serial.println("stone has been retrieved");
+    #endif
+
+    return COMM_SUCCESS;
+}
+
+/** [DEPRECATED] 
+ * Climbs the post until the top is reached. 
  *  Precondition: the arm is currently centred on the post
  *  @param post_number: the number of the post to climb
  *  Returns: COMM_SUCCESS if the operation is successful
@@ -219,53 +441,112 @@ byte find_post(byte side)
 byte ascend_post_to_top(byte post_number)
 {
 
-    //int16_t current_proximity_value;
-    float temp_angle;
+    #if !MOCK_HARDWARE
 
-    if ( (turntable_angle == UNREACHABLE_ERROR) || (base_arm_angle == UNREACHABLE_ERROR) || \
-        (forearm_angle == UNREACHABLE_ERROR) || (wrist_angle == UNREACHABLE_ERROR) )
-    {
-        return COMM_TASK_FAILED;
-    }
+        //int16_t current_proximity_value;
+        float temp_angle;
 
-    x = calculate_xpos(turntable_angle, base_arm_angle, forearm_angle);
-    y = calculate_ypos(turntable_angle, base_arm_angle, forearm_angle);
-    xy = calculate_xy_projection(x, y);
-    z = post_heights[post_number];
+        if ( (turntable_angle == UNREACHABLE_ERROR) || (base_arm_angle == UNREACHABLE_ERROR) || \
+            (forearm_angle == UNREACHABLE_ERROR) || (wrist_angle == UNREACHABLE_ERROR) )
+        {
+            return COMM_TASK_FAILED;
+        }
 
-    //Make the initial movement to a position close to the top of the arm
-    temp_angle = calculate_arm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    base_arm_angle = temp_angle;
-    
-    temp_angle = calculate_forearm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    forearm_angle = temp_angle;
+        x = calculate_xpos(turntable_angle, base_arm_angle, forearm_angle);
+        y = calculate_ypos(turntable_angle, base_arm_angle, forearm_angle);
+        xy = calculate_xy_projection(x, y);
+        z = post_positions_right[post_number - 1].z;
 
-    temp_angle = calculate_wrist_angle(base_arm_angle, forearm_angle);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    wrist_angle = temp_angle;
+        //Make the initial movement to a position close to the top of the arm
+        temp_angle = calculate_arm_angle(xy, z);
+        if (temp_angle == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        base_arm_angle = temp_angle;
+        
+        temp_angle = calculate_forearm_angle(xy, z);
+        if (temp_angle == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        forearm_angle = temp_angle;
 
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
+        temp_angle = calculate_wrist_angle(base_arm_angle, forearm_angle);
+        if (temp_angle == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        wrist_angle = temp_angle;
 
-    //Slowly creep up to the top of the arm to eliminate any positioning errors
-    //current_proximity_value = 0;
-    while (read_tape_sensor_digital())
-    {
-        z = z + VERTICAL_STEP_RESOLUTION;
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //Slowly creep up to the top of the arm to eliminate any positioning errors
+        //current_proximity_value = 0;
+        while (read_tape_sensor_digital())
+        {
+            z = z + VERTICAL_STEP_RESOLUTION;
+
+            temp_angle = calculate_arm_angle(xy, z);
+            if (temp_angle == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            base_arm_angle = temp_angle;
+
+            temp_angle = calculate_forearm_angle(xy, z);
+            if (temp_angle == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            forearm_angle = temp_angle;
+
+            temp_angle = calculate_wrist_angle(base_arm_angle, forearm_angle);
+            if (temp_angle == UNREACHABLE_ERROR)
+            {
+                return COMM_TASK_FAILED;
+            }
+            wrist_angle = temp_angle;
+
+            arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+            if (arm_move_status == MOVE_FAIL)
+            {
+                return COMM_TASK_FAILED;
+            }
+
+            //current_proximity_value = 0;
+        }
+
+    #endif
+
+    return COMM_SUCCESS;
+}
+
+/** [DEPRECATED] 
+ * Opens the claw, extends the arm towards the post, closes the claw, raises arm clear.
+ *  Returns: COMM_SUCCESS if the operation is successful
+ *           COMM_TASK_FAILED if the operation encounters a problem
+ */
+byte grab_infinity_stone(void)
+{
+
+    #if !MOCK_HARDWARE
+        
+        float x_extension, y_extension;
+        float temp_angle;
+        
+        open_claw();
+
+        //extend the arm towards the post
+        x_extension = calculate_x_extension(x, y);
+        y_extension = calculate_y_extension(x, y);
+        x = x + x_extension;
+        y = y + y_extension;
+        xy = calculate_xy_projection(x, y);
 
         temp_angle = calculate_arm_angle(xy, z);
         if (temp_angle == UNREACHABLE_ERROR)
@@ -294,89 +575,46 @@ byte ascend_post_to_top(byte post_number)
             return COMM_TASK_FAILED;
         }
 
-        //current_proximity_value = 0;
-    }
+        close_claw();
 
-    return COMM_SUCCESS;
-}
+        //Move the claw up to a safe distance above the post
+        z = z + Z_PULLUP_DISTANCE;
 
-/** Opens the claw, extends the arm towards the post, closes the claw, raises arm clear.
- *  Returns: COMM_SUCCESS if the operation is successful
- *           COMM_TASK_FAILED if the operation encounters a problem
- */
-byte grab_infinity_stone(void)
-{
-    float x_extension, y_extension;
-    float temp_angle;
-    
-    open_claw();
+        temp_angle = calculate_arm_angle(xy, z);
+        if (temp_angle == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        base_arm_angle = temp_angle;
 
-    //extend the arm towards the post
-    x_extension = calculate_x_extension(x, y);
-    y_extension = calculate_y_extension(x, y);
-    x = x + x_extension;
-    y = y + y_extension;
-    xy = calculate_xy_projection(x, y);
+        temp_angle = calculate_forearm_angle(xy, z);
+        if (temp_angle == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        forearm_angle = temp_angle;
 
-    temp_angle = calculate_arm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    base_arm_angle = temp_angle;
+        temp_angle = calculate_wrist_angle(base_arm_angle, forearm_angle);
+        if (temp_angle == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        wrist_angle = temp_angle;
 
-    temp_angle = calculate_forearm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    forearm_angle = temp_angle;
+        //wait until the arm has actually moved over to the correct position
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
 
-    temp_angle = calculate_wrist_angle(base_arm_angle, forearm_angle);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    wrist_angle = temp_angle;
+    #endif
 
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
+    #if DEBUG_ALL
 
-    close_claw();
+        Serial.println("infinity stone obtained.");
 
-    //Move the claw up to a safe distance above the post
-    z = z + Z_PULLUP_DISTANCE;
-
-    temp_angle = calculate_arm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    base_arm_angle = temp_angle;
-
-    temp_angle = calculate_forearm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    forearm_angle = temp_angle;
-
-    temp_angle = calculate_wrist_angle(base_arm_angle, forearm_angle);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    wrist_angle = temp_angle;
-
-    //wait until the arm has actually moved over to the correct position
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
+    #endif
 
     return COMM_SUCCESS;
 }
@@ -387,42 +625,79 @@ byte grab_infinity_stone(void)
  */
 byte put_stone_in_gauntlet(void)
 {
-    float temp_angle;
 
-    x = gauntlet_positions[current_slot].x;
-    y = gauntlet_positions[current_slot].y;
-    z = gauntlet_positions[current_slot].z;
-    xy = calculate_xy_projection(x, y);
+    #if !MOCK_HARDWARE
+        
+        //move turntable to the appropriate position in front of the gauntlet
+        #if DEBUG_ALL
+            Serial.println("move turntable to gauntlet");
+        #endif
 
-    temp_angle = calculate_arm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    base_arm_angle = temp_angle;
-    
-    temp_angle = calculate_forearm_angle(xy, z);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    forearm_angle = temp_angle;
+        temp_angle_1 = calculate_turntable_angle(gauntlet_positions[current_slot].x, gauntlet_positions[current_slot].y);
+        if (temp_angle_1 == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        turntable_angle = temp_angle_1;
 
-    temp_angle = calculate_wrist_angle(base_arm_angle, forearm_angle);
-    if (temp_angle == UNREACHABLE_ERROR)
-    {
-        return COMM_TASK_FAILED;
-    }
-    wrist_angle = temp_angle;
-    
-    //wait until the whole arm has moved over to the correct position
-    arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
-    if (arm_move_status == MOVE_FAIL)
-    {
-        return COMM_TASK_FAILED;
-    }
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
 
-    open_claw();
+        //lower arm to the gauntlet position
+        #if DEBUG_ALL
+            Serial.println("lower arm to gauntlet");
+        #endif
+
+        xy = calculate_xy_projection(gauntlet_positions[current_slot].x, gauntlet_positions[current_slot].y);
+        
+        temp_angle_1 = calculate_arm_angle(xy, gauntlet_positions[current_slot].z);
+        if (temp_angle_1 == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        base_arm_angle = temp_angle_1;
+
+        temp_angle_1 = calculate_forearm_angle(xy, gauntlet_positions[current_slot].z);
+        if (temp_angle_1 == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        forearm_angle = temp_angle_1;
+
+        temp_angle_1 = calculate_wrist_angle(xy, gauntlet_positions[current_slot].z);
+        if (temp_angle_1 == UNREACHABLE_ERROR)
+        {
+            return COMM_TASK_FAILED;
+        }
+        wrist_angle = temp_angle_1;
+
+        arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+        if (arm_move_status == MOVE_FAIL)
+        {
+            return COMM_TASK_FAILED;
+        }
+
+        //open claw to drop the stone into the gauntlet
+        #if DEBUG_ALL
+            Serial.println("dropping stone");
+        #endif
+
+        open_claw();
+
+        //increment the number of the occupied slots
+        current_slot++;
+
+
+    #endif
+
+    #if DEBUG_ALL
+
+        Serial.println("stone inserted into gauntlet");
+
+    #endif
 
     return COMM_SUCCESS;
 }
@@ -432,69 +707,43 @@ byte put_stone_in_gauntlet(void)
 void maintain_current_arm_position(void)
 {
 
-    //Serial.println("Maintaining Pos");
+    #if !MOCK_HARDWARE
+        
+        //Calculate the relative differences between stated and current position
+        float delta_turntable_angle = read_turntable_angle() - turntable_angle;
+        float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
 
-    /*
-    //Current position is CCW
-    if (read_base_arm_angle() > 0)
-    {
-        Serial.println(read_base_arm_angle());
-        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, BASE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);
-        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
-    }
-    else
-    {
-        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, BASE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);         
-    }
+        pwm_response base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
+        pwm_response turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+
+        if (base_arm_correction.dir == CLOCKWISE)
+        {
+            pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
+            pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+        }
+        else
+        {
+            pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+            pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
+        }
+
+        if (turntable_correction.dir == CLOCKWISE)
+        {
+            pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
+            pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
+        }
+        else
+        {
+            pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+            pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
+        }
     
-    //Current position is CCW
-    if (read_fore_arm_angle() > 0)
-    {
-        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, FORE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);
-        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0); 
-    }
-    else
-    {
-        pwm_start(FORE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, FORE_ARM_DUTY_CYCLE * PWM_PERIOD, 0);
-        pwm_start(FORE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0); 
-    }
-    */
+    #endif
 
-    //Calculate the relative differences between stated and current position
-    //float delta_turntable_angle = read_turntable_angle() - turntable_angle;
-    float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
-    //float delta_forearm_angle = forearm_angle - read_fore_arm_angle();
+    #if DEBUG_ALL
 
-    pwm_response base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
-    //pwm_response forearm_correction = calculate_forearm_pwm(delta_forearm_angle);
-    //pwm_response turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+        //Serial.println("maintaining current position");
 
-    if (base_arm_correction.dir == CLOCKWISE)
-    {
-        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
-        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-    }
-    else
-    {
-        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
-    }
+    #endif
 
-    /*
-    if (turntable_correction.dir == CLOCKWISE)
-    {
-        pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
-        pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
-    }
-    else
-    {
-        pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
-    }
-
-    wrist_servo.write(wrist_angle);
-
-    */
-    
 }

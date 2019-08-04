@@ -34,7 +34,7 @@ uint16_t read_tape_sensor_digital(void)
  */
 float read_turntable_angle(void)
 {
-    return analogRead(TURNTABLE_POTENTIOMETER) * TURNTABLE_POTENTIOMETER - TURNTABLE_ANGLE_OFFSET;
+    return (float) ( (int32_t) analogRead(TURNTABLE_POTENTIOMETER) - TURNTABLE_ANGLE_OFFSET) / TURNTABLE_SCALE_FACTOR;
 }
 
 /** Read the base arm angle in degrees
@@ -42,5 +42,5 @@ float read_turntable_angle(void)
  */
 float read_base_arm_angle(void)
 {
-    return (float) ( (int32_t) analogRead(BASE_ARM_POTENTIOMETER) - 349) / 4.34;
+    return (float) ( (int32_t) analogRead(BASE_ARM_POTENTIOMETER) - BASE_ARM_ANGLE_OFFSET) / BASE_ARM_SCALE_FACTOR;
 }

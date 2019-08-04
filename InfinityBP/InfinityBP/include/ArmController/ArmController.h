@@ -25,26 +25,28 @@ byte init_arm(void);
  */
 byte get_arm_position(byte response[]);
 
-/** Fold the arm into an ascent position
- *  Returns: COMM_SUCCESS if the operation is successful
- *           COMM_TASK_FAILED if the operation encounters a problem
- */
-byte position_arm_for_ascent(void);
-
 /** Folds the arm back into its ready position.
  *  Returns: COMM_SUCCESS if the operation is successful
  *           COMM_TASK_FAILED if the operation encounters a problem
  */
 byte position_arm_for_travel(void);
 
-/** Unfolds and swings the arm along one side of the robot, until a post is detected.
+/** Grab a stone from a pillar
+ *  Returns: COMM_SUCCESS if the operation is successful
+ *           COMM_TASK_FAILED if the operation encounters a problem
+ */
+byte obtain_infinity_stone(byte side, byte post_number);
+
+/** [DEPRECATED] 
+ * Unfolds and swings the arm along one side of the robot, until a post is detected.
  *  Postcondition: The arm is centred on the post
  *  Returns: COMM_SUCCESS if the operation is successful
  *           COMM_TASK_FAILED if the operation encounters a problem
  */
-byte find_post(byte side);
+byte find_post(byte side, byte post_number);
 
-/** Climbs the post until the top is reached. 
+/** [DEPRECATED] 
+ * Climbs the post until the top is reached. 
  *  Precondition: the arm is currently centred on the post
  *  @param post_number: the number of the post to climb
  *  Returns: COMM_SUCCESS if the operation is successful
@@ -52,7 +54,8 @@ byte find_post(byte side);
  */
 byte ascend_post_to_top(byte post_number);
 
-/** Opens the claw, extends the arm towards the post, closes the claw, raises arm clear.
+/** [DEPRECATED] 
+ * Opens the claw, extends the arm towards the post, closes the claw, raises arm clear.
  *  Returns: COMM_SUCCESS if the operation is successful
  *           COMM_TASK_FAILED if the operation encounters a problem
  */

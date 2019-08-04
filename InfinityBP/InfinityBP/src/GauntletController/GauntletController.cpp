@@ -6,17 +6,26 @@
 #include "GauntletController/GauntletController.h"
 #include "Servo.h"
 
-Servo gauntlet_servo;
-
 /** Initialize the gauntlet
  *  Returns: COMM_SUCCESS if the operation is successful
  *           COMM_TASK_FAILED if the operation failed
  */
 byte init_gauntlet(void)
 {
-    gauntlet_servo.attach(GAUNTLET_SERVO_PIN);
 
-    gauntlet_storage_position();
+    #if !MOCK_HARDWARE
+
+        pwm_start(GAUNTLET_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, GAUNTLET_STORAGE_POS, 1);
+
+        gauntlet_storage_position();
+
+    #endif
+
+    #if DEBUG_ALL
+
+        Serial.println("Gauntlet Initialized");
+
+    #endif
 
     return COMM_SUCCESS;
 }
@@ -27,7 +36,15 @@ byte init_gauntlet(void)
  */
 byte gauntlet_storage_position(void)
 {
-    gauntlet_servo.write(GAUNTLET_STORAGE_POS);
+    #if DEBUG_ALL
+        Serial.println("move gauntlet into storage position");
+    #endif
+
+    #if !MOCK_HARDWARE
+
+        pwm_start(GAUNTLET_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, GAUNTLET_STORAGE_POS, 0);
+
+    #endif
 
     return COMM_SUCCESS;
 }
@@ -38,7 +55,17 @@ byte gauntlet_storage_position(void)
  */
 byte gauntlet_open_position(void)
 {
-    gauntlet_servo.write(GAUNTLET_OPEN_POS);
+    #if DEBUG_ALL
+
+        Serial.println("move gauntlet into open position");
+
+    #endif
+
+    #if !MOCK_HARDWARE
+
+         pwm_start(GAUNTLET_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, GAUNTLET_OPEN_POS, 0);
+
+    #endif
 
     return COMM_SUCCESS;
 }
@@ -49,7 +76,18 @@ byte gauntlet_open_position(void)
  */
 byte gauntlet_deploy_position(void)
 {
-    gauntlet_servo.write(GAUNTLET_DEPLOY_POS);
+
+    #if DEBUG_ALL
+
+        Serial.println("move gauntlet into deployed position");
+
+    #endif
+
+    #if !MOCK_HARDWARE
+        
+        pwm_start(GAUNTLET_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, GAUNTLET_DEPLOY_POS, 0);
+
+    #endif
 
     return COMM_SUCCESS;
 }

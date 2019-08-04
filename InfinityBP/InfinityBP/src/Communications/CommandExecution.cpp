@@ -11,11 +11,7 @@
 #define GET_ACK 0x00
 #define GET_ARM_POSITION 0x03
 
-#define SET_TRAVEL_POSITION 0x04
-#define SET_ASCENT_POSITION 0x05
 #define SET_STONE_IN_GAUNTLET 0x06
-#define CONFIRM_POST_PRESENCE 0x07
-#define ASCEND_POST 0x08
 #define GRAB_STONE 0x09
 #define DEPLOY_GAUNTLET 0xA
 
@@ -43,7 +39,7 @@ void init_communication(void)
         CommSerial.readString();
     }
     
-    Serial.println("init_communication");
+    Serial.println("CommandExecution initialized");
 }
 
 /** Executes commands sent by the blue pill, if they exist
@@ -58,23 +54,50 @@ void execute_command(void)
 
         return;
     }
-    byte param;
+    byte side, post_number;
 
     byte start = CommSerial.read();
-    Serial.print("start: ");
-    Serial.println(start);
 
     byte command = CommSerial.read();
-    Serial.print("command: ");
-    Serial.println(command);
-    //to confirm the post presence, it is necessary to search either left or right
-    if (command == CONFIRM_POST_PRESENCE || command == ASCEND_POST) {
-        param = CommSerial.read();
+
+    if (command == GRAB_STONE)
+    {
+        while (CommSerial.available() < 3);
+
+        side = CommSerial.read();
+        post_number = CommSerial.read();
+
     }
 
     byte stop = CommSerial.read();
-    Serial.print("stop: ");
-    Serial.println(stop);
+
+    #if DEBUG_ALL
+
+        Serial.println();
+
+        Serial.print("received message: ");
+
+        Serial.print("  ");
+        Serial.print(start);
+
+        Serial.print("  ");
+        Serial.print(command);
+
+        if (command == GRAB_STONE)
+        {
+            Serial.print("  ");
+            Serial.print(side);
+
+            Serial.print("  ");
+            Serial.print(post_number);
+        }
+
+        Serial.print("  ");
+        Serial.print(stop);
+
+        Serial.println();
+
+    #endif
 
     if (start != START || stop != STOP) {
         byte corrupted[1] = {COMM_CORRUPT_COMMAND};
@@ -83,81 +106,92 @@ void execute_command(void)
     byte response[1];
 
     switch(command) {
+        
+        //Establish communication
         case GET_ACK:
         {
-            Serial.println("GET_ACK");
+
+            #if DEBUG_ALL
+                Serial.println("GET_ACK");
+            #endif
+
             byte success[1] = {COMM_SUCCESS};
-            send_response(success, 1); // temp placeholder responses
+
+            send_response(success, 1);
             break;
         }
+
         case GET_ARM_POSITION:
         {
-            Serial.println("GET_ARM_POSITION");
+
+            #if DEBUG_ALL
+                Serial.println("GET_ARM_POSITION");
+            #endif
+
             byte arm_position_info[5];
-            response[0] = COMM_SUCCESS;
-            if (get_arm_position(&response[1]) != SUCCESS) {
-                response[0] = COMM_TASK_FAILED;
+
+            arm_position_info[0] = COMM_SUCCESS;
+
+            if (get_arm_position(&arm_position_info[1]) != SUCCESS) {
+                arm_position_info[0] = COMM_TASK_FAILED;
                 send_response(arm_position_info, 1);
             }
-            send_response(response, 5);
+
+            send_response(arm_position_info, 5);
             break;
         }
-        case SET_TRAVEL_POSITION:
-        {
-            Serial.println("SET_TRAVEL_POSITION");
-            response[0] = position_arm_for_travel();
-            send_response(response, 1);
-            break;
-        }
-        case SET_ASCENT_POSITION:
-        {
-            Serial.println("SET_ASCENT_POSITION");
-            response[0] = position_arm_for_ascent();
-            send_response(response, 1);
-            break;
-        }
+
         case SET_STONE_IN_GAUNTLET:
         {
-            Serial.println("SET_STONE_IN_GAUNTLET");
-            gauntlet_open_position();
-            response[0] = put_stone_in_gauntlet();
-            gauntlet_storage_position();
-            send_response(response, 1);
-            break;
-        }
-        case CONFIRM_POST_PRESENCE:
-        {
 
-            Serial.println("CONFIRM_POST_PRESENCE");
-            response[0] = find_post(param);
+            #if DEBUG_ALL
+                Serial.println("SET_STONE_IN_GAUNTLET");
+            #endif
+            
+            response[0] = gauntlet_open_position();
+
+            response[0] = put_stone_in_gauntlet();
+            
+            response[0] = gauntlet_storage_position();
+
             send_response(response, 1);
             break;
         }
-        case ASCEND_POST:
-        {
-            Serial.println("ASCEND_POST");
-            response[0] = ascend_post_to_top(param);
-            send_response(response, 1);
-            break;
-        }
+
         case GRAB_STONE:
         {
-            Serial.println("GRAB_STONE");
-            response[0] = grab_infinity_stone();
+            #if DEBUG_ALL
+                Serial.println("GRAB_STONE");
+            #endif
+
+            response[0] = obtain_infinity_stone(side, post_number);
+
             send_response(response, 1);
+
             break;
         }
+
         case DEPLOY_GAUNTLET:
         {
-            Serial.println("DEPLOY_GAUNTLET");
+            #if DEBUG_ALL
+                Serial.println("DEPLOY_GAUNTLET");
+            #endif
+
             response[0] = gauntlet_deploy_position();
+
             send_response(response, 1);
+
             break;
         }
+
         default:
         {
-            Serial.println("command not recognised");
+            #if DEBUG_ALL
+                Serial.println("command not recognised");
+            #endif
+
             byte corrupted[1] = {COMM_CORRUPT_COMMAND};
+
             send_response(corrupted, 1);
             break; 
         }
@@ -179,4 +213,21 @@ void send_response(byte *response, int response_length)
 
     while (!CommSerial.availableForWrite());
     CommSerial.write(response_buff, response_length + 2);
+
+    #if DEBUG_ALL
+
+        Serial.println();
+        
+        Serial.print("response sent: ");
+
+        for (i = 0; i < response_length + 2; i++)
+        {
+            Serial.print(response_buff[i]);
+            Serial.print("  ");
+        }
+        Serial.println();
+
+    #endif
+
+
 }

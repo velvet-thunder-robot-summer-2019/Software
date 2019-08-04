@@ -7,9 +7,6 @@
 
 #include "GlobalInfo/GlobalVars.h"
 #include <Arduino.h>
-#include "Servo.h"
-
-extern Servo wrist_servo;
 
 /** Initializes the arm driver
  */
