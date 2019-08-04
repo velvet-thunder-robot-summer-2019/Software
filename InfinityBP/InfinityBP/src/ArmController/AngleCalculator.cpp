@@ -28,9 +28,11 @@ float calculate_xy_projection(float x, float y)
 float calculate_turntable_angle(float x, float y)
 {
 
+    //TODO: Update this to the newest turntable calculation
+
     float theta;
 
-    theta = atan(y/x) * RAD_DEG;
+    theta = atan(y/x) * RAD_TO_DEG;
     
     if (x < 0)
     {
@@ -229,9 +231,9 @@ float calculate_xpos(float turntableAngle, float armAngle, float foreArmAngle)
     
     float xyPos;
 
-    xyPos = L1*sin(armAngle * DEG_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_RAD) + L3;
+    xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) + L3;
 
-    return xyPos * cos(turntableAngle * DEG_RAD);
+    return xyPos * cos(turntableAngle * DEG_TO_RAD);
     
 }
 
@@ -249,9 +251,9 @@ float calculate_ypos(float turntableAngle, float armAngle, float foreArmAngle)
 
     float xyPos;
 
-    xyPos = L1*sin(armAngle * DEG_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_RAD) + L3;
+    xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) + L3;
 
-    return xyPos * sin(turntableAngle * DEG_RAD);
+    return xyPos * sin(turntableAngle * DEG_TO_RAD);
     
 }
 
@@ -267,7 +269,7 @@ float calculate_zpos(float armAngle, float foreArmAngle)
 
     float zPos;
 
-    zPos = L1*cos(armAngle * DEG_RAD) + L2*cos((armAngle + foreArmAngle) * DEG_RAD);
+    zPos = L1*cos(armAngle * DEG_TO_RAD) + L2*cos((armAngle + foreArmAngle) * DEG_TO_RAD);
 
     return zPos;
     

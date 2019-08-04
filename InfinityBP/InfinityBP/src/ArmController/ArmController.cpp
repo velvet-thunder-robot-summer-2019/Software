@@ -24,13 +24,15 @@ float forearm_angle;
 float wrist_angle;
 
 float temp_angle_1;
-float temp_angle_2;
-float temp_angle_3;
-float temp_angle_4;
 
 coordinate post_positions_left[6];   //location of the stone, relative to the arm base on the stop position
 coordinate post_positions_right[6];
 coordinate gauntlet_positions[4];
+coordinate adaptive_response_left_2;
+coordinate adaptive_response_right_3;
+coordinate adaptive_response;
+
+uint8_t next_post;
 
 /** Set up the initial position of the arm, the value of the gauntlet positions, and the post heights
  *  Returns: COMM_SUCCESS if the operation is successful
@@ -109,6 +111,15 @@ byte init_arm(void)
     post_positions_right[5].x = POST_RIGHT_6_X;
     post_positions_right[5].y = POST_RIGHT_6_Y;
     post_positions_right[5].z = POST_RIGHT_6_Z;
+
+    //Initialize the adaptive response bit
+    adaptive_response_left_2.x = LEFT_2_X;
+    adaptive_response_left_2.x = LEFT_2_X;
+    adaptive_response_left_2.x = LEFT_2_X;
+
+    adaptive_response_right_3.x = RIGHT_3_X;
+    adaptive_response_right_3.x = RIGHT_3_X;
+    adaptive_response_right_3.x = RIGHT_3_X;
 
     #if !MOCK_HARDWARE
         //Open the claw
@@ -325,7 +336,94 @@ byte obtain_infinity_stone(byte side, byte post_number)
             return COMM_TASK_FAILED;
         }
 
-        //TODO: Adaptive response if robot can pick up 2 stones at once
+        #if ADAPTIVE_RESPONSE
+        
+            //Commence adaptive response for short pillars
+            if ( (side == LEFT_SIDE && post_number == 3) || (side == RIGHT_SIDE && post_number == 2) )
+            {
+            
+                if (side == LEFT_SIDE && post_number == 3)
+                {
+                    next_post = 2;
+                    adaptive_response = adaptive_response_left_2;
+                }
+                else if (side == RIGHT_SIDE && post_number == 2)
+                {
+                    next_post = 3;
+                    adaptive_response = adaptive_response_right_3;
+                }
+            
+                //put current stone in gauntlet
+                put_stone_in_gauntlet();
+
+                //move turntable to the position of the pillar
+                #if DEBUG_ALL
+                    Serial.println("moving turntable to face pillar");
+                #endif
+
+                temp_angle_1 = calculate_turntable_angle(adaptive_response.x, adaptive_response.y);   
+
+                if (temp_angle_1 == UNREACHABLE_ERROR)
+                {
+                    return COMM_TASK_FAILED;
+                }
+                turntable_angle = temp_angle_1;
+
+                arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+                if (arm_move_status == MOVE_FAIL)
+                {
+                    return COMM_TASK_FAILED;
+                }
+
+                //lower the arm to meet the pillar and enclose the stone
+                #if DEBUG_ALL
+                    Serial.println("lowering arm to top of pillar");
+                #endif
+
+                xy = calculate_xy_projection(adaptive_response.x, adaptive_response.y);
+
+                temp_angle_1 = calculate_arm_angle(xy, adaptive_response.z);
+                if (temp_angle_1 == UNREACHABLE_ERROR)
+                {
+                    return COMM_TASK_FAILED;
+                }
+                base_arm_angle = temp_angle_1;
+
+                temp_angle_1 = calculate_forearm_angle(xy, adaptive_response.z);
+                if (temp_angle_1 == UNREACHABLE_ERROR)
+                {
+                    return COMM_TASK_FAILED;
+                }
+                forearm_angle = temp_angle_1;
+
+                temp_angle_1 = calculate_wrist_angle(base_arm_angle, forearm_angle);
+                if (temp_angle_1 == UNREACHABLE_ERROR)
+                {
+                    return COMM_TASK_FAILED;
+                }
+                wrist_angle = temp_angle_1;
+                
+
+                arm_move_status = move_whole_arm_position(base_arm_angle, forearm_angle, wrist_angle, turntable_angle);
+                if (arm_move_status == MOVE_FAIL)
+                {
+                    return COMM_TASK_FAILED;
+                }
+
+                //grab the stone.
+                #if DEBUG_ALL
+                    Serial.println("closing claw");
+                #endif
+                close_claw();
+
+                //lift the stone above the pillar again
+                #if DEBUG_ALL
+                    Serial.println("lift stone above pillar");
+                #endif
+            }
+
+        #endif
+        
 
         //return to travel position
         #if DEBUG_ALL

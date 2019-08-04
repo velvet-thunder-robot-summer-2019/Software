@@ -4,8 +4,6 @@
 
 #include "Communications/CommandExecution.h"
 #include "GauntletController/GauntletController.h"
-#include "Servo.h"
-
 /** Initialize the gauntlet
  *  Returns: COMM_SUCCESS if the operation is successful
  *           COMM_TASK_FAILED if the operation failed

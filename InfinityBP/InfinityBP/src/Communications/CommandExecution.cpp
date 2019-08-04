@@ -54,7 +54,8 @@ void execute_command(void)
 
         return;
     }
-    byte side, post_number;
+    byte side = 0;
+    byte post_number = 0;
 
     byte start = CommSerial.read();
 

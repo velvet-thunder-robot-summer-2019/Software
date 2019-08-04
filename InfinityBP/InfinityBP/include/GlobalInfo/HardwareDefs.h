@@ -15,19 +15,15 @@
 
 #define TURNTABLE_KP 0
 #define BASE_ARM_KP 5
-#define FOREARM_KP 8
 
 #define TURNTABLE_KI 0
 #define BASE_ARM_KI 0
-#define FOREARM_KI 0
 
 #define TURNTABLE_KD 0
 #define BASE_ARM_KD 0
-#define FOREARM_KD 1
 
 #define TURNTABLE_ANTI_WINDUP 0
 #define BASE_ARM_ANTI_WINDUP 0
-#define FOREARM_ANTI_WINDUP 0
 
 #define NUM_PAST_ERRORS 10
 
@@ -171,6 +167,14 @@
 #define POST_RIGHT_6_Y 0
 #define POST_RIGHT_6_Z 0
 
+#define LEFT_2_X 0
+#define LEFT_2_Y 0
+#define LEFT_2_Z 0
+
+#define RIGHT_3_X 0
+#define RIGHT_3_Y 0
+#define RIGHT_3_Z 0
+
 //vertical distance in mm needed to clear the arm
 #define Z_PULLUP_DISTANCE 0
 
@@ -192,10 +196,6 @@
  * ############## Definitions ##################
  * #############################################
  */
-
-//Angle conversions
-#define RAD_DEG 180.0/3.1415926535
-#define DEG_RAD 3.1415925635/180.0
 
 //Chirality
 #define LEFT_SIDE  0x00
@@ -238,7 +238,7 @@
 
 #define DEBUG_ALL TRUE
 #define MOCK_HARDWARE FALSE
-
 #define HARDCODE_POST_POSITIONS TRUE
+#define ADAPTIVE_RESPONSE TRUE
 
 #endif
