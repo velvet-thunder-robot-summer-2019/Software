@@ -9,8 +9,6 @@
 #define RESTART_TIME 700 // ms
 #define STOP_TIME 20 // ms
 
-location target_location = nullptr; // nullptr if we're not going anywhere
-
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
 int branch_side_expected(location next_location);
@@ -272,14 +270,9 @@ void move_to(location next_location)
     }
 }
 
-location get_target_location()
-{
-    return target_location;
-}
 
 int reach_adjacent_location_on_tape(location next_location, state expected_state, bool stopping_at_branch)
 { 
-    target_location = next_location;
 #if TESTING_ORDER_OF_EVENTS
     Serial.println("reaching next location on tape");
     delay(1000);
@@ -310,7 +303,6 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     if (stopping_at_branch) {
         stop_motors();
     }
-    target_location = nullptr;
     return SUCCESS;
 }
 
