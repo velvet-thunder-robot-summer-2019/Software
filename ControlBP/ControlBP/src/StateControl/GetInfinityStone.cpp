@@ -23,7 +23,7 @@ void get_infinity_stone()
 #endif
 
 
-    int side = run_status.bot_identity == THANOS ? LEFT : RIGHT;
+    int side = get_branch_side(run_status.bot_position.next_location);
 
     // attempt to grab infinity stone
     int post_index = get_post_index();

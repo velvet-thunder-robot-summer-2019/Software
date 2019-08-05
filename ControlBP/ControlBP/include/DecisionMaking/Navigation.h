@@ -1,5 +1,5 @@
-#ifndef POSITIONING_H_
-#define POSITIONING_H_
+#ifndef NAVIGATION_H_
+#define NAVIGATION_H_
 
 #include "GlobalInfo/GlobalVars.h"
 
@@ -23,4 +23,9 @@ int follow_tape_till_branch(state expected_state, float pwm);
  */
 int turn_into_gauntlet(int direction, state expected_state);
 
-#endif // POSITIONING_H_
+/**
+ * Returns side on which post / branch is expected to be found
+ */
+int branch_side_expected(location next_location);
+
+#endif // NAVIGATION_H_
