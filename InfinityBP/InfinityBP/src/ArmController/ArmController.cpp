@@ -808,34 +808,41 @@ void maintain_current_arm_position(void)
     #if !MOCK_HARDWARE
         
         //Calculate the relative differences between stated and current position
-        float delta_turntable_angle = read_turntable_angle() - turntable_angle;
-        float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
+        #if ACTIVATE_TURNTABLE
+            float delta_turntable_angle = read_turntable_angle() - turntable_angle;
+            pwm_response turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+        #endif
+        #if ACTIVATE_BASE_ARM
+            float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
+            pwm_response base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
+        #endif
 
-        pwm_response base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
-        pwm_response turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+        #if ACTIVATE_BASE_ARM
+            if (base_arm_correction.dir == CLOCKWISE)
+            {
+                pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
+                pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+            }
+            else
+            {
+                pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
+            }
+        #endif
 
-        if (base_arm_correction.dir == CLOCKWISE)
-        {
-            pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
-            pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-        }
-        else
-        {
-            pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-            pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
-        }
+        #if ACTIVATE_TURNTABLE        
+            if (turntable_correction.dir == CLOCKWISE)
+            {
+                pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
+                pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
+            }
+            else
+            {
+                pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
+            }
+        #endif
 
-        if (turntable_correction.dir == CLOCKWISE)
-        {
-            pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
-            pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
-        }
-        else
-        {
-            pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-            pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
-        }
-    
     #endif
 
     #if DEBUG_ALL

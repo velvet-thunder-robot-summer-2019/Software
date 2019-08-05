@@ -12,11 +12,11 @@ void setup()
     #if DEBUG_ALL
         Serial.begin(9600);
     #endif
-    
+
     init_communication();
     init_arm();
     init_gauntlet();
-    
+
 }
 
 void loop() 

@@ -23,7 +23,7 @@ float calculate_xy_projection(float x, float y)
  * @param x: The x-coordinate of the tip of the arm in mm
  * @param y: The y-coordinate of the tip of the arm in mm
  * Returns: The turning angle from the x axis in degrees. The turning angle is always a 
- *          value between 0 and 360 inclusive.
+ *          value between -180 and 180 inclusive.
  */
 float calculate_turntable_angle(float x, float y)
 {
@@ -34,13 +34,22 @@ float calculate_turntable_angle(float x, float y)
 
     theta = atan(y/x) * RAD_TO_DEG;
     
-    if (x < 0)
+    if (x > 0 && y < 0)
     {
         theta = theta + 180.0;
     }
-    else if (x > 0 && y < 0)
+    else if (x < 0 && y < 0)
     {
-        theta = theta + 360.0;
+        theta = theta - 180.0;
+    }
+
+    if (theta >= 0 && theta < 60)
+    {
+        theta = 60;
+    }
+    else if (theta < 0 && theta > -60)
+    {
+        theta = -60;
     }
 
     return theta;
@@ -204,14 +213,14 @@ float calculate_wrist_angle(float armAngle, float foreArmAngle)
     float theta = round(-90.0 - armAngle - foreArmAngle);
 
     if (theta <= 90 && theta >= -90 )
-    {
-        #if DEBUG_ALL
-            Serial.print("wrist angle is unreachable: ");
-            Serial.println(theta);
-        #endif
-        
+    {        
         return theta;
     }
+
+    #if DEBUG_ALL
+        Serial.print("wrist angle is unreachable: ");
+        Serial.println(theta);
+    #endif
     
     return UNREACHABLE_ERROR;
 
@@ -231,9 +240,10 @@ float calculate_xpos(float turntableAngle, float armAngle, float foreArmAngle)
     
     float xyPos;
 
-    xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) + L3;
+    //xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) + L3;
+    xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) - L3;
 
-    return xyPos * cos(turntableAngle * DEG_TO_RAD);
+    return xyPos * sin(turntableAngle * DEG_TO_RAD) * -1.0;
     
 }
 
@@ -251,9 +261,10 @@ float calculate_ypos(float turntableAngle, float armAngle, float foreArmAngle)
 
     float xyPos;
 
-    xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) + L3;
+    //xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) + L3;
+    xyPos = L1*sin(armAngle * DEG_TO_RAD) + L2*sin((armAngle + foreArmAngle) * DEG_TO_RAD) - L3;
 
-    return xyPos * sin(turntableAngle * DEG_TO_RAD);
+    return xyPos * cos(turntableAngle * DEG_TO_RAD) * -1.0;
     
 }
 

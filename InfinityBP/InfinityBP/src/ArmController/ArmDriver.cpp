@@ -30,6 +30,8 @@ float base_arm_past_errors[NUM_PAST_ERRORS];
 float turntable_anti_windup;
 float base_arm_anti_windup;
 
+float current_turntable_angle;
+
 uint8_t turntable_last_error_pos;
 uint8_t base_arm_last_error_pos;
 
@@ -70,21 +72,32 @@ void init_arm_driver(void)
 
         //Initialize all GPIO pins
         
-        pinMode(TURNTABLE_POS_PIN, OUTPUT);
-        pinMode(TURNTABLE_NEG_PIN, OUTPUT);
 
-        pinMode(BASE_ARM_CW_PIN, OUTPUT);
-        pinMode(BASE_ARM_CCW_PIN, OUTPUT);
+        #if ACTIVATE_BASE_ARM
+            pinMode(BASE_ARM_CW_PIN, OUTPUT);
+            pinMode(BASE_ARM_CCW_PIN, OUTPUT);
+            pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+            pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+        #endif
 
-        pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
-        pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+        #if ACTIVAE_WRIST
+            pwm_start(WRIST_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (wrist_angle + 157.5) / 11.25, 1);
+        #endif
 
-        pwm_start(WRIST_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (wrist_angle + 157.5) / 11.25, 1);
-        pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_OPEN, 1);
-        pwm_start(FOREARM_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (forearm_angle + 191.25) / 11.25, 1);
-        
-        pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
-        pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+        #if ACTIVATE_CLAW
+            pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_OPEN, 1);
+        #endif
+
+        #if ACTIVATE_FORE_ARM
+            pwm_start(FOREARM_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (forearm_angle + 191.25) / 11.25, 1);
+        #endif
+
+        #if ACTIVATE_TURNTABLE
+            pinMode(TURNTABLE_POS_PIN, OUTPUT);
+            pinMode(TURNTABLE_NEG_PIN, OUTPUT);
+            pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+            pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 1);
+        #endif
 
     #endif
 
@@ -120,75 +133,116 @@ byte move_whole_arm_position(float base_arm_angle, float forearm_angle, float wr
         Serial.print("   turntable Angle: ");
         Serial.println(turntable_angle);
 
-        delay(5000);
-
     #endif
 
     #if !MOCK_HARDWARE
 
-        //Get angle discrepency
-        float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
-        float delta_turntable_angle = turntable_angle - read_turntable_angle();
-
-        while ( (abs(delta_turntable_angle) > ANGULAR_ERROR_BOUND) || (abs(delta_base_arm_angle) > ANGULAR_ERROR_BOUND) )
-        {
+        #if ACTIVATE_BASE_ARM
+            //Get angle discrepency
+            float delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
+        #endif
         
-            base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
-            turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+        #if ACTIVATE_TURNTABLE
+            float delta_turntable_angle;
 
-            #if DEBUG_ALL
-                Serial.print("base duty: ");
-                Serial.print((BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD);
-            #endif
-            
-            if (base_arm_correction.dir == CLOCKWISE)
+            current_turntable_angle = read_turntable_angle();
+
+            //if the old and new angles are on opposite sides of the coordinate system
+            if ( (turntable_angle <= 180 && turntable_angle >= 0) && (current_turntable_angle <= 0 && current_turntable_angle >= -180) )
             {
-                #if DEBUG_ALL
-                    Serial.println("  CW");
-                #endif
-                pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
-                pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                // OLD: -135, NEW: 135, delta = -90, CW
+                delta_turntable_angle = ( -180 - current_turntable_angle ) + ( - 180 + turntable_angle );
+            }
+            else if ( (turntable_angle <=0 && current_turntable_angle >= -180)  && (current_turntable_angle <= 180 && current_turntable_angle >= 0))
+            {
+                //OLD: 135, NEW: -135, delta = +90, CCW
+                delta_turntable_angle = ( 180 - current_turntable_angle ) + (180 + turntable_angle);
             }
             else
             {
-                #if DEBUG_ALL
-                    Serial.println("  CW");
-                #endif
-                pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-                pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
+                delta_turntable_angle = turntable_angle - current_turntable_angle;
             }
+        #endif
 
-                #if DEBUG_ALL
-                Serial.print("turntable duty: ");
-                Serial.print( (TURNTABLE_DUTY_CYCLE + turntable_correction.pwm_val) * PWM_PERIOD) ;
+        #if ACTIVATE_TURNTABLE && ACTIVATE_BASE_ARM
+            while ( (abs(delta_turntable_angle) > ANGULAR_ERROR_BOUND) || (abs(delta_base_arm_angle) > ANGULAR_ERROR_BOUND) )
+        #elif ACTIVATE_TURNTABLE && !ACTIVATE_BASE_ARM
+            while( (abs(delta_turntable_angle) > ANGULAR_ERROR_BOUND) )
+        #elif !ACTIVATE_TURNTABLE && ACTIVATE_BASE_ARM
+            while( (abs(delta_base_arm_angle) > ANGULAR_ERROR_BOUND) )
+        #else
+            while(0)
+        #endif
+        {
+            #if ACTIVATE_BASE_ARM
+                base_arm_correction = calculate_base_arm_pwm(delta_base_arm_angle);
             #endif
+
+            #if ACTIVATE_TURNTABLE
+                turntable_correction = calculate_turntable_pwm(delta_turntable_angle);
+            #endif
+
+            #if ACTIVATE_BASE_ARM
+                #if DEBUG_ALL
+                    Serial.print("base duty: ");
+                    Serial.print((BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD);
+                #endif
                 
-            if (turntable_correction.dir == CLOCKWISE)
-            {
-                #if DEBUG_ALL
-                    Serial.println("  CW");
-                #endif
-                pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
-                pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
-            }
-            else
-            {
-                #if DEBUG_ALL
-                    Serial.println("  CCW");
-                #endif
-                pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
-                pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
-            }
+                if (base_arm_correction.dir == CLOCKWISE)
+                {
+                    #if DEBUG_ALL
+                        Serial.println("  CW");
+                    #endif
+                    pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);
+                    pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                }
+                else
+                {
+                    #if DEBUG_ALL
+                        Serial.println("  CW");
+                    #endif
+                    pwm_start(BASE_ARM_CW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                    pwm_start(BASE_ARM_CCW_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, (BASE_ARM_DUTY_CYCLE + base_arm_correction.pwm_val) * PWM_PERIOD, 0);            
+                }
+            #endif
 
-            delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
-            delta_turntable_angle = turntable_angle - read_turntable_angle();
+            #if ACTIVATE_TURNTABLE
+                #if DEBUG_ALL
+                    Serial.print("turntable duty: ");
+                    Serial.print( (TURNTABLE_DUTY_CYCLE + turntable_correction.pwm_val) * PWM_PERIOD) ;
+                #endif
+                    
+                if (turntable_correction.dir == CLOCKWISE)
+                {
+                    #if DEBUG_ALL
+                        Serial.println("  CW");
+                    #endif
+                    pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);
+                    pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);  
+                }
+                else
+                {
+                    #if DEBUG_ALL
+                        Serial.println("  CCW");
+                    #endif
+                    pwm_start(TURNTABLE_POS_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, 0, 0);
+                    pwm_start(TURNTABLE_NEG_PIN, PWM_CLOCK_FREQ, PWM_PERIOD, turntable_correction.pwm_val * PWM_PERIOD, 0);            
+                }
+
+                delta_base_arm_angle = base_arm_angle - read_base_arm_angle();
+                delta_turntable_angle = turntable_angle - read_turntable_angle();
+            #endif
         }
         
-        //Forearm can move between -120 and +50
-        pwm_start(FOREARM_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (forearm_angle + 191.25) / 11.25, 0);
+        #if ACTIVATE_FORE_ARM
+            //Forearm can move between -120 and +50
+            pwm_start(FOREARM_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (forearm_angle + 191.25) / 11.25, 0);
+        #endif
 
-        //Wrist can move between -90 and +90
-        pwm_start(WRIST_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (wrist_angle + 157.5) / 11.25, 0);
+        #if ACTIVATE_WRIST
+            //Wrist can move between -90 and +90
+            pwm_start(WRIST_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, (float) (wrist_angle + 157.5) / 11.25, 0);
+        #endif
 
     #endif
 
@@ -208,7 +262,9 @@ void open_claw(void)
 
     #if !MOCK_HARDWARE
 
-        pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_OPEN, 0);
+        #if ACTIVATE_CLAW
+            pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_OPEN, 0);
+        #endif
 
     #endif
 
@@ -226,8 +282,10 @@ void close_claw(void)
 {
     #if !MOCK_HARDWARE
         
-        pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_CLOSE, 0);
-    
+        #if ACTIVATE_CLAW
+            pwm_start(CLAW_SERVO_PIN, SERVO_FREQ, SERVO_PERIOD, CLAW_SERVO_CLOSE, 0);
+        #endif
+
     #endif
 
     #if DEBUG_ALL
