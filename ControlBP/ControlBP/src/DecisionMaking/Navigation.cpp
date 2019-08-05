@@ -9,6 +9,8 @@
 #define RESTART_TIME 700 // ms
 #define STOP_TIME 20 // ms
 
+location target_location = nullptr; // nullptr if we're not going anywhere
+
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
 int branch_side_expected(location next_location);
@@ -270,10 +272,17 @@ void move_to(location next_location)
     }
 }
 
+location get_target_location()
+{
+    return target_location;
+}
+
 int reach_adjacent_location_on_tape(location next_location, state expected_state, bool stopping_at_branch)
 { 
+    target_location = next_location;
 #if TESTING_ORDER_OF_EVENTS
     Serial.println("reaching next location on tape");
+    delay(1000);
     return SUCCESS;
 #endif
     // turn around if need be  
@@ -301,32 +310,7 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     if (stopping_at_branch) {
         stop_motors();
     }
-
-    // while (!back_reached_branch) {
-    //     uint8_t response;
-    //     if (!stopping_at_branch) {
-    //         response = follow_tape(FLAT_GROUND_APPROACHING_STOP_PWM);
-    //     } else {
-    //         response = follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-    //     }
-    //     if (response == TAPE_NOT_FOUND) {
-    //          backtrack_to_tape();
-    //     }
-    //     if (robot_state() != expected_state) {
-    //         return STATE_CHANGED;
-    //     }
-    //     back_reached_branch = branch_reached(branch_side);
-    //     // update ze bloody location outside of this code. It's a pain otherwise
-    // }
-    // // if we've overshot, move back a bit. We'll have to tune it to a reasonable overshoot
-    // if (stopping_at_branch) 
-    // {
-    //     while (!branch_reached(branch_side)) {
-    //        reverse(FLAT_GROUND_APPROACHING_STOP_PWM);
-    //     }
-    //     stop_motors();
-    // }
-    // handle the intersection cases where it's NOT the end?
+    target_location = nullptr;
     return SUCCESS;
 }
 
@@ -338,7 +322,9 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
 int turn_onto_branch(int direction, state expected_state)
 {
 #if TESTING_ORDER_OF_EVENTS
-Serial.println("following tape till branch, remove this if later!!");
+Serial.println("we are turning on to the branch...");
+delay(1000);
+Serial.println("turn completed!");
 return SUCCESS;
 #endif
 

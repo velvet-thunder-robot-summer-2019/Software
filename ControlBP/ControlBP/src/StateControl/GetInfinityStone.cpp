@@ -33,9 +33,8 @@ void get_infinity_stone()
     } else if (result == COMM_TASK_FAILED) {
         run_status.stones_status[post_index] = MISSING;
     }
-
     
-    request_put_stone_in_gauntlet();
+    result = request_put_stone_in_gauntlet();
 
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(GET_INFINITY_STONE, FIND_POST);

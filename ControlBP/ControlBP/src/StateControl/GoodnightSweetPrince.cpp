@@ -3,6 +3,7 @@
 
 void goodnight_sweet_prince()
 {
+#if DEBUG_PRINT || TESTING_ORDER_OF_EVENTS
     Serial.println("");
     Serial.println("");
 
@@ -10,7 +11,10 @@ void goodnight_sweet_prince()
     Serial.println("______________________");
 
     Serial.println("And flights of angels sing thee to thy rest");
-    delay(10000); // TODO: change this to permanent delay 
+#endif
+    deploy_gauntlet();
+    delay(1000000); // TODO: change this to permanent delay
+
     if (digitalRead(MASTER_SWITCH) == DEV) {
         switch_state(GOODNIGHT_SWEET_PRINCE, MENU);
     }

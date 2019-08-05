@@ -36,10 +36,10 @@ void init_tape_following()
 int follow_tape(float torque)
 {
 #if DEBUG_PRINT
-    // Serial.println("follow_tape");
-    // Serial.print("PWM: ");
-    // Serial.println(torque);
-    // Serial.println("");
+    Serial.println("follow_tape");
+    Serial.print("PWM: ");
+    Serial.println(torque);
+    Serial.println("");
 #endif
     int error = get_tape_following_error();
     PID_output = get_PID_output(error);

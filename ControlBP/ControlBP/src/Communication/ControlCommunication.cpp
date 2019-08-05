@@ -155,7 +155,7 @@ uint8_t get_arm_angles(uint8_t *angles)
  */
 uint8_t request_put_stone_in_gauntlet() 
 {
-#if DEBUG_PRINT
+#if DEBUG_PRINT || TESTING_ORDER_OF_EVENTS
     Serial.println("request_put_infinity_in_gauntlet: putting stone in gauntlet");
 #endif
     uint8_t send_status = send_command(SET_STONE_IN_GAUNTLET);
@@ -178,9 +178,51 @@ uint8_t request_put_stone_in_gauntlet()
 #endif
         return COMM_CORRUPT_RESPONSE;
     }
-#if DEBUG_PRINT
+#if DEBUG_PRINT || TESTING_ORDER_OF_EVENTS
     Serial.print("response from infinity: ");
     Serial.println(infinity_response[1]);
+    if (infinity_response[1] == COMM_SUCCESS) {
+        Serial.println("Successfully got the stone in gauntlet!");
+    }
+#endif
+    return infinity_response[1];
+}
+
+/**
+ * Request put stone in gauntlet
+ * Does not wait for reply
+ */
+uint8_t deploy_gauntlet() 
+{
+#if DEBUG_PRINT || TESTING_ORDER_OF_EVENTS
+    Serial.println("Request gauntlet deployment");
+#endif
+    uint8_t send_status = send_command(DEPLOY_GAUNTLET);
+    if (send_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
+        Serial.println("send timeout");
+#endif
+        return COMM_TIMEOUT;
+    }
+
+    uint8_t response_status = get_response(1);
+    if (response_status == COMM_TIMEOUT) {
+#if DEBUG_PRINT
+        Serial.println("received timeout");
+#endif
+        return COMM_TIMEOUT;
+    } else if (response_status == COMM_CORRUPT_RESPONSE) {
+#if DEBUG_PRINT
+        Serial.println("corrupt response");
+#endif
+        return COMM_CORRUPT_RESPONSE;
+    }
+#if DEBUG_PRINT || TESTING_ORDER_OF_EVENTS
+    Serial.print("response from infinity: ");
+    Serial.println(infinity_response[1]);
+    if (infinity_response[1] == COMM_SUCCESS) {
+        Serial.println("succesfully deployed gauntlet!");
+    }
 #endif
     return infinity_response[1];
 }
@@ -192,7 +234,7 @@ uint8_t request_put_stone_in_gauntlet()
  */
 uint8_t grab_infinity_stone(byte side, byte post_num)
 {
-#if DEBUG_PRINT
+#if DEBUG_PRINT || TESTING_ORDER_OF_EVENTS
     Serial.println("grab_infinity_stone");
 #endif
     if (side == LEFT) {
@@ -231,7 +273,7 @@ uint8_t grab_infinity_stone(byte side, byte post_num)
 
     //wait for response
     while (!CommSerial.available()) {
-#if DEBUG_PRINT
+#if DEBUG_PRINT && !TESTING_ORDER_OF_EVENTS
         Serial.println("I pine for your response");
 #endif
     } 
@@ -249,9 +291,13 @@ uint8_t grab_infinity_stone(byte side, byte post_num)
 #endif
         return COMM_CORRUPT_RESPONSE;
     }
-#if DEBUG_PRINT
+#if DEBUG_PRINT || TESTING_ORDER_OF_EVENTS
     Serial.print("response from infinity: ");
     Serial.println(infinity_response[1]);
+
+    if (infinity_response[1] == COMM_SUCCESS) {
+        Serial.println("successfully picked up stone!");
+    }
 #endif
 
     return infinity_response[1]; 

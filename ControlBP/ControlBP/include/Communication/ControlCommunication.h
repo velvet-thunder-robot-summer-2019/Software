@@ -55,6 +55,8 @@ uint8_t grab_infinity_stone(byte side, byte post_num);
  */
 uint8_t request_put_stone_in_gauntlet();
 
-uint8_t send_command_no_retries(byte command);
+uint8_t send_command_no_retries(byte command); // for debug
+
+uint8_t deploy_gauntlet();
 
 #endif // CONTROL_COMMUNICATION_H_

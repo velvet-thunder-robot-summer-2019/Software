@@ -41,14 +41,22 @@ int follow_upper_path()
     {
             // tape follow till fork in road
             if (follow_tape_till_branch(FIND_POST, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
-                // return STATE_CHANGED;
+                return STATE_CHANGED;
             }
 
         // turn the correct direction at the fork
         int turn_direction = thanos ? RIGHT : LEFT;
+#if TESTING_ORDER_OF_EVENTS
+    Serial.print("the direction in which we want to turn is ");
+    if (turn_direction == RIGHT) {
+        Serial.println("right");
+    } else {
+        Serial.println("left");
+    }
+#endif
 
         if (turn_onto_branch(turn_direction, FIND_POST) == STATE_CHANGED) {
-            // return STATE_CHANGED;
+            return STATE_CHANGED;
         }
         // delay(500);
 
@@ -56,31 +64,27 @@ int follow_upper_path()
 
         // reach next location
         if (reach_adjacent_location_on_tape(my_first_post, FIND_POST, true) == STATE_CHANGED) {
-            // return STATE_CHANGED;
+            return STATE_CHANGED;
         }
         
         update_position(my_first_post, my_second_post);
     } else if (run_status.bot_position.last_location == my_intersection && run_status.bot_position.next_location == my_first_post)
     {
         if (reach_adjacent_location_on_tape(my_first_post, FIND_POST, true) == STATE_CHANGED) {
-            // return STATE_CHANGED;
+            return STATE_CHANGED;
         }
         update_position(my_first_post, my_second_post);
     } else if (run_status.bot_position.last_location == my_first_post && run_status.bot_position.next_location == my_second_post)
     {
             if (reach_adjacent_location_on_tape(my_second_post, FIND_POST, true) == STATE_CHANGED) {
-                // return STATE_CHANGED;
+                return STATE_CHANGED;
             }
             update_position(my_second_post, opp_intersection);
     } else {
         // this is temporary for the next tuning run, we just go Home
 #if TESTING_ORDER_OF_EVENTS
         Serial.println("We've picked up all stones, return home");
-        digitalWrite(BLINKY, HIGH); // error bad things happened
         delay(1000);
-        digitalWrite(BLINKY, LOW);
-        delay(1000);
-        digitalWrite(BLINKY, HIGH);
         Serial.print("state is: ");
         Serial.print(robot_state());
 #endif
@@ -114,6 +118,14 @@ int follow_lower_path()
 
         // turn the correct direction at the fork
         int turn_direction = I_am_inevitable ? LEFT : RIGHT;
+#if TESTING_ORDER_OF_EVENTS
+        Serial.print("the direction in which we want to turn is ");
+        if (turn_direction == RIGHT) {
+            Serial.println("right");
+        } else {
+            Serial.println("left");
+        }
+#endif
         if (turn_onto_branch(turn_direction, FIND_POST) == STATE_CHANGED) {
             // return STATE_CHANGED;
         }
