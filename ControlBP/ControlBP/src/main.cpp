@@ -32,6 +32,7 @@ void setup() {
 #if TESTING_ORDER_OF_EVENTS
   Serial.println("begin setup");
 #endif
+  run_status.comp_start_time = millis();
   reset();
 }
 

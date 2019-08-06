@@ -70,6 +70,7 @@ typedef struct
     position bot_position;
     identity bot_identity;
     branch target_branch; // can be upper or lower
+    uint32_t comp_start_time;
 
 }status_summary;
 

@@ -21,19 +21,6 @@ void collision_right();
 void collision_front();
 void collision_back();
 
-// encoder interrupts on wheels
-volatile byte seqA_left = 0;
-volatile byte seqB_left = 0;
-
-volatile byte seqA_right = 0;
-volatile byte seqB_right = 0;
-
-volatile uint32_t right_wheel_dt[DT_ARRAY_SIZE] = {0};
-volatile uint8_t right_wheel_dt_index = 0;
-
-volatile uint32_t left_wheel_dt[DT_ARRAY_SIZE] = {0};
-volatile uint8_t left_wheel_dt_index = 0;
-
 /**
  * Does all necessary initialisation for interrupts
  */
@@ -42,18 +29,12 @@ void init_interrupts()
     Serial.println("init_interrupts");
 
     //set up pins for collision interrupt
-    pinMode(BUMPER_LEFT, INPUT);
-    pinMode(BUMPER_RIGHT, INPUT);
+    pinMode(BUMPER_LEFT, INPUT_PULLUP);
+    pinMode(BUMPER_RIGHT, INPUT_PULLUP);
 
     // attach collision interrupt
-    // attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), set_collision_mode, FALLING);
-    // attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), set_collision_mode, FALLING);
-
-    //set up pins for encoder interrupt
-    pinMode(ENCODER_LEFT_A, INPUT);
-    pinMode(ENCODER_LEFT_B, INPUT);
-    pinMode(ENCODER_RIGHT_A, INPUT);
-    pinMode(ENCODER_RIGHT_B, INPUT);
+    attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), set_collision_mode, FALLING);
+    attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), set_collision_mode, FALLING);
 }
 
 /**
@@ -68,63 +49,3 @@ Serial.println("collision at front");
         switch_state(robot_state(), HANDLE_COLLISION);
     }
 }
-
-// /**
-//  * Increments left wheel rotations
-//  */
-// void encoder_left_handle()
-// {
-//     bool A_val = digitalRead(ENCODER_LEFT_A);
-//     bool B_val = digitalRead(ENCODER_LEFT_B);
-    
-//     seqA_left <<= 1;
-//     seqA_left |= A_val;
-    
-//     seqB_left <<= 1;
-//     seqB_left |= B_val;
-
-//     seqA_left &= 0b00001111;
-//     seqB_left &= 0b00001111;
-
-//     if (seqA_left == 0b00001001 && seqB_left == 0b00000011) {
-//         run_status.bot_position.left_wheel_ticks++;
-//         int last_index = left_wheel_dt_index == 0 ? DT_ARRAY_SIZE - 1 : left_wheel_dt_index - 1;
-//         left_wheel_dt[left_wheel_dt_index++] = millis() - left_wheel_dt[last_index];
-//         if (left_wheel_dt_index == DT_ARRAY_SIZE) {
-//             left_wheel_dt_index = 0;
-//         }
-//     } else if (seqA_left == 0b00000011 && seqB_left == 0b00001001) {
-//         run_status.bot_position.left_wheel_ticks--;
-//     }
-// }
-
-// /**
-//  * Increments right wheel rotations
-//  */
-// void encoder_right_handle()
-// {
-//     bool A_val = digitalRead(ENCODER_RIGHT_A);
-//     bool B_val = digitalRead(ENCODER_RIGHT_B);
-    
-//     seqA_right <<= 1;
-//     seqA_right |= A_val;
-    
-//     seqB_right <<= 1;
-//     seqB_right |= B_val;
-
-//     seqA_right &= 0b00001111;
-//     seqB_right &= 0b00001111;
-
-//     if (seqA_right == 0b00001001 && seqB_right == 0b00000011) {
-//         run_status.bot_position.right_wheel_ticks++;
-//         int last_index = right_wheel_dt_index == 0 ? DT_ARRAY_SIZE - 1 : right_wheel_dt_index - 1;
-//         right_wheel_dt[right_wheel_dt_index++] = millis() - right_wheel_dt[last_index];
-//         if (right_wheel_dt_index == DT_ARRAY_SIZE) {
-//             right_wheel_dt_index = 0;
-//         }
-//     } else if (seqA_right == 0b00000011 && seqB_right == 0b00001001) {
-//         run_status.bot_position.right_wheel_ticks--;
-//     }
-// }
-
-

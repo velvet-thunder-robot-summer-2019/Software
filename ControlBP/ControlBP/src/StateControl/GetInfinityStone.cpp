@@ -17,6 +17,10 @@ void get_infinity_stone()
     Serial.println("GET_INFINITY_STONE state entered!");
     Serial.println("______________________");
 #endif
+    if (millis() - run_status.comp_start_time < TIME_TO_TARGET_NEW_POST) {
+        switch_state(FIND_POST, RETURN_TO_GAUNTLET);
+        return;
+    }
 #if NO_ARM_TESTING
     stub_arm_motion();
     switch_state(GET_INFINITY_STONE, FIND_POST);

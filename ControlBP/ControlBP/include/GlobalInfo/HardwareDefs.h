@@ -102,6 +102,11 @@
 #define COMM_BUSY 0xAE
 #define COMM_CORRUPT_COMMAND 0xAF
 
+// hardcoded times
+#define MAX_RETURN_TIME 30*1000 // 20 s
+#define MAX_PICK_UP_STONE_TIME 15*1000 // 15 s
+#define TIME_TO_TARGET_NEW_POST (MAX_RETURN_TIME + MAX_PICK_UP_STONE_TIME)
+
 
 // just for testing
 #define TESTING_ORDER_OF_EVENTS TRUE

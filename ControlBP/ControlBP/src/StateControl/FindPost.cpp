@@ -18,6 +18,11 @@ void find_post()
     Serial.println("______________________");
 #endif
 
+if (millis() - run_status.comp_start_time < TIME_TO_TARGET_NEW_POST) {
+    switch_state(FIND_POST, RETURN_TO_GAUNTLET);
+    return;
+}
+
 if (switch_branch_needed()) {
     int turn_direction;
     bool inevitable = (run_status.bot_identity == THANOS);
