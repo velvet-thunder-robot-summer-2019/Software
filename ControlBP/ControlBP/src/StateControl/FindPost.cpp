@@ -2,6 +2,7 @@
 #include "DecisionMaking/DecisionMaking.h"
 #include "StateControl/FindPost.h"
 #include "Debugging/Menu.h"
+#include "StateControl/HandleCollision.h"
 
 int follow_lower_path();
 int follow_upper_path();
@@ -16,11 +17,19 @@ void find_post()
     Serial.println("FIND_POST state entered!");
     Serial.println("______________________");
 #endif
-#if UPPER_BRANCH_PATH
-     follow_upper_path();
-#elif LOWER_BRANCH_PATH
+
+if (switch_branch_needed()) {
+    // switch branch physically
+    // switch run_status.target_branch
+    return;
+}
+
+
+if (run_status.target_branch == UPPER) {
+    follow_upper_path();
+} else {
     follow_lower_path();
-#endif
+}
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(FIND_POST, GET_INFINITY_STONE);
     } else {

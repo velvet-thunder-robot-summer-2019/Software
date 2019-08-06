@@ -11,7 +11,6 @@
 
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
-int branch_side_expected(location next_location);
 String get_location_string(location my_loc);
 void print_position();
 int get_branch_side(location next);
@@ -503,8 +502,9 @@ Serial.println("follow_tape_till_branch");
 int face_reverse_direction(state expected_state)
 {
 #if TESTING_ORDER_OF_EVENTS
-delay(1000);
-return SUCCESS;
+    Serial.println("face reverse direction, turn around");
+    delay(1000);
+    return SUCCESS;
 #endif
     rotate_on_spot(TURN_PWM, LEFT);
     while (!outer_left_sensor()) {
@@ -535,7 +535,22 @@ return SUCCESS;
         return STATE_CHANGED;
     }
     // flip robot positioning system
-    update_position(run_status.bot_position.next_location, run_status.bot_position.last_location);
+    // update_position(run_status.bot_position.next_location, run_status.bot_position.last_location);
+    return SUCCESS;
+}
+
+int return_to_intersection()
+{
+    if (run_status.target_branch == UPPER) {
+
+
+        
+        run_status.target_branch = LOWER;
+    } else {
+
+
+        run_status.target_branch = UPPER;
+    }
     return SUCCESS;
 }
 

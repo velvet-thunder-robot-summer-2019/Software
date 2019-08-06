@@ -3,7 +3,9 @@
 
 #define BACKUP_TIME 1500
 
-static int collision_retries = 0;
+int collision_retries = 0;
+bool switch_branch = false;
+
 int backup_at_collision();
 
 void handle_collision()
@@ -23,10 +25,8 @@ void handle_collision()
         if (we_have_stones()) {
             switch_state(RETURN_TO_GAUNTLET);
         } else {
-            // reach next branch
+            switch_branch = true;
         }
-        // case we have no stones
-        // case we have stones
     }
 
     //SET GLOBAL WHICH SIDE WE HIT VAR BACK TO NO_COLLISION
@@ -57,4 +57,9 @@ bool we_have_stones()
         }
     }
     return false;
+}
+
+bool switch_branch_needed()
+{
+    return switch_branch;
 }

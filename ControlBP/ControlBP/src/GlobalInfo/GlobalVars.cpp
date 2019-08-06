@@ -29,12 +29,18 @@ void initialise_competition_data(position start_position)
     run_status.last_collision = NO_COLLISION;
 
     if (digitalRead(THANOS_v_METHANOS_SWITCH) == METHANOS) {
+#if DEBUG_PRINT
         Serial.println("we are methanos");
+#endif
         run_status.bot_identity = METHANOS;
     } else {
+#if DEBUG_PRINT
         Serial.println("we are inevitable");
+#endif
         run_status.bot_identity = THANOS;
     }
+
+    run_status.target_branch = UPPER;
 }
 
 /**
@@ -43,17 +49,18 @@ void initialise_competition_data(position start_position)
  */
 void initialise_competition_data()
 {
+#if DEBUG_PRINT
     Serial.println("initialise_competition_data general mode");
-
-    position my_position;
     Serial.println("switch says initialised: ");
+#endif
+    position my_position;
     if (digitalRead(THANOS_v_METHANOS_SWITCH) == METHANOS) {
         Serial.println("we are methanos");
-        my_position = {METHANOS_START, METHANOS_GAUNTLET, 0, 0}; //, 0, 0, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
+        my_position = {METHANOS_START, METHANOS_GAUNTLET, 0, 0};  // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
         run_status.bot_identity = METHANOS;
     } else {
         Serial.println("we are thanos");
-        my_position = {THANOS_START, THANOS_GAUNTLET, 0, 0}; //, 0, 0, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
+        my_position = {THANOS_START, THANOS_GAUNTLET, 0, 0}; // i.e. current position is METHANOS_START, next position is METHANOS_GAUNTLET, we're 0 of the way there
         run_status.bot_identity = THANOS;
     }
     initialise_competition_data(my_position);
