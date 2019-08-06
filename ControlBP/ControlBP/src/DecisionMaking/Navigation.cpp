@@ -8,12 +8,13 @@
 #define TURN_TIME 200 //ms
 #define RESTART_TIME 700 // ms
 #define STOP_TIME 20 // ms
+#define BACKUP_TIME 800 // ms
 
 int face_reverse_direction(state expected_state);
 int reach_adjacent_location_on_tape(location next_location, state expected_state);
 String get_location_string(location my_loc);
 void print_position();
-int get_branch_side(location next);
+int turn_around(state expected_state);
 
 int ramp_reached()
 {
@@ -36,239 +37,6 @@ int ramp_reached()
     }
     return FALSE;
 }
-
-void move_to(location next_location)
-{
-    // each 'move_to' targeting a post ends when the back sensors detect the back of it
-    if ((run_status.bot_position.last_location == POST_1 && run_status.bot_position.next_location == POST_2) ||
-        (run_status.bot_position.last_location == POST_2 && run_status.bot_position.next_location == POST_1)) {
-        // i.e if we're between posts 1 and 2
-        switch(next_location) {
-            case POST_1:
-                // turn around (pi) if last if POST_1
-                // follow_tape till next intersection
-                // update position to last = 1, next = METHANOS_INTERSECTION
-                break;
-            case POST_2:
-                // turn around (pi) if last if POST_2
-                // follow tape till next intersection
-
-                // update position to last = 2, next = 3
-                break;
-            case POST_3:
-                move_to(POST_2);
-                move_to(POST_3); //updates position to last = 3, next = 4
-                break;
-            case POST_4:
-                move_to(POST_3);
-                move_to(POST_4); // updates position to last = 4, next = 5
-                break;
-            case POST_5:
-                move_to(POST_6);
-                move_to(POST_5);
-                // update position to last = 6, next = 5
-                break;
-            case POST_6:
-                //rotate till you face "up"
-                //cross country till you hit tape
-                // turn to face right
-                // update position to last = METHANOS_INTERSECTION, next = 6
-                move_to(POST_6);
-                break;
-            case THANOS_INTERSECTION:
-                move_to(POST_5);
-                move_to(THANOS_INTERSECTION);
-                break;
-            case THANOS_GAUNTLET:
-                move_to(THANOS_INTERSECTION);
-                move_to(THANOS_GAUNTLET);
-                break;
-            case METHANOS_INTERSECTION:
-                // turn until you face up
-                // cross country till you hit tape
-                // turn to face left
-                // update position to prev = 6, next = methanos intersection
-                move_to(METHANOS_INTERSECTION);
-            case METHANOS_GAUNTLET:
-                move_to(METHANOS_INTERSECTION);
-                // turn up branch, follow to gauntlet
-                // update position
-                break;
-            default: 
-                Serial.println("Error, can't go to that location");
-                break;
-        }
-    } else if ((run_status.bot_position.last_location == POST_2 && run_status.bot_position.next_location == POST_3) ||
-        (run_status.bot_position.last_location == POST_3 && run_status.bot_position.next_location == POST_2)) {
-        // i.e if we're between posts 2 and 3
-        switch(next_location) {
-            case POST_1:
-                move_to(POST_2); // updates position: last = 2, next = 1
-                move_to(POST_1);
-                break;
-            case POST_2:
-                // turn around (pi) if last if POST_2
-                // follow tape till next intersection
-                // update position to last = 2, next = 1
-                break;
-            case POST_3:
-                // turn around (pi) if last if POST_3
-                // follow tape till next intersection
-                // update position to last = 3, next = 4
-                break;
-            case POST_4:
-                move_to(POST_3);
-                move_to(POST_4);
-                break;
-            case POST_5:
-                // rotate till you face "up" (positive y)
-                // cross country till you hit tape
-                // turn to face right
-                // update position to last==6, next==5
-                move_to(POST_5);
-                break;
-            case POST_6:
-                //rotate till you face "up"
-                //cross counTry till you hit tape
-                // turn to face left
-                // update position to last == 5, next == 6
-                move_to(POST_6);
-                break;
-            case THANOS_INTERSECTION:
-                move_to(POST_5);
-                move_to(THANOS_INTERSECTION);
-                break;
-            case THANOS_GAUNTLET:
-                move_to(THANOS_INTERSECTION);
-                move_to(THANOS_GAUNTLET);
-                break;
-            case METHANOS_INTERSECTION:
-                move_to(POST_6);
-                move_to(METHANOS_INTERSECTION);
-            case METHANOS_GAUNTLET:
-                move_to(METHANOS_INTERSECTION);
-                move_to(METHANOS_GAUNTLET);
-                break;
-            default: 
-                Serial.println("Error, can't go to that location");
-                break;
-        }
-    } else if ((run_status.bot_position.last_location == POST_3 && run_status.bot_position.next_location == POST_4) ||
-        (run_status.bot_position.last_location == POST_4 && run_status.bot_position.next_location == POST_3)) {
-        // i.e if we're between posts 3 and 4
-        switch(next_location) {
-            case POST_1:
-                move_to(POST_2);
-                move_to(POST_1);
-                break;
-            case POST_2:
-                move_to(POST_3);
-                move_to(POST_2);
-                break;
-            case POST_3:
-                // turn around (pi) if last if POST_3
-                // follow tape till next intersection
-                // update position to last = 3, next = 2
-                break;
-            case POST_4:
-                // turn around (pi) if last if POST_4
-                // follow tape till next intersection
-                // update position to last = 4, next = 5
-                break;
-            case POST_5:
-                // rotate till you face "up" (positive y)
-                // cross country till you hit tape
-                // turn to face left
-                // update position to last = THANOS_INTERSECTION, next = 5
-                move_to(POST_5);
-                break;
-            case POST_6:
-                move_to(POST_5);
-                move_to(POST_6);
-                break;
-            case THANOS_INTERSECTION:
-                // turn till you face "up" (positive y)
-                // cross country till you hit tape
-                // turn to face right
-                // update position to last = 5, next = THANOS_INTERSECTION
-                move_to(THANOS_INTERSECTION);
-                break;
-            case THANOS_GAUNTLET:
-                move_to(THANOS_INTERSECTION);
-                move_to(THANOS_GAUNTLET);
-                break;
-            case METHANOS_INTERSECTION:
-                // rotate till you face "up" (positive y)
-                // cross country till you hit tape
-                // turn to face right
-                // update position to last = 5, next = METHANOS_INTERSECTION
-                move_to(METHANOS_INTERSECTION);
-                break;
-            case METHANOS_GAUNTLET:
-                move_to(METHANOS_INTERSECTION);
-                move_to(METHANOS_GAUNTLET);
-                break;
-            default: 
-                Serial.println("Error, can't go to that location");
-                break;
-        }
-    } else if ((run_status.bot_position.last_location == POST_1 && run_status.bot_position.next_location == METHANOS_INTERSECTION) ||
-        (run_status.bot_position.last_location == METHANOS_INTERSECTION && run_status.bot_position.next_location == POST_1)) {
-        // i.e if we're between post 1 and METHANOS_INTERSECTION
-        switch(next_location) {
-            case POST_1:
-                // turn around (pi) if last is POST_1
-                // follow_tape till next intersection (that's the branch really)
-                // turn left (i.e. towards neg y roughly)
-                // follow tape till next intersection
-                // update position to last = 1, next = 2
-                break;
-            case POST_2:
-                move_to(POST_1);
-                move_to(POST_2);
-                break;
-            case POST_3:
-                move_to(POST_2);
-                move_to(POST_3);
-                break;
-            case POST_4:
-                move_to(POST_3);
-                move_to(POST_4);
-                break;
-            case POST_5:
-                move_to(POST_6);
-                move_to(POST_5);
-                break;
-            case POST_6:
-                move_to(METHANOS_INTERSECTION);
-                // turn to face right
-                // update position, last == METHANOS_INTERSECTION, next == 6
-                // call move_to(POST_6)
-                break;
-            case THANOS_INTERSECTION:
-                move_to(POST_5);
-                move_to(THANOS_INTERSECTION);
-                break;
-            case THANOS_GAUNTLET:
-                move_to(THANOS_INTERSECTION);
-                move_to(THANOS_GAUNTLET);
-                break;
-            case METHANOS_INTERSECTION:
-                // turn around (pi) if last == METHANOS_INTERSECTION
-                // tape follow till branch is hit
-                // update position to last = METHANOS_INTERSECTION, next = METHANOS_GAUNTLET
-                break;
-            case METHANOS_GAUNTLET:
-                move_to(METHANOS_INTERSECTION);
-                move_to(METHANOS_GAUNTLET);
-                break;
-            default: 
-                Serial.println("Error, can't go to that location");
-                break;
-        }
-    }
-}
-
 
 int reach_adjacent_location_on_tape(location next_location, state expected_state, bool stopping_at_branch)
 { 
@@ -506,15 +274,28 @@ int face_reverse_direction(state expected_state)
     delay(1000);
     return SUCCESS;
 #endif
-    rotate_on_spot(TURN_PWM, LEFT);
-    while (!outer_left_sensor()) {
+    int direction;
+    int stop_direction;
+    int (*outer_sensor)();
+    if ((run_status.bot_identity == THANOS && run_status.target_branch == LOWER) ||
+        (run_status.bot_identity == METHANOS && run_status.target_branch == UPPER)) {
+        direction = RIGHT;
+        stop_direction = LEFT;
+        outer_sensor = outer_right_sensor;
+    } else {
+        direction = LEFT;
+        stop_direction = RIGHT;
+        outer_sensor = outer_left_sensor;
+    }
+    rotate_on_spot(TURN_PWM, direction);
+    while (!outer_sensor()) {
         // turn fairly fast until then
         get_tape_following_error();
         if (robot_state() != expected_state) {
             return STATE_CHANGED;
         }
     }
-    rotate_on_spot(TURN_PWM * 0.8, LEFT);
+    rotate_on_spot(TURN_PWM * 0.8, direction);
     while (!(inner_left_sensor() && inner_right_sensor())) {
         // turn slower around
         get_tape_following_error();
@@ -523,9 +304,8 @@ int face_reverse_direction(state expected_state)
         }
     }
     // stop motion once on line
-
     uint32_t start_time = millis();
-    rotate_on_spot(1, RIGHT);
+    rotate_on_spot(1, stop_direction);
     while (millis() - start_time < STOP_TIME) {
         get_tape_following_error();
     }
@@ -535,21 +315,104 @@ int face_reverse_direction(state expected_state)
         return STATE_CHANGED;
     }
     // flip robot positioning system
-    // update_position(run_status.bot_position.next_location, run_status.bot_position.last_location);
     return SUCCESS;
 }
 
-int return_to_intersection()
+int return_to_intersection(state expected_state)
 {
+    bool inevitable = (run_status.bot_identity == THANOS);
+    location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
+    location other_intersection = inevitable ? METHANOS_INTERSECTION : THANOS_INTERSECTION;
+
+    turn_around(expected_state);
     if (run_status.target_branch == UPPER) {
-
-
+        location my_first_post = inevitable ? POST_5 : POST_6;
+        location my_second_post = inevitable ? POST_5 : POST_5;
         
-        run_status.target_branch = LOWER;
+        if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.next_location == other_intersection) {
+            update_position(my_second_post, my_first_post);
+        }
+        if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.last_location == my_first_post) {
+            if (reach_adjacent_location_on_tape(my_first_post, RETURN_TO_GAUNTLET, false) == STATE_CHANGED) {
+                return STATE_CHANGED;
+            }
+            update_position(my_first_post, my_intersection);
+        }
+        if (run_status.bot_position.last_location ==  my_first_post && run_status.bot_position.next_location == my_second_post) {
+            update_position(my_first_post, my_intersection);
+        }
+
+        // move and turn into intersection
+        if (follow_tape_till_branch(RETURN_TO_GAUNTLET, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
+            return STATE_CHANGED;
+        }
     } else {
+        location my_first_post = inevitable ? POST_4 : POST_1;
+        location my_second_post = inevitable ? POST_3 : POST_2;
+        location my_third_post = inevitable ? POST_2 : POST_3;
+        location my_fourth_post = inevitable ? POST_1 : POST_4;
+        
+        if (run_status.bot_position.last_location == my_fourth_post && run_status.bot_position.next_location == other_intersection) {
+            update_position(my_fourth_post, my_third_post);
+#if DEBUG_SCREEN_DELAYS
+            display_string("4th-3rd");
+#endif
+        }
+        if (run_status.bot_position.last_location == my_fourth_post && run_status.bot_position.next_location == my_third_post) {
+            if (reach_adjacent_location_on_tape(my_third_post, expected_state, true) == STATE_CHANGED) {
+                return STATE_CHANGED;
+            }
+            update_position(my_third_post, my_second_post);
+#if DEBUG_SCREEN_DELAYS
+            display_string("3rd-2nd");
+#endif
+        }
+        if (run_status.bot_position.last_location == my_third_post && run_status.bot_position.next_location == my_second_post) {
+            if (reach_adjacent_location_on_tape(my_second_post, expected_state, true)) {
+                return STATE_CHANGED;
+            }
+            // delay(500);
+            update_position(my_second_post, my_first_post);
+#if DEBUG_SCREEN_DELAYS
+            display_string("2nd-1st");
+#endif
+        }
+        if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.next_location == my_first_post) {
+            if (reach_adjacent_location_on_tape(my_first_post, expected_state, true)) {
+                return STATE_CHANGED;
+            }
+            // delay(500);
+            update_position(my_first_post, my_intersection);
+#if DEBUG_SCREEN_DELAYS
+            display_string("1st-inter");
+#endif
+        }
 
+        // move and turn into intersection
+        if (follow_tape_till_branch(expected_state, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
+            return STATE_CHANGED;
+        }
+    }
+    return SUCCESS;
+}
 
-        run_status.target_branch = UPPER;
+int turn_around(state expected_state)
+{
+    reverse(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+    uint32_t start_time = millis();
+    while (millis() - start_time < BACKUP_TIME) {
+        get_tape_following_error();
+        if (robot_state() != expected_state) {
+            return STATE_CHANGED;
+        }
+    }
+    stop_motors(BACK);
+    
+    if (face_reverse_direction(expected_state) == STATE_CHANGED) {
+#if TESTING_ORDER_OF_EVENTS
+    Serial.println("direction reversal failed");
+#endif
+        return STATE_CHANGED;
     }
     return SUCCESS;
 }
@@ -558,8 +421,6 @@ void update_position(location last_location, location next_location)
 {
     run_status.bot_position.last_location = last_location;
     run_status.bot_position.next_location = next_location;
-    run_status.bot_position.left_wheel_ticks = 0;
-    run_status.bot_position.right_wheel_ticks = 0;
 #if TESTING_ORDER_OF_EVENTS
 print_position();
 #endif

@@ -1,6 +1,7 @@
 #include "AllPurposeInclude.h"
 #include "StateControl/GetInfinityStone.h"
 #include "Debugging/Menu.h"
+#include "DecisionMaking/Navigation.h"
 
 #define MAX_ATTEMPTS_STONE 3
 
@@ -21,7 +22,6 @@ void get_infinity_stone()
     switch_state(GET_INFINITY_STONE, FIND_POST);
     return;
 #endif
-
 
     int side = get_branch_side(run_status.bot_position.next_location);
 

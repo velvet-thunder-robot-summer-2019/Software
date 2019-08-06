@@ -19,9 +19,16 @@ void find_post()
 #endif
 
 if (switch_branch_needed()) {
-    // switch branch physically
-    // switch run_status.target_branch
-    return;
+    int turn_direction;
+    bool inevitable = (run_status.bot_identity == THANOS);
+    if (run_status.target_branch == UPPER) {
+        turn_direction = inevitable ? RIGHT : LEFT;
+    } else {
+        turn_direction = inevitable ? LEFT : RIGHT;
+    }
+    return_to_intersection(FIND_POST);
+    turn_onto_branch(turn_direction, FIND_POST);
+    set_switch_branch_false();
 }
 
 

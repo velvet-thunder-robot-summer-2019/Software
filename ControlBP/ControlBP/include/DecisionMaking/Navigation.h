@@ -26,6 +26,8 @@ int turn_into_gauntlet(int direction, state expected_state);
 /**
  * Returns side on which post / branch is expected to be found
  */
-int branch_side_expected(location next_location);
+int get_branch_side(location next);
+
+int return_to_intersection(state expected_state);
 
 #endif // NAVIGATION_H_

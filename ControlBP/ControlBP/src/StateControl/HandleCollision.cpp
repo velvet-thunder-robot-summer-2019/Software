@@ -6,7 +6,8 @@
 int collision_retries = 0;
 bool switch_branch = false;
 
-int backup_at_collision();
+void backup_at_collision();
+bool we_have_stones();
 
 void handle_collision()
 {   
@@ -23,9 +24,10 @@ void handle_collision()
     } else {
         collision_retries = 0;
         if (we_have_stones()) {
-            switch_state(RETURN_TO_GAUNTLET);
+            switch_state(HANDLE_COLLISION, RETURN_TO_GAUNTLET);
         } else {
             switch_branch = true;
+            switch_state(HANDLE_COLLISION, FIND_POST);
         }
     }
 
@@ -35,10 +37,9 @@ void handle_collision()
     } else {
         switch_state(HANDLE_COLLISION, FIND_POST);
     }
-    run_status.last_collision = NO_COLLISION;
 }
 
-int backup_at_collision() {
+void backup_at_collision() {
     uint32_t start_time = millis();
     while (millis() - start_time < BACKUP_TIME) {
         reverse(FLAT_GROUND_TAPE_FOLLOWING_PWM);
@@ -62,4 +63,9 @@ bool we_have_stones()
 bool switch_branch_needed()
 {
     return switch_branch;
+}
+
+void set_switch_branch_false()
+{
+    switch_branch = false;
 }
