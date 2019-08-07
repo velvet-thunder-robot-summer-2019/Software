@@ -11,7 +11,8 @@ int last_sensor = RIGHT; // arbitrarily set, we just need one
 
 int last_stop_vals[4] = {0};
 
-uint32_t tape_sensor_threshold = 660;
+uint32_t tape_sensor_threshold = 350;
+uint32_t tape_sensor_threshold_outer = 660;
 
 /**
  * Initialising pins for tape sensing
@@ -160,7 +161,7 @@ int inner_left_sensor()
  */
 int outer_left_sensor()
 {
-    return analogRead(OUTER_LEFT_SENSOR) > tape_sensor_threshold;
+    return analogRead(OUTER_LEFT_SENSOR) > tape_sensor_threshold_outer;
 }
 
 /**
@@ -169,7 +170,7 @@ int outer_left_sensor()
  */
 int outer_right_sensor()
 {
-    return analogRead(OUTER_RIGHT_SENSOR) > tape_sensor_threshold;
+    return analogRead(OUTER_RIGHT_SENSOR) > tape_sensor_threshold_outer;
 }
 
 

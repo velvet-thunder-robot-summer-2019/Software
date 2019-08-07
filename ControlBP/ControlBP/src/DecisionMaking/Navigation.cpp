@@ -16,28 +16,6 @@ String get_location_string(location my_loc);
 void print_position();
 int turn_around(state expected_state);
 
-int ramp_reached()
-{
-    // TODO: implement based on encoder speed
-    uint32_t avg_velocity_left = (left_wheel_dt[0] + left_wheel_dt[1] + left_wheel_dt[2]) / 3;
-    uint32_t avg_velocity_right = (right_wheel_dt[0] + right_wheel_dt[1] + right_wheel_dt[2]) / 3;
-#if TESTING_ORDER_OF_EVENTS
-    Serial.println("ramp_reached method");
-    Serial.print("avg velocity left: ");
-    Serial.println(avg_velocity_left);
-    Serial.print("avg velocity right");
-    Serial.println(avg_velocity_right);
-    return TRUE;
-#endif
-    
-    if ((abs((int) (UP_RAMP_ENCODER_DT - avg_velocity_left)) < ENCODER_DT_DELTA) && 
-        (abs((int)(UP_RAMP_ENCODER_DT - avg_velocity_right) < ENCODER_DT_DELTA)))
-    {
-        return TRUE;
-    }
-    return FALSE;
-}
-
 int reach_adjacent_location_on_tape(location next_location, state expected_state, bool stopping_at_branch)
 { 
 #if TESTING_ORDER_OF_EVENTS
@@ -81,7 +59,12 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
 int turn_onto_branch(int direction, state expected_state)
 {
 #if TESTING_ORDER_OF_EVENTS
-Serial.println("we are turning on to the branch...");
+Serial.print("we are turning ");
+if (direction == LEFT) {
+    Serial.println("left");
+} else {
+    Serial.println("right");
+}
 delay(1000);
 Serial.println("turn completed!");
 return SUCCESS;
@@ -327,12 +310,12 @@ int return_to_intersection(state expected_state)
     turn_around(expected_state);
     if (run_status.target_branch == UPPER) {
         location my_first_post = inevitable ? POST_5 : POST_6;
-        location my_second_post = inevitable ? POST_5 : POST_5;
+        location my_second_post = inevitable ? POST_6 : POST_5;
         
         if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.next_location == other_intersection) {
             update_position(my_second_post, my_first_post);
         }
-        if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.last_location == my_first_post) {
+        if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.next_location == my_first_post) {
             if (reach_adjacent_location_on_tape(my_first_post, RETURN_TO_GAUNTLET, false) == STATE_CHANGED) {
                 return STATE_CHANGED;
             }

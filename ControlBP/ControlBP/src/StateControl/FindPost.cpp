@@ -18,7 +18,7 @@ void find_post()
     Serial.println("______________________");
 #endif
 
-if (millis() - run_status.comp_start_time < TIME_TO_TARGET_NEW_POST) {
+if ((TOTAL_ROUND_TIME - (millis() - run_status.comp_start_time) < TIME_TO_TARGET_NEW_POST) && we_have_stones()) {
     switch_state(FIND_POST, RETURN_TO_GAUNTLET);
     return;
 }
@@ -64,6 +64,7 @@ int follow_upper_path()
             if (follow_tape_till_branch(FIND_POST, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
                 return STATE_CHANGED;
             }
+            stop_motors();
 
         // turn the correct direction at the fork
         int turn_direction = thanos ? RIGHT : LEFT;

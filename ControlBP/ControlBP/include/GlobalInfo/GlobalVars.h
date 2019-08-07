@@ -1,6 +1,8 @@
 #ifndef GLOBAL_VARS_H_
 #define GLOBAL_VARS_H_
 
+#include <Arduino.h>
+
 #define TOTAL_NUM_STONE 6
 
 // defines for DEBUG board

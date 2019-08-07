@@ -2,6 +2,7 @@
 #include "StateControl/GetInfinityStone.h"
 #include "Debugging/Menu.h"
 #include "DecisionMaking/Navigation.h"
+#include "StateControl/HandleCollision.h"
 
 #define MAX_ATTEMPTS_STONE 3
 
@@ -17,7 +18,7 @@ void get_infinity_stone()
     Serial.println("GET_INFINITY_STONE state entered!");
     Serial.println("______________________");
 #endif
-    if (millis() - run_status.comp_start_time < TIME_TO_TARGET_NEW_POST) {
+    if ((TOTAL_ROUND_TIME - (millis() - run_status.comp_start_time) < TIME_TO_TARGET_NEW_POST) && we_have_stones()) {
         switch_state(FIND_POST, RETURN_TO_GAUNTLET);
         return;
     }

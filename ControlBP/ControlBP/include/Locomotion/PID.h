@@ -38,4 +38,11 @@ int get_kp();
  */
 int get_kd();
 
+/**
+ * Set values you want for navigation at the top
+ */
+void set_kd_kp_for_post_nav();
+
+void set_kd_kp_for_ramp();
+
 #endif //PID_H_

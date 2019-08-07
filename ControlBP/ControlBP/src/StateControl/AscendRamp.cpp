@@ -1,7 +1,8 @@
 #include "StateControl/AscendRamp.h"
 #include "AllPurposeInclude.h"
+#include "Locomotion/PID.h"
 
-#define FLAT_GROUND_TIME 5000
+#define FLAT_GROUND_TIME 7000
 
 void ascend_ramp()
 {
@@ -40,6 +41,8 @@ void ascend_ramp()
     location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
     location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
     update_position(my_gauntlet, my_intersection);
+
+    set_kd_kp_for_post_nav();
 
     // ok so we should've turned onto the right branch, let's go into next state
     if (digitalRead(MASTER_SWITCH) == COMP) {

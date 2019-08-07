@@ -22,8 +22,8 @@
 
 //sensors
 #define OUTER_LEFT_SENSOR PA4
-#define MID_LEFT_SENSOR PA0
-#define INNER_LEFT_SENSOR PA5
+#define MID_LEFT_SENSOR PA5 // PA0 <-- should be this, changed as temp measure
+#define INNER_LEFT_SENSOR PA0 // PA5 <-- should be this, changed as temp measure
 #define INNER_RIGHT_SENSOR PA3
 #define MID_RIGHT_SENSOR PA2
 #define OUTER_RIGHT_SENSOR PA1 
@@ -37,10 +37,10 @@
 
 // #define RIGHT_MOTOR_PWM_BACK PA_8
 // #define RIGHT_MOTOR_PWM_FWD PA_6
-#define LEFT_MOTOR_PWM_BACK PB_1
-#define LEFT_MOTOR_PWM_FWD PB_0
-#define RIGHT_MOTOR_PWM_BACK PA_6
-#define RIGHT_MOTOR_PWM_FWD PA_8
+#define RIGHT_MOTOR_PWM_FWD PB_1
+#define RIGHT_MOTOR_PWM_BACK PB_0
+#define LEFT_MOTOR_PWM_FWD PA_6
+#define LEFT_MOTOR_PWM_BACK PA_8
 
 //encoders
 #define ENCODER_RIGHT_A PB9
@@ -83,13 +83,13 @@
 #define RIGHT_MOTOR 1
 
 // drivings vals and PWMs
-#define REACH_RAMP_PWM 0.3
-#define ASCEND_RAMP_PWM 0.45 // 0.38
-#define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.25
-#define FLAT_GROUND_APPROACHING_STOP_PWM 0.18
+#define REACH_RAMP_PWM 0.28
+#define ASCEND_RAMP_PWM 0.55 // 0.38
+#define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.3
+#define FLAT_GROUND_APPROACHING_STOP_PWM 0.24
 #define ARC_LENGTH_FOR_TURN 8
-#define TURN_PWM 0.2
-#define TURN_INTO_GAUNTLET_PWM 0.2
+#define TURN_PWM 0.22
+#define TURN_INTO_GAUNTLET_PWM 0.22
 
 // communication status
 // when communication fails
@@ -106,11 +106,12 @@
 #define MAX_RETURN_TIME 30*1000 // 20 s
 #define MAX_PICK_UP_STONE_TIME 15*1000 // 15 s
 #define TIME_TO_TARGET_NEW_POST (MAX_RETURN_TIME + MAX_PICK_UP_STONE_TIME)
+#define TOTAL_ROUND_TIME 2*60*1000 // 2 mins
 
 
 // just for testing
-#define TESTING_ORDER_OF_EVENTS TRUE
-#define NO_ARM_TESTING FALSE
+#define TESTING_ORDER_OF_EVENTS FALSE
+#define NO_ARM_TESTING TRUE
 #define DEBUG_PRINT FALSE
 #define USING_ENCODERS FALSE
 #define LOWER_BRANCH_PATH FALSE

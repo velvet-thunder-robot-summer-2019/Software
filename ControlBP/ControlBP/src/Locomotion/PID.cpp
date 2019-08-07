@@ -34,8 +34,7 @@ void init_PID()
     //     past_errors[i] = 0;
     // }
     // oldest_error_index = 0;
-    kp = 350;
-    kd = 0;
+    set_kd_kp_for_ramp();
 }
 
 /**
@@ -117,6 +116,17 @@ float getD(int error)
     // return (float) (error - past_errors[oldest_error_index]) * kd * 0.5 / MAX_ANALOG;
     return (float) (error - past_error) * kd * 0.2  / MAX_ANALOG;
 }
+
+void set_kd_kp_for_post_nav() {
+    kp = 295;
+    kd = 250;
+}
+
+void set_kd_kp_for_ramp() {
+    kp = 450;
+    kd = 100;
+}
+
 
 // /**
 //  * Updates record of 10 previous errors 

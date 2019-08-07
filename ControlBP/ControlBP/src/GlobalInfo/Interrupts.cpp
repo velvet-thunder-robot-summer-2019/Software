@@ -12,14 +12,7 @@
 
 #define RETURN_TIME 130 // in seconds, arbitrary rn
 
-void encoder_left_handle();
-void encoder_right_handle();
-
-
-void collision_left();
-void collision_right();
-void collision_front();
-void collision_back();
+void set_collision_mode();
 
 /**
  * Does all necessary initialisation for interrupts
@@ -33,8 +26,8 @@ void init_interrupts()
     pinMode(BUMPER_RIGHT, INPUT_PULLUP);
 
     // attach collision interrupt
-    attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), set_collision_mode, FALLING);
-    attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), set_collision_mode, FALLING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_LEFT), set_collision_mode, FALLING);
+    // attachInterrupt(digitalPinToInterrupt(BUMPER_RIGHT), set_collision_mode, FALLING);
 }
 
 /**

@@ -18,12 +18,10 @@
 
 #define DELAY_BETWEEN_COMMANDS 1000
 
-void test_ramp_reached();
 void test_reach_location_fwd();
 void test_reach_location_back();
 void test_turn_onto_branch();
 void test_follow_arc(int arc_val, int direction);
-void get_click_speeds();
 void get_all_tape_sensors();
 void run_motor_at_pwm(float pwm);
 
@@ -89,8 +87,6 @@ void debug()
             grab_infinity_stone(LEFT, 1);
         } else if (command.equals("grab infinity stone right, 5")) {
             grab_infinity_stone(RIGHT, 5);
-        } else if (command.equals("test ramp_reached")) {
-            test_ramp_reached();
         } else if (command.equals("reach location forwards")) {
             test_reach_location_fwd();
         } else if (command.equals("reach location backwards")) {
@@ -138,8 +134,6 @@ void debug()
                 follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
             }
             stop_motors();
-        } else if (command.equals("get last click speed")) {
-            get_click_speeds();
         } else if (command.equals("run straight")) {
             while (true) {
                 run_motor(LEFT, FWD, 0.4);
@@ -207,18 +201,6 @@ void run_motor_at_pwm(float pwm) {
     stop_motors();
 }
 
-
-//follow_tape wrapped for time period: 1 param time period, 1 param torque
-void test_ramp_reached() 
-{
-    delay(3000); // delays 3 seconds
-    digitalWrite(BLINKY, HIGH); // turn off light
-    while (!ramp_reached()) {
-        follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
-    }
-    digitalWrite(BLINKY, LOW);
-}
-
 void test_reach_location_fwd()
 {
     Serial.println("put robot between POST_4 and POST_3, facing POST_3");
@@ -242,17 +224,6 @@ void test_turn_onto_branch()
     Serial.println("place robot at intersection");
     delay(3000); // 3 seconds
     turn_onto_branch(LEFT, MENU);
-}
-
-void get_click_speeds() 
-{
-    uint32_t avg_velocity_left = (left_wheel_dt[0] + left_wheel_dt[1] + left_wheel_dt[2]) / 3;
-    uint32_t avg_velocity_right = (right_wheel_dt[0] + right_wheel_dt[1] + right_wheel_dt[2]) / 3;
-    Serial.println("ramp_reached method");
-    Serial.print("avg velocity left: ");
-    Serial.println(avg_velocity_left);
-    Serial.print("avg velocity right");
-    Serial.println(avg_velocity_right);
 }
 
 void get_all_tape_sensors()

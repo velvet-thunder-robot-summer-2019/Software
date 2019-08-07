@@ -7,7 +7,6 @@ int collision_retries = 0;
 bool switch_branch = false;
 
 void backup_at_collision();
-bool we_have_stones();
 
 void handle_collision()
 {   

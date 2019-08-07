@@ -335,6 +335,7 @@ void state_menu()
                 if (!digitalRead(NAVIGATE)) {
                     displayed_state = FIND_POST_MENU;
                 } else if (!digitalRead(SET)) {
+                    // set_kd_kp_for_ramp();
                     switch_state(MENU, ASCEND_RAMP);
                     Serial.println("Entering ascend ramp state");
                 }
@@ -369,6 +370,7 @@ void state_menu()
                         // update_position(METHANOS_INTERSECTION, POST_1);
                     }
 #endif
+                    // set_kd_kp_for_post_nav();
                     switch_state(MENU, FIND_POST);
 
                 }
