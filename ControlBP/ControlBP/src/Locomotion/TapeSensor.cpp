@@ -67,9 +67,9 @@ int get_tape_following_error()
         last_sensor = RIGHT;
         return -2;
     } else if (last_sensor == LEFT) {
-        return 3;
+        return 5;
     } else {
-        return -3;
+        return -5;
     }
 
     // option 2: I like it better, more resolution

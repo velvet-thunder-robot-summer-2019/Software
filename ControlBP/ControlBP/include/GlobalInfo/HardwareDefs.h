@@ -83,12 +83,12 @@
 #define RIGHT_MOTOR 1
 
 // drivings vals and PWMs
-#define REACH_RAMP_PWM 0.28
-#define ASCEND_RAMP_PWM 0.55 // 0.38
-#define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.3
+#define REACH_RAMP_PWM 0.22
+#define ASCEND_RAMP_PWM 0.45 // 0.38
+#define FLAT_GROUND_TAPE_FOLLOWING_PWM 0.22
 #define FLAT_GROUND_APPROACHING_STOP_PWM 0.24
 #define ARC_LENGTH_FOR_TURN 8
-#define TURN_PWM 0.22
+#define TURN_PWM 0.2
 #define TURN_INTO_GAUNTLET_PWM 0.22
 
 // communication status

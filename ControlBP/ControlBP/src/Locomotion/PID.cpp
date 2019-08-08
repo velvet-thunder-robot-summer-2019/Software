@@ -123,8 +123,9 @@ void set_kd_kp_for_post_nav() {
 }
 
 void set_kd_kp_for_ramp() {
-    kp = 450;
-    kd = 100;
+    // kp = 450, kd = 0
+    kp = 400;
+    kd = 0;
 }
 
 

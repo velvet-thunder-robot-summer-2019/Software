@@ -6,6 +6,7 @@
 #include "GlobalInfo/HardwareDefs.h"
 #include "Communication/ControlCommunication.h"
 #include "GlobalInfo/RobotState.h"
+#include "Locomotion/TapeSensor.h"
 
 // Communication details
 #define BUFFER_SIZE 7 // 2 for start/stop, 1 for return code, up to 4 for data
@@ -273,6 +274,7 @@ uint8_t grab_infinity_stone(byte side, byte post_num)
 
     //wait for response
     while (!CommSerial.available()) {
+        get_tape_following_error();
 #if DEBUG_PRINT && !TESTING_ORDER_OF_EVENTS
         Serial.println("I pine for your response");
 #endif
