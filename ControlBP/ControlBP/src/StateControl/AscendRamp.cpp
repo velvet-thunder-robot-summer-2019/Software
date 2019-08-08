@@ -19,6 +19,7 @@ void ascend_ramp()
     int inevitable = run_status.bot_identity == THANOS;
     
     int turn_direction = inevitable ? LEFT : RIGHT;
+    set_kd_kp_for_reach_ramp();
 
     uint32_t start_time = millis();
     while (millis() - start_time < FLAT_GROUND_TIME) {
@@ -27,8 +28,7 @@ void ascend_ramp()
             return;
         }
     }
-    set_kd_kp_for_reach_ramp();
-    
+    set_kd_kp_for_ramp();
     if (follow_tape_till_branch(ASCEND_RAMP, ASCEND_RAMP_PWM) == STATE_CHANGED) {
         return;
     }

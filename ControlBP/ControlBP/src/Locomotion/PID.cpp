@@ -129,8 +129,8 @@ void set_kd_kp_for_reach_ramp() {
 }
 
 void set_kd_kp_for_ramp() {
-    kp = 300;
-    kd = 200;
+    kp = 100;
+    kd = 0;
 }
 
 
