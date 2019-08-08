@@ -72,10 +72,6 @@ void init_menu()
     display.clearDisplay();
     display.setTextSize(2);
     display.setTextColor(WHITE);
-    // display.setCursor(0,0);
-    // display.println("OLED Display 128x64");
-    // display.setFont(&FreeMono12pt7b);
-    // display.drawPixel(0,45,WHITE);
 }
 
 void menu()
@@ -87,6 +83,10 @@ void menu()
     Serial.print("SET: ");
     Serial.println(digitalRead(SET));
     */
+    if (digitalRead(MASTER_SWITCH) == COMP) {
+        switch_state(MENU, REACH_RAMP);
+        return;
+    }
 
     while(1) {
         switch (menu_display) {

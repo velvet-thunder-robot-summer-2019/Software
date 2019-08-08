@@ -11,10 +11,12 @@ volatile status_summary run_status;
  */
 void initialise_competition_data(position start_position)
 {
+#if DEBUG_PRINT
     Serial.println("initialise_competition_data");
+#endif
 
     // enable fault light
-    pinMode(BLINKY, OUTPUT);    
+    // pinMode(BLINKY, OUTPUT);    
 
     run_status.bot_position.last_location = start_position.last_location;
     run_status.bot_position.next_location = start_position.next_location;

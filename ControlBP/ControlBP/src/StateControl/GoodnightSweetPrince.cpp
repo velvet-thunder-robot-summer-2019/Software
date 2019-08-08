@@ -13,7 +13,9 @@ void goodnight_sweet_prince()
     Serial.println("And flights of angels sing thee to thy rest");
 #endif
     deploy_gauntlet();
-    delay(1000000); // TODO: change this to permanent delay
+    while (digitalRead(MASTER_SWITCH) == COMP) {
+        delay(100);
+    }
 
     if (digitalRead(MASTER_SWITCH) == DEV) {
         switch_state(GOODNIGHT_SWEET_PRINCE, MENU);

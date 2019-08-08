@@ -16,7 +16,7 @@
 
 #include "Communication/ControlCommunication.h"
 
-void reset();
+void initialise_all();
 
 /**
  * Calls all initialisation routines (vary between DEV and COMP modes)
@@ -33,7 +33,7 @@ void setup() {
   Serial.println("begin setup");
 #endif
   run_status.comp_start_time = millis();
-  reset();
+  initialise_all();
 }
 
 void loop() {
@@ -90,7 +90,7 @@ state bot_state = robot_state();
   delay(1000); // just for now, so that Julie can see what went down
 }
 
-void reset() 
+void initialise_all() 
 {
   init_menu();
   init_tape_following();

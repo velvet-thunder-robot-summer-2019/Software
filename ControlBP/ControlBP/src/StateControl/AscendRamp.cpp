@@ -3,7 +3,7 @@
 #include "Locomotion/PID.h"
 
 #define FLAT_GROUND_TIME 5000
-#define STARTUP_TIME 100
+#define STARTUP_TIME 100 
 
 void ascend_ramp()
 {
