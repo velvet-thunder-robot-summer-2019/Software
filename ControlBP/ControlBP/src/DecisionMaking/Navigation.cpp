@@ -47,6 +47,11 @@ int reach_adjacent_location_on_tape(location next_location, state expected_state
     }
     if (stopping_at_branch) {
         stop_motors();
+    } else {
+        uint32_t start_time = millis();
+        while (millis() - start_time < RESTART_TIME) {
+            follow_tape(FLAT_GROUND_TAPE_FOLLOWING_PWM);
+        }
     }
     return SUCCESS;
 }
@@ -244,6 +249,7 @@ Serial.println("follow_tape_till_branch");
             return STATE_CHANGED;
         }
     }
+    stop_motors();
     return SUCCESS;
 }
 
@@ -308,9 +314,13 @@ int return_to_intersection(state expected_state)
     location other_intersection = inevitable ? METHANOS_INTERSECTION : THANOS_INTERSECTION;
 
     turn_around(expected_state);
+#if DEBUG_SCREEN_DELAYS
+    display_string("we've turned");
+#endif
     if (run_status.target_branch == UPPER) {
         location my_first_post = inevitable ? POST_5 : POST_6;
         location my_second_post = inevitable ? POST_6 : POST_5;
+        location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
         
         if (run_status.bot_position.last_location == my_second_post && run_status.bot_position.next_location == other_intersection) {
             update_position(my_second_post, my_first_post);

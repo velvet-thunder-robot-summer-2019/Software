@@ -2,7 +2,8 @@
 #include "AllPurposeInclude.h"
 #include "Locomotion/PID.h"
 
-#define FLAT_GROUND_TIME 8000
+#define FLAT_GROUND_TIME 5000
+#define STARTUP_TIME 100
 
 void ascend_ramp()
 {
@@ -17,11 +18,17 @@ void ascend_ramp()
         return;
     }
     int inevitable = run_status.bot_identity == THANOS;
+    uint32_t start_time = millis();
+    while (millis() - start_time < STARTUP_TIME) {
+        follow_tape(ASCEND_RAMP_PWM);
+        if (robot_state() != ASCEND_RAMP) {
+            return;
+        }
+    }
     
     int turn_direction = inevitable ? LEFT : RIGHT;
     set_kd_kp_for_reach_ramp();
 
-    uint32_t start_time = millis();
     while (millis() - start_time < FLAT_GROUND_TIME) {
         follow_tape(REACH_RAMP_PWM);
         if (robot_state() != ASCEND_RAMP) {
@@ -32,10 +39,9 @@ void ascend_ramp()
     if (follow_tape_till_branch(ASCEND_RAMP, ASCEND_RAMP_PWM) == STATE_CHANGED) {
         return;
     }
-    // stop_motors();
-    // delay(3000);
-    // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
+    stop_motors();
 
+    // ok so we've spotted the branch. We want to go left if Thanos, right if Methanos
     if (turn_onto_branch(turn_direction, ASCEND_RAMP) == STATE_CHANGED) {
         return;
     }

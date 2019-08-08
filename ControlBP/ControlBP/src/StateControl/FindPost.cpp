@@ -45,7 +45,7 @@ if (run_status.target_branch == UPPER) {
     if (digitalRead(MASTER_SWITCH) == COMP) {
         switch_state(FIND_POST, GET_INFINITY_STONE);
     } else {
-        switch_state(FIND_POST, GET_INFINITY_STONE);
+        switch_state(FIND_POST, MENU);
     }
 }
 
