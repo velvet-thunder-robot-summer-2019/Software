@@ -122,10 +122,15 @@ void set_kd_kp_for_post_nav() {
     kd = 250;
 }
 
-void set_kd_kp_for_ramp() {
+void set_kd_kp_for_reach_ramp() {
     // kp = 450, kd = 0
     kp = 400;
-    kd = 0;
+    kd = 100;
+}
+
+void set_kd_kp_for_ramp() {
+    kp = 300;
+    kd = 200;
 }
 
 

@@ -2,7 +2,7 @@
 #include "AllPurposeInclude.h"
 #include "Locomotion/PID.h"
 
-#define FLAT_GROUND_TIME 7000
+#define FLAT_GROUND_TIME 8000
 
 void ascend_ramp()
 {
@@ -27,6 +27,7 @@ void ascend_ramp()
             return;
         }
     }
+    set_kd_kp_for_reach_ramp();
     
     if (follow_tape_till_branch(ASCEND_RAMP, ASCEND_RAMP_PWM) == STATE_CHANGED) {
         return;

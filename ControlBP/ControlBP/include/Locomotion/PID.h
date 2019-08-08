@@ -45,4 +45,7 @@ void set_kd_kp_for_post_nav();
 
 void set_kd_kp_for_ramp();
 
+void set_kd_kp_for_reach_ramp();
+
+
 #endif //PID_H_
