@@ -277,6 +277,13 @@ int face_reverse_direction(state expected_state)
         outer_sensor = outer_left_sensor;
     }
     rotate_on_spot(TURN_PWM, direction);
+    // uint32_t start_time = millis();
+    // while (millis() - start_time < 1000) {
+    //     get_tape_following_error();
+    //     if (robot_state() != expected_state) {
+    //         return STATE_CHANGED;
+    //     }
+    // }
     while (!outer_sensor()) {
         // turn fairly fast until then
         get_tape_following_error();
@@ -284,8 +291,9 @@ int face_reverse_direction(state expected_state)
             return STATE_CHANGED;
         }
     }
+    Serial.println("outer sensor found");
     rotate_on_spot(TURN_PWM * 0.8, direction);
-    while (!(inner_left_sensor() && inner_right_sensor())) {
+    while (!(inner_left_sensor() || inner_right_sensor())) {
         // turn slower around
         get_tape_following_error();
         if (robot_state() != expected_state) {

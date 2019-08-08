@@ -2,8 +2,8 @@
 #include "AllPurposeInclude.h"
 #include "Locomotion/PID.h"
 
-#define FLAT_GROUND_TIME 5000
-#define STARTUP_TIME 100 
+#define FLAT_GROUND_TIME 6000
+#define STARTUP_TIME 300 
 
 void ascend_ramp()
 {
