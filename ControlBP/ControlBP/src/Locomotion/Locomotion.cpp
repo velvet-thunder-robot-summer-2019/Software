@@ -78,9 +78,9 @@ int rotate_on_spot(float pwm, int direction)
 {
     if (direction == LEFT) {
         run_motor(RIGHT_MOTOR, FWD, pwm);
-        run_motor(LEFT_MOTOR, BACK, pwm);
+        run_motor(LEFT_MOTOR, BACK, pwm*1.2);
     } else if (direction == RIGHT) {
-        run_motor(RIGHT_MOTOR, BACK, pwm);
+        run_motor(RIGHT_MOTOR, BACK, pwm*1.2);
         run_motor(LEFT_MOTOR, FWD, pwm);
     }
 
