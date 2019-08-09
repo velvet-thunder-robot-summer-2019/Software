@@ -63,6 +63,10 @@ int get_tape_following_error()
     } else if (inner_right && mid_right) {
         last_sensor = RIGHT;
         return 1;
+    } else if (inner_right) {
+        return 1;
+    } else if (inner_left) {
+        return -1;
     } else if (mid_right) {
         last_sensor = RIGHT;
         return -2;

@@ -2,7 +2,7 @@
 #include "AllPurposeInclude.h"
 #include "Locomotion/PID.h"
 
-#define FLAT_GROUND_TIME 6000
+#define FLAT_GROUND_TIME 8500
 #define STARTUP_TIME 300 
 
 void ascend_ramp()
@@ -48,6 +48,10 @@ void ascend_ramp()
     location my_gauntlet = inevitable ? THANOS_GAUNTLET : METHANOS_GAUNTLET;
     location my_intersection = inevitable ? THANOS_INTERSECTION : METHANOS_INTERSECTION;
     update_position(my_gauntlet, my_intersection);
+
+    if (follow_tape_till_branch(ASCEND_RAMP, FLAT_GROUND_TAPE_FOLLOWING_PWM) == STATE_CHANGED) {
+        return;
+    }
 
     set_kd_kp_for_post_nav();
 

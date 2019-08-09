@@ -5,6 +5,7 @@
 #include "Debugging/Menu.h"
 
 #define GO_INTO_GAUNTLET_TIME 1000 // 2 seconds
+#define TURN_TIME_PAST_LINES 500
 
 int return_from_lower_path();
 int return_from_upper_path();
@@ -83,6 +84,15 @@ int return_from_lower_path()
     if (turn_into_gauntlet(direction, RETURN_TO_GAUNTLET)) {
         return STATE_CHANGED;
     }
+
+    int other_direction = inevitable ? RIGHT : LEFT;
+    rotate_on_spot(TURN_PWM, direction);
+    uint32_t start_time = millis();
+    while (millis() - start_time < TURN_TIME_PAST_LINES)
+    {
+        get_tape_following_error();
+    }
+    rotate_on_spot(1, other_direction);
     return SUCCESS;
 }
 
@@ -114,8 +124,18 @@ int return_from_upper_path()
     }
     
     direction = inevitable ? LEFT : RIGHT;
-    if (turn_onto_branch(direction, RETURN_TO_GAUNTLET)) {
+    int other_direction = inevitable ? RIGHT : LEFT;
+    if (turn_into_gauntlet(direction, RETURN_TO_GAUNTLET)) {
         return STATE_CHANGED;
     }
+    
+    rotate_on_spot(TURN_PWM, direction);
+    uint32_t start_time = millis();
+    while (millis() - start_time < TURN_TIME_PAST_LINES)
+    {
+        get_tape_following_error();
+    }
+    rotate_on_spot(1, other_direction);
+
     return SUCCESS;
 }
